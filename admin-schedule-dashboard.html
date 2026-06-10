@@ -449,10 +449,11 @@
         /* ---- MAIN SPLIT CONTENT GRID ---- */
         .timeline-main-grid {
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1fr;
             flex: 1;
-            overflow: hidden;
+            overflow-y: auto;
             border-top: 1px solid var(--border-color);
+            background-color: var(--body-bg);
         }
 
         /* ---- LEFT SIDE: TIMELINE SCHEDULER PANEL ---- */
@@ -771,10 +772,17 @@
         /* ---- RIGHT SIDE: OPERATIONS PANEL SIDEBAR ---- */
         .operations-panel {
             background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             padding: 24px;
             display: flex;
             flex-direction: column;
             gap: 24px;
+            max-width: 600px;
+            width: 100%;
+            margin: 32px auto;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            flex-shrink: 0;
             overflow-y: auto;
         }
 
@@ -1483,7 +1491,7 @@
         <div class="timeline-main-grid">
             
             <!-- LEFT COLUMN: GANTT CHART TIMELINE -->
-            <section class="timeline-scheduler-panel">
+            <section class="timeline-scheduler-panel" style="display: none;">
                 <div class="scheduler-header">
                     <div class="scheduler-filters">
                         <div class="filter-tab active" data-floor="all">Tất cả tầng (1-5)</div>
@@ -1781,12 +1789,18 @@
             const getHeaders  = { 'Authorization': 'Bearer ' + jwtToken };
 
             // Navigation Redirects
-            document.getElementById('btn-switch-receptionist').addEventListener('click', () => {
-                window.location.href = 'receptionist-dashboard.html';
-            });
-            document.getElementById('logo-redirect').addEventListener('click', () => {
-                window.location.href = 'admin-dashboard.html';
-            });
+            const btnSwitch = document.getElementById('btn-switch-receptionist');
+            if (btnSwitch) {
+                btnSwitch.addEventListener('click', () => {
+                    window.location.href = 'receptionist-dashboard.html';
+                });
+            }
+            const logoRedirect = document.getElementById('logo-redirect');
+            if (logoRedirect) {
+                logoRedirect.addEventListener('click', () => {
+                    window.location.href = 'admin-dashboard.html';
+                });
+            }
 
             // Set Profile initials
             const staffName = localStorage.getItem('staffName');
@@ -1795,7 +1809,10 @@
                 const initials = parts.length > 1
                     ? (parts[0][0] + parts[parts.length - 1][0])
                     : parts[0].substring(0, 2);
-                document.getElementById('btn-profile').innerText = initials.toUpperCase();
+                const btnProfile = document.getElementById('btn-profile');
+                if (btnProfile) {
+                    btnProfile.innerText = initials.toUpperCase();
+                }
             }
 
             // ================================================================

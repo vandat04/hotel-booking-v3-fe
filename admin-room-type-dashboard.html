@@ -514,7 +514,7 @@
         }
 
         .detail-header {
-            padding: 24px 32px;
+            padding: 16px 24px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
@@ -568,7 +568,7 @@
 
         .detail-scroll-area {
             flex: 1;
-            padding: 32px;
+            padding: 24px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -995,7 +995,102 @@
             background-color: var(--primary-dark);
         }
 
-        
+        /* ---- Custom Confirm Dialog ---- */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 99998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .confirm-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .confirm-dialog {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+            transform: scale(0.92) translateY(10px);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .confirm-overlay.show .confirm-dialog {
+            transform: scale(1) translateY(0);
+        }
+        .confirm-icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--danger-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: var(--danger);
+        }
+        .confirm-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .confirm-message {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .confirm-btn-cancel {
+            flex: 1;
+            padding: 11px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-btn-cancel:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+        .confirm-btn-ok {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            background: var(--danger);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+        }
+        .confirm-btn-ok:hover {
+            background: #dc2626;
+        }
     </style>
     <script src="menu.js"></script>
 </head>
@@ -1108,22 +1203,28 @@
             }
 
             // Redirect handles
-            document.getElementById('btn-switch-receptionist').addEventListener('click', () => {
-                window.location.href = 'receptionist-dashboard.html';
-            });
-            document.getElementById('logo-redirect').addEventListener('click', () => {
-                window.location.href = 'admin-dashboard.html';
-            });
-            document.getElementById('btn-profile').addEventListener('click', () => {
-                window.location.href = 'staff-profile.html';
-            });
+            const btnSwitch = document.getElementById('btn-switch-receptionist');
+            if (btnSwitch) {
+                btnSwitch.addEventListener('click', () => {
+                    window.location.href = 'receptionist-dashboard.html';
+                });
+            }
+            const logoRedirect = document.getElementById('logo-redirect');
+            if (logoRedirect) {
+                logoRedirect.addEventListener('click', () => {
+                    window.location.href = 'admin-dashboard.html';
+                });
+            }
 
             // Set profile initials if staff details exist
             const staffName = localStorage.getItem('staffName');
             if (staffName) {
                 const parts = staffName.split(' ');
                 const initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]) : parts[0].substring(0, 2);
-                document.getElementById('btn-profile').innerText = initials.toUpperCase();
+                const btnProfile = document.getElementById('btn-profile');
+                if (btnProfile) {
+                    btnProfile.innerText = initials.toUpperCase();
+                }
             }
 
             // Helper format currency
@@ -1629,7 +1730,11 @@
 
                 // Delete button listener
                 document.getElementById('btn-delete-type').addEventListener('click', async () => {
-                    if (confirm(`Bạn có chắc chắn muốn xóa hạng phòng "${activeRoomType.name}" không?`)) {
+                    const confirmDelete = await showConfirm(
+                        "Xác nhận xóa hạng phòng",
+                        `Bạn có chắc chắn muốn xóa hạng phòng "${activeRoomType.name}" không?`
+                    );
+                    if (confirmDelete) {
                         try {
                             const headers = { 'Authorization': 'Bearer ' + jwtToken };
                             const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}`, {
@@ -1844,7 +1949,11 @@
             window.removeItemFromRoomType = async (itemId) => {
                 if (!activeRoomType) return;
                 
-                if (confirm("Bạn có chắc chắn muốn bỏ gán vật tư này?")) {
+                const confirmRemove = await showConfirm(
+                    "Xác nhận bỏ gán",
+                    "Bạn có chắc chắn muốn bỏ gán vật tư này?"
+                );
+                if (confirmRemove) {
                     try {
                         const headers = { 'Authorization': 'Bearer ' + jwtToken };
                         const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}/items/${itemId}`, {
@@ -2017,7 +2126,11 @@
             window.deleteRoomTypeImage = async (imageId) => {
                 if (!activeRoomType) return;
 
-                if (confirm("Bạn có chắc chắn muốn xóa ảnh này?")) {
+                const confirmDelete = await showConfirm(
+                    "Xác nhận xóa ảnh",
+                    "Bạn có chắc chắn muốn xóa ảnh này?"
+                );
+                if (confirmDelete) {
                     try {
                         const headers = { 'Authorization': 'Bearer ' + jwtToken };
                         const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}/images/${imageId}`, {
@@ -2246,8 +2359,68 @@
                 window.showToast(msgStr, type);
                 console.log("CheckinX Smart Toast: Đã đánh chặn alert ->", msgStr);
             };
+
+            // 6. Định nghĩa hàm showConfirm đồng bộ UI mượt mà
+            window.showConfirm = function(title, message) {
+                return new Promise((resolve) => {
+                    const overlay = document.getElementById('confirm-overlay');
+                    const titleEl = document.getElementById('confirm-title');
+                    const msgEl = document.getElementById('confirm-message');
+                    const btnOk = document.getElementById('confirm-btn-ok');
+                    const btnCancel = document.getElementById('confirm-btn-cancel');
+
+                    if (!overlay) {
+                        resolve(false);
+                        return;
+                    }
+
+                    titleEl.innerText = title;
+                    msgEl.innerText = message;
+
+                    const close = () => {
+                        overlay.classList.remove('show');
+                    };
+
+                    const handleOk = () => {
+                        close();
+                        cleanup();
+                        resolve(true);
+                    };
+
+                    const handleCancel = () => {
+                        close();
+                        cleanup();
+                        resolve(false);
+                    };
+
+                    const cleanup = () => {
+                        btnOk.removeEventListener('click', handleOk);
+                        btnCancel.removeEventListener('click', handleCancel);
+                    };
+
+                    btnOk.addEventListener('click', handleOk);
+                    btnCancel.addEventListener('click', handleCancel);
+
+                    overlay.classList.add('show');
+                });
+            };
         })();
     </script>
+
+    <!-- CUSTOM CONFIRM DIALOG -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-icon-circle">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="confirm-title" id="confirm-title">Xác nhận</div>
+            <div class="confirm-message" id="confirm-message">Bạn có chắc chắn muốn thực hiện hành động này?</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn-cancel" id="confirm-btn-cancel">Hủy bỏ</button>
+                <button class="confirm-btn-ok" id="confirm-btn-ok">Xác nhận</button>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

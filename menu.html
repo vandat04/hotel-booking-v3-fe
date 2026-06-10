@@ -8,12 +8,13 @@
             <a href="admin-room-grid-dashboard.html" class="nav-link">Sơ đồ phòng</a>
             <a href="admin-book-dashboard.html" class="nav-link">Đặt phòng</a>
             <a href="admin-room-timeline.html" class="nav-link">Timeline</a>
-            <a href="admin-schedule-dashboard.html" class="nav-link">Tối ưu AI</a>
             <a href="admin-ota-booking.html" class="nav-link">Kênh bán</a>
             <a href="admin-payment-dashboard.html" class="nav-link">Giao dịch</a>
-            <a href="admin-damage-dashboard.html" class="nav-link">Đền bù</a>
-            <a href="admin-room-dashboard.html" class="nav-link">Phòng</a>
+            <a href="admin-review-dashboard.html" class="nav-link">Đánh Giá</a>
+            <a href="admin-schedule-dashboard.html" class="nav-link">Tối ưu AI</a>
             <a href="admin-room-type-dashboard.html" class="nav-link">Loại Phòng</a>
+            <a href="admin-room-dashboard.html" class="nav-link">Phòng</a>
+            <a href="admin-base-item-dashboard.html" class="nav-link">Vật Tư</a>
         </nav>
     </div>
     <div class="header-right">
@@ -30,7 +31,7 @@
         <div class="header-icon" id="btn-settings" onclick="window.location.href='admin-hotel-dashboard.html'">
             <i class="fa-solid fa-gear"></i>
         </div>
-        <div class="user-profile" id="btn-profile" onclick="window.location.href='staff-profile.html'">
+        <div class="user-profile" id="btn-profile">
             AD
         </div>
         <div class="header-icon" id="btn-logout" title="Đăng xuất" style="color: var(--danger, #ef4444); margin-left: 8px;">
@@ -38,3 +39,397 @@
         </div>
     </div>
 </header>
+
+<!-- Dynamic Profile Modal -->
+<div id="profile-modal-overlay">
+    <style>
+        #profile-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Outfit', 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+
+        #profile-modal-overlay * {
+            box-sizing: border-box;
+        }
+
+        #profile-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .pm-dialog {
+            background: #ffffff;
+            width: 90%;
+            max-width: 680px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            transform: scale(0.95) translateY(10px);
+            opacity: 0;
+            transition: transform 0.25s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.25s ease;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #profile-modal-overlay.active .pm-dialog {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .pm-header {
+            padding: 20px 28px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pm-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .pm-close-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            transition: all 0.2s;
+        }
+
+        .pm-close-btn:hover {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .pm-body {
+            padding: 28px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 32px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        @media (max-width: 640px) {
+            .pm-body {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 20px;
+            }
+        }
+
+        .pm-avatar-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .pm-avatar-wrapper {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #f8fafc;
+            box-shadow: 0 4px 14px rgba(91, 48, 166, 0.12);
+            background-color: #f1f5f9;
+        }
+
+        .pm-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pm-avatar-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            opacity: 0;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .pm-avatar-wrapper:hover .pm-avatar-overlay {
+            opacity: 1;
+        }
+
+        .pm-avatar-overlay i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .pm-avatar-overlay span {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .pm-avatar-actions {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pm-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .pm-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pm-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .pm-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+        }
+
+        .pm-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .pm-input-wrapper i {
+            position: absolute;
+            left: 12px;
+            color: #94a3b8;
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .pm-input {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            font-size: 13.5px;
+            font-family: inherit;
+            color: #334155;
+            transition: all 0.2s;
+            background-color: #ffffff;
+        }
+
+        .pm-input:focus {
+            outline: none;
+            border-color: #5b30a6;
+            box-shadow: 0 0 0 3px rgba(91, 48, 166, 0.15);
+        }
+
+        .pm-input[readonly] {
+            background-color: #f8fafc;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-color: #e2e8f0;
+        }
+
+        .pm-select {
+            width: 100%;
+            padding: 10px 32px 10px 36px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            font-size: 13.5px;
+            font-family: inherit;
+            color: #334155;
+            background-color: #ffffff;
+            transition: all 0.2s;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 14px;
+        }
+
+        .pm-select:focus {
+            outline: none;
+            border-color: #5b30a6;
+            box-shadow: 0 0 0 3px rgba(91, 48, 166, 0.15);
+        }
+
+        .pm-footer {
+            padding: 16px 28px 24px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .pm-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .pm-btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .pm-btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        .pm-btn-primary {
+            background-color: #5b30a6;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(91, 48, 166, 0.15);
+        }
+
+        .pm-btn-primary:hover {
+            background-color: #4a238a;
+        }
+
+        .pm-btn-primary:disabled {
+            background-color: #cbd5e1;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+    </style>
+    <div class="pm-dialog">
+        <div class="pm-header">
+            <h3 class="pm-title"><i class="fa-solid fa-user-gear" style="color: #5b30a6;"></i> Thông tin cá nhân</h3>
+            <button class="pm-close-btn" id="pm-close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="pm-body">
+            <!-- Left Column: Avatar upload -->
+            <div class="pm-avatar-column">
+                <div class="pm-avatar-wrapper" id="pm-avatar-clickzone">
+                    <img id="pm-avatar-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=placeholder" alt="Avatar" class="pm-avatar-img">
+                    <div class="pm-avatar-overlay">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Thay đổi ảnh</span>
+                    </div>
+                </div>
+                <input type="file" id="pm-avatar-input" accept="image/*" style="display: none;">
+                <div class="pm-avatar-actions">
+                    <button id="pm-btn-select-avatar" class="pm-btn pm-btn-secondary" style="font-size: 11px; padding: 8px 12px; width: 100%;">
+                        <i class="fa-solid fa-images"></i> Chọn tệp ảnh
+                    </button>
+                    <button id="pm-btn-save-avatar" class="pm-btn pm-btn-primary" style="font-size: 11px; padding: 8px 12px; width: 100%; display: none;">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Lưu ảnh đại diện
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Right Column: Details Form -->
+            <form id="pm-profile-form" class="pm-form" onsubmit="return false;">
+                <!-- Username -->
+                <div class="pm-form-group">
+                    <label class="pm-label">Tên đăng nhập</label>
+                    <div class="pm-input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="text" id="pm-username" class="pm-input" readonly>
+                    </div>
+                </div>
+                <!-- Email -->
+                <div class="pm-form-group">
+                    <label class="pm-label">Địa chỉ Email</label>
+                    <div class="pm-input-wrapper">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="text" id="pm-email" class="pm-input" readonly>
+                    </div>
+                </div>
+                <!-- Full name -->
+                <div class="pm-form-group">
+                    <label class="pm-label">Họ và tên</label>
+                    <div class="pm-input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="pm-fullName" class="pm-input" required>
+                    </div>
+                </div>
+                <!-- Phone -->
+                <div class="pm-form-group">
+                    <label class="pm-label">Số điện thoại</label>
+                    <div class="pm-input-wrapper">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="text" id="pm-phone" class="pm-input" required>
+                    </div>
+                </div>
+                <!-- Gender -->
+                <div class="pm-form-group">
+                    <label class="pm-label">Giới tính</label>
+                    <div class="pm-input-wrapper">
+                        <i class="fa-solid fa-venus-mars" style="z-index: 1;"></i>
+                        <select id="pm-gender" class="pm-select">
+                            <option value="MALE">Nam</option>
+                            <option value="FEMALE">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Date of birth -->
+                <div class="pm-form-group">
+                    <label class="pm-label">Ngày sinh</label>
+                    <div class="pm-input-wrapper">
+                        <i class="fa-solid fa-cake-candles"></i>
+                        <input type="date" id="pm-dateOfBirth" class="pm-input" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="pm-footer">
+            <button class="pm-btn pm-btn-secondary" id="pm-btn-cancel">Hủy</button>
+            <button class="pm-btn pm-btn-primary" id="pm-btn-save">Lưu thay đổi</button>
+        </div>
+    </div>
+</div>

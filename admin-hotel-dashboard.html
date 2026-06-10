@@ -171,7 +171,7 @@
             max-width: 1600px;
             width: 100%;
             margin: 0 auto;
-            padding: 24px 32px 40px 32px;
+            padding: 16px 24px 32px 24px;
             display: flex;
             flex-direction: column;
             gap: 24px;
@@ -1259,7 +1259,6 @@
 
             // Bind Global Dialogs
             window.showConfirm = showConfirm;
-            };
 
             // Authentication Checking
             const jwtToken = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken');
@@ -1272,19 +1271,28 @@
             }
 
             // Navigation Redirect bindings
-            document.getElementById('btn-switch-receptionist').addEventListener('click', () => {
-                window.location.href = 'receptionist-dashboard.html';
-            });
-            document.getElementById('logo-redirect').addEventListener('click', () => {
-                window.location.href = 'admin-dashboard.html';
-            });
+            const btnSwitch = document.getElementById('btn-switch-receptionist');
+            if (btnSwitch) {
+                btnSwitch.addEventListener('click', () => {
+                    window.location.href = 'receptionist-dashboard.html';
+                });
+            }
+            const logoRedirect = document.getElementById('logo-redirect');
+            if (logoRedirect) {
+                logoRedirect.addEventListener('click', () => {
+                    window.location.href = 'admin-dashboard.html';
+                });
+            }
 
             // Set user profile avatar initials
             const staffName = localStorage.getItem('staffName');
             if (staffName) {
                 const parts = staffName.split(' ');
                 const initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]) : parts[0].substring(0, 2);
-                document.getElementById('btn-profile').innerText = initials.toUpperCase();
+                const btnProfile = document.getElementById('btn-profile');
+                if (btnProfile) {
+                    btnProfile.innerText = initials.toUpperCase();
+                }
             }
 
             // State variables

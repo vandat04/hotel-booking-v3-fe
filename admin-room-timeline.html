@@ -204,25 +204,14 @@
             flex-direction: column;
             min-height: calc(100vh - 64px);
         }
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-        }
 
         /* Content Area */
         .content {
-            padding: 32px;
+            padding: 16px 24px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 16px;
         }
 
         /* Control Panel */
@@ -230,7 +219,7 @@
             background-color: var(--white);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px 24px;
+            padding: 12px 20px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -424,7 +413,7 @@
         .timeline-row {
             display: flex;
             border-bottom: 1px solid var(--border-color);
-            min-height: 60px;
+            height: 72px;
             position: relative;
         }
 
@@ -518,8 +507,8 @@
 
         .booking-card {
             position: absolute;
-            top: 10px;
-            bottom: 10px;
+            top: 8px;
+            bottom: 8px;
             border-radius: 6px;
             color: var(--white);
             padding: 6px 12px;
@@ -707,6 +696,206 @@
             50% { transform: scale(0.98); opacity: 0.9; }
             100% { transform: scale(1); }
         }
+
+        /* ---- Custom Confirm Dialog ---- */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 99998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .confirm-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .confirm-dialog {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+            transform: scale(0.92) translateY(10px);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .confirm-overlay.show .confirm-dialog {
+            transform: scale(1) translateY(0);
+        }
+        .confirm-icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--danger-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: var(--danger);
+        }
+        .confirm-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .confirm-message {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .confirm-btn-cancel {
+            flex: 1;
+            padding: 11px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-btn-cancel:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+        .confirm-btn-ok {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            background: var(--danger);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+        }
+        .confirm-btn-ok:hover {
+            background: #dc2626;
+        }
+
+        /* Workspace Container */
+        .workspace {
+            display: flex;
+            height: calc(100vh - 64px);
+            overflow: hidden;
+            flex: 1;
+        }
+
+        /* Sidebar Search & Filters */
+        .sidebar-filter {
+            width: 260px;
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 38px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #f8fafc;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            cursor: pointer;
+            color: var(--text-main);
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .radio-option input[type="radio"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option input[type="radio"]:checked {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            box-shadow: inset 0 0 0 3px var(--white);
+        }
     </style>
     <script src="menu.js"></script>
 </head>
@@ -715,56 +904,67 @@
     <!-- Header Container -->
     <div id="header-container"></div>
 
-    <!-- Main Wrapper -->
-    <div class="main-wrapper">
+    <!-- Workspace Wrapper -->
+    <div class="workspace">
 
-        <!-- Content -->
-        <div class="content">
+        <!-- Column 1: Sidebar Filter -->
+        <aside class="sidebar-filter">
+            <!-- LỊCH TRÌNH Section -->
+            <div class="filter-section">
+                <div class="filter-label">LỊCH TRÌNH</div>
+                <div class="date-navigator" style="width: 100%; display: flex; background-color: var(--gray-bg); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+                    <button id="btn-prev-day" class="btn-nav-date" style="padding: 10px 14px; border: none; background: transparent; cursor: pointer; transition: background 0.2s;"><i class="fa-solid fa-chevron-left"></i></button>
+                    <input type="date" id="input-timeline-date" class="input-date" style="flex: 1; border: none; font-size: 13px; font-weight: 600; text-align: center; background: transparent; outline: none; padding: 8px 0; cursor: pointer;">
+                    <button id="btn-next-day" class="btn-nav-date" style="padding: 10px 14px; border: none; background: transparent; cursor: pointer; transition: background 0.2s;"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <!-- LỌC THEO TẦNG Section -->
+            <div class="filter-section">
+                <div class="filter-label">LỌC THEO TẦNG</div>
+                <div class="radio-group" id="floor-filter-group">
+                    <label class="radio-option">
+                        <input type="radio" name="floor-filter" value="all" checked>
+                        <span>Tất cả các tầng</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="floor-filter" value="1">
+                        <span>Tầng 1</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="floor-filter" value="2">
+                        <span>Tầng 2</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="floor-filter" value="3">
+                        <span>Tầng 3</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="floor-filter" value="4">
+                        <span>Tầng 4</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Auto Refresh Status Section -->
+            <div class="filter-section" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <div class="refresh-status" style="justify-content: center; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted);">
+                    <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+                    <span id="refresh-text">Tự động làm mới sau 45s</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <div class="content" style="flex: 1; overflow-y: auto;">
             <div class="page-title" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                 <div>
                     <h2 style="font-size: 24px; font-weight: 700; font-family: 'Outfit'; color: var(--text-main);">Lịch trình phòng theo ngày (Timeline)</h2>
                     <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Quản lý trực quan quỹ thời gian phòng, check-in, check-out và overbooking.</p>
                 </div>
                 <div style="display:flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                    <div class="search-bar" style="display: flex; align-items: center; background-color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 14px; width: 260px; height: 38px;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted); margin-right: 8px;"></i>
-                        <input type="text" placeholder="Tìm kiếm phòng, khách..." style="border: none; outline: none; width: 100%; font-size: 13.5px;">
-                    </div>
                     <button id="btn-quick-checkin" class="btn-primary" style="background-color: var(--primary); color: white; border: none; padding: 0 16px; height: 38px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-bolt"></i> Quick Check-in</button>
                     <button id="btn-create-new" class="btn-primary" style="background-color: #10b981; color: white; border: none; padding: 0 16px; height: 38px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-plus"></i> Tạo mới</button>
-                </div>
-            </div>
-
-            <!-- Controls Panel -->
-            <div class="control-panel">
-                <div class="filter-group">
-                    <div class="filter-label">BỘ LỌC:</div>
-                    <select id="filter-floor" class="select-filter">
-                        <option value="">Tất cả các tầng</option>
-                        <option value="1">Tầng 1</option>
-                        <option value="2">Tầng 2</option>
-                        <option value="3">Tầng 3</option>
-                        <option value="4">Tầng 4</option>
-                    </select>
-                    
-                    <select id="filter-room-type" class="select-filter">
-                        <option value="">Đang tải loại phòng...</option>
-                    </select>
-                </div>
-
-                <!-- Date Navigation -->
-                <div class="filter-group">
-                    <div class="date-navigator">
-                        <button id="btn-prev-day" class="btn-nav-date"><i class="fa-solid fa-chevron-left"></i></button>
-                        <input type="date" id="input-timeline-date" class="input-date">
-                        <button id="btn-next-day" class="btn-nav-date"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-                </div>
-
-                <!-- Auto Refresh Status -->
-                <div class="refresh-status">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span id="refresh-text">Tự động làm mới sau 45s</span>
                 </div>
             </div>
 
@@ -863,8 +1063,7 @@
             const todayStr = new Date().toISOString().substring(0, 10);
             dateInput.value = todayStr;
 
-            // Load filters and draw timeline
-            loadRoomTypes();
+            // Load timeline
             fetchTimelineData();
 
             // Date Navigation Events
@@ -883,8 +1082,17 @@
             });
 
             dateInput.addEventListener('change', fetchTimelineData);
-            document.getElementById('filter-floor').addEventListener('change', fetchTimelineData);
-            document.getElementById('filter-room-type').addEventListener('change', fetchTimelineData);
+
+            // Bind Floor Filter Radio Buttons
+            const floorFilterGroup = document.getElementById('floor-filter-group');
+            if (floorFilterGroup) {
+                floorFilterGroup.querySelectorAll('input[name="floor-filter"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        selectedFloor = e.target.value;
+                        fetchTimelineData();
+                    });
+                });
+            }
 
             // Close popover
             document.getElementById('popover-close-btn').addEventListener('click', () => {
@@ -904,35 +1112,18 @@
             }, 1000);
         });
 
-        // 1. Fetch Room Types for Filter
-        async function loadRoomTypes() {
-            try {
-                const response = await fetch('http://localhost:8080/api/hotel/room-types?page=0&size=100');
-                const result = await response.json();
-                if (result.success && result.data && result.data.content) {
-                    const selectEl = document.getElementById('filter-room-type');
-                    let html = '<option value="">Tất cả loại phòng</option>';
-                    result.data.content.forEach(type => {
-                        html += `<option value="${type.id}">${type.name}</option>`;
-                    });
-                    selectEl.innerHTML = html;
-                }
-            } catch (error) {
-                console.error("Error loading room types:", error);
-                document.getElementById('filter-room-type').innerHTML = '<option value="">Lỗi tải dữ liệu</option>';
-            }
-        }
+        // Selected Floor state
+        let selectedFloor = 'all';
 
         // 2. Fetch Timeline Data and Render
         async function fetchTimelineData() {
             const date = document.getElementById('input-timeline-date').value;
-            const floor = document.getElementById('filter-floor').value;
-            const roomTypeId = document.getElementById('filter-room-type').value;
             const container = document.getElementById('timeline-container');
 
             let url = `http://localhost:8080/api/receptionist/rooms/timeline?date=${date}`;
-            if (floor) url += `&floor=${floor}`;
-            if (roomTypeId) url += `&roomTypeId=${roomTypeId}`;
+            if (selectedFloor && selectedFloor !== 'all') {
+                url += `&floor=${selectedFloor}`;
+            }
 
             try {
                 const response = await fetch(url, {
@@ -1217,7 +1408,11 @@
 
         // Popover Action handlers
         async function quickCheckIn(bookingId) {
-            if (!confirm(`Bạn có chắc chắn muốn thực hiện Check-in nhanh cho đặt phòng #${bookingId}?`)) return;
+            const confirmCheckIn = await showConfirm(
+                "Xác nhận Check-in nhanh",
+                `Bạn có chắc chắn muốn thực hiện Check-in nhanh cho đặt phòng #${bookingId}?`
+            );
+            if (!confirmCheckIn) return;
             try {
                 const response = await fetch(`http://localhost:8080/api/receptionist/bookings/${bookingId}/check-in`, {
                     method: 'POST',
@@ -1408,8 +1603,68 @@
                 window.showToast(msgStr, type);
                 console.log("CheckinX Smart Toast: Đã đánh chặn alert ->", msgStr);
             };
+
+            // 6. Định nghĩa hàm showConfirm đồng bộ UI mượt mà
+            window.showConfirm = function(title, message) {
+                return new Promise((resolve) => {
+                    const overlay = document.getElementById('confirm-overlay');
+                    const titleEl = document.getElementById('confirm-title');
+                    const msgEl = document.getElementById('confirm-message');
+                    const btnOk = document.getElementById('confirm-btn-ok');
+                    const btnCancel = document.getElementById('confirm-btn-cancel');
+
+                    if (!overlay) {
+                        resolve(false);
+                        return;
+                    }
+
+                    titleEl.innerText = title;
+                    msgEl.innerText = message;
+
+                    const close = () => {
+                        overlay.classList.remove('show');
+                    };
+
+                    const handleOk = () => {
+                        close();
+                        cleanup();
+                        resolve(true);
+                    };
+
+                    const handleCancel = () => {
+                        close();
+                        cleanup();
+                        resolve(false);
+                    };
+
+                    const cleanup = () => {
+                        btnOk.removeEventListener('click', handleOk);
+                        btnCancel.removeEventListener('click', handleCancel);
+                    };
+
+                    btnOk.addEventListener('click', handleOk);
+                    btnCancel.addEventListener('click', handleCancel);
+
+                    overlay.classList.add('show');
+                });
+            };
         })();
     </script>
+
+    <!-- CUSTOM CONFIRM DIALOG -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-icon-circle">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="confirm-title" id="confirm-title">Xác nhận</div>
+            <div class="confirm-message" id="confirm-message">Bạn có chắc chắn muốn thực hiện hành động này?</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn-cancel" id="confirm-btn-cancel">Hủy bỏ</button>
+                <button class="confirm-btn-ok" id="confirm-btn-ok">Xác nhận</button>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

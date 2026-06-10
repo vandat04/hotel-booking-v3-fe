@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheckinX - Receptionist Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -308,7 +308,7 @@
         /* Dashboard Content */
         .content {
             flex: 1;
-            padding: 32px;
+            padding: 16px 24px;
             overflow-y: auto;
         }
 
@@ -750,6 +750,109 @@
         .view-all:hover {
             color: var(--primary);
         }
+
+        /* Workspace Container */
+        .workspace {
+            display: flex;
+            height: calc(100vh - 64px);
+            overflow: hidden;
+            flex: 1;
+        }
+
+        /* Sidebar Search & Filters */
+        .sidebar-filter {
+            width: 260px;
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 38px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #f8fafc;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            cursor: pointer;
+            color: var(--text-main);
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .radio-option input[type="radio"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option input[type="radio"]:checked {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            box-shadow: inset 0 0 0 3px var(--white);
+        }
     </style>
     <script src="menu.js"></script>
 </head>
@@ -758,43 +861,55 @@
     <!-- Header Container -->
     <div id="header-container"></div>
 
-    <!-- Main Wrapper -->
-    <div class="main-wrapper">
+    <!-- Workspace Wrapper -->
+    <div class="workspace">
+
+        <!-- Column 1: Sidebar Filter -->
+        <aside class="sidebar-filter">
+            <!-- TÌM KIẾM Section -->
+            <div class="filter-section">
+                <div class="filter-label">TÌM KIẾM</div>
+                <div class="search-wrapper" style="margin-bottom: 10px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="booking-search-input" class="search-input" placeholder="Tìm tên, SĐT, Email...">
+                </div>
+                <button id="btn-reset-booking" class="btn-outline" style="background: white; width: 100%; border-radius: 6px; padding: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
+            </div>
+
+            <!-- PHÂN LOẠI Section -->
+            <div class="filter-section">
+                <div class="filter-label">PHÂN LOẠI</div>
+                <div class="radio-group" id="booking-filter-group">
+                    <label class="radio-option">
+                        <input type="radio" name="booking-filter" value="ALL" checked>
+                        <span>Tất cả</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="booking-filter" value="UPCOMING_IN">
+                        <span>Sắp Check-in</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="booking-filter" value="UPCOMING_OUT">
+                        <span>Sắp Check-out</span>
+                    </label>
+                </div>
+            </div>
+        </aside>
 
         <!-- Content -->
-        <div class="content">
+        <div class="content" style="flex: 1; overflow-y: auto;">
             <div class="page-title" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                 <div>
                     <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold; color: var(--text-main);">Quản lý Đặt phòng</h2>
                     <p style="margin: 5px 0 0; color: var(--text-muted);">Danh sách tất cả các đặt phòng trên hệ thống</p>
                 </div>
                 <div style="display:flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                    <div class="search-bar" style="display: flex; align-items: center; background-color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 14px; width: 260px; height: 38px;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted); margin-right: 8px;"></i>
-                        <input type="text" placeholder="Tìm kiếm phòng, khách..." style="border: none; outline: none; width: 100%; font-size: 13.5px;">
-                    </div>
                     <button id="btn-quick-checkin" class="btn-primary" style="background-color: var(--primary); color: white; border: none; padding: 0 16px; height: 38px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-bolt"></i> Quick Check-in</button>
                     <button id="btn-create-new" class="btn-primary" style="background-color: #10b981; color: white; border: none; padding: 0 16px; height: 38px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-plus"></i> Tạo mới</button>
                 </div>
             </div>
 
             <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                <!-- Toolbar -->
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <button id="filter-all" class="btn-filter active" style="padding: 8px 16px; border: 1px solid var(--primary); background: var(--primary); color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s;">Tất cả</button>
-                    <button id="filter-upcoming-in" class="btn-filter" style="padding: 8px 16px; border: 1px solid #ddd; background: white; color: #555; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s;">Sắp Check-in</button>
-                    <button id="filter-upcoming-out" class="btn-filter" style="padding: 8px 16px; border: 1px solid #ddd; background: white; color: #555; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s;">Sắp Check-out</button>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                    <div class="search-bar" style="border: 1px solid #ddd; background: #fff; width: 300px;">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="booking-search-input" placeholder="Tìm tên, SĐT, Email..." style="background: transparent;">
-                    </div>
-                    <div style="display:flex; gap: 10px;">
-                        <button class="btn-outline" style="background: white;" id="btn-search-booking">Tìm kiếm</button>
-                        <button class="btn-outline" style="background: white;" id="btn-reset-booking"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
-                    </div>
-                </div>
 
                 <!-- Table -->
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
@@ -1084,7 +1199,12 @@
                 
                 if (!isRoomTypesLoaded) {
                     try {
-                        const response = await fetch('http://localhost:8080/api/hotel/room-types?page=0&size=100');
+                        const tokenVal = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
+                        const response = await fetch('http://localhost:8080/api/admin/room-types?page=0&size=100', {
+                            headers: {
+                                'Authorization': 'Bearer ' + tokenVal
+                            }
+                        });
                         const result = await response.json();
                         if (result.success && result.data && result.data.content) {
                             const selectEl = document.getElementById('bk-roomTypeId');
@@ -1418,47 +1538,48 @@
                 loadBookings(currentPage, currentKeyword);
             });
             
-            document.getElementById('btn-search-booking').addEventListener('click', () => {
-                currentKeyword = document.getElementById('booking-search-input').value.trim();
-                currentPage = 0;
-                loadBookings(currentPage, currentKeyword);
-            });
-            
-            document.getElementById('btn-reset-booking').addEventListener('click', () => {
-                document.getElementById('booking-search-input').value = '';
-                currentKeyword = '';
-                currentPage = 0;
-                loadBookings(currentPage, currentKeyword);
-            });
+            // Debounced Search logic
+            const searchInput = document.getElementById('booking-search-input');
+            if (searchInput) {
+                let searchTimeout;
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        currentKeyword = e.target.value.trim();
+                        currentPage = 0;
+                        loadBookings(currentPage, currentKeyword);
+                    }, 400);
+                });
+            }
 
-            // Filters logic
-            const filterBtns = [
-                { id: 'filter-all', value: 'ALL' },
-                { id: 'filter-upcoming-in', value: 'UPCOMING_IN' },
-                { id: 'filter-upcoming-out', value: 'UPCOMING_OUT' }
-            ];
-
-            filterBtns.forEach(btnInfo => {
-                document.getElementById(btnInfo.id).addEventListener('click', (e) => {
-                    // Update UI
-                    filterBtns.forEach(b => {
-                        const el = document.getElementById(b.id);
-                        el.style.background = 'white';
-                        el.style.color = '#555';
-                        el.style.borderColor = '#ddd';
-                    });
-                    e.target.style.background = 'var(--primary)';
-                    e.target.style.color = 'white';
-                    e.target.style.borderColor = 'var(--primary)';
-
-                    // Load Data
-                    currentFilter = btnInfo.value;
-                    document.getElementById('booking-search-input').value = ''; // clear search when filtering
+            // Reset logic
+            const btnReset = document.getElementById('btn-reset-booking');
+            if (btnReset) {
+                btnReset.addEventListener('click', () => {
+                    document.getElementById('booking-search-input').value = '';
+                    const radioAll = document.querySelector('input[name="booking-filter"][value="ALL"]');
+                    if (radioAll) radioAll.checked = true;
+                    
+                    currentFilter = 'ALL';
                     currentKeyword = '';
                     currentPage = 0;
-                    loadBookings();
+                    loadBookings(currentPage, currentKeyword);
                 });
-            });
+            }
+
+            // Filters logic
+            const filterGroup = document.getElementById('booking-filter-group');
+            if (filterGroup) {
+                filterGroup.querySelectorAll('input[name="booking-filter"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        currentFilter = e.target.value;
+                        document.getElementById('booking-search-input').value = ''; // clear search when filtering
+                        currentKeyword = '';
+                        currentPage = 0;
+                        loadBookings(currentPage, currentKeyword);
+                    });
+                });
+            }
             
             // --- Modals & Actions ---
             const detailModal = document.getElementById('booking-detail-modal');

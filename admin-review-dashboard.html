@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckinX - Admin Đánh Giá & Phản Hồi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f3cc9;
+            --primary-dark: #3b2bb0;
+            --primary-light: #eef2ff;
+            --primary-gradient: linear-gradient(135deg, #4f3cc9 0%, #7c3aed 100%);
+            --bg-color: #f4f5f8;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --white: #ffffff;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --info: #0284c7;
+            --info-bg: #f0f9ff;
+            --header-bg: #4f3cc9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Header Styles --- */
+        header {
+            background: linear-gradient(90deg, #3b2bb0 0%, #4f3cc9 100%);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            color: var(--white);
+            flex-shrink: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 64px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-link.active {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 4px;
+            background-color: #10b981;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-le-tan {
+            background-color: var(--white);
+            color: var(--primary);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn-le-tan:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .header-icon {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .header-icon:hover {
+            color: var(--white);
+        }
+
+        .user-profile {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: border 0.2s;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            border-color: var(--white);
+        }
+
+        /* --- Workspace Structure --- */
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Column 1: Sidebar Filter */
+        .sidebar-filter {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 38px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13.5px;
+            outline: none;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(79, 60, 201, 0.15);
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13.5px;
+            outline: none;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .radio-option input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Column 2: Main Content Panel */
+        .list-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #f8fafc;
+        }
+
+        .list-header {
+            padding: 16px 24px;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-block h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .title-block p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Stats Row */
+        .stats-summary-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 24px 24px 0 24px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 992px) {
+            .stats-summary-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Scrollable container */
+        .reviews-scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Review Card Layout */
+        .review-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .review-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .review-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .guest-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .guest-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            border: 1.5px solid var(--border-color);
+        }
+
+        .guest-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .guest-name {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 14.5px;
+        }
+
+        .room-type-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            background-color: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            align-self: flex-start;
+            margin-top: 2px;
+        }
+
+        .review-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .stars-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .review-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .review-comment {
+            font-size: 13.5px;
+            color: #334155;
+            line-height: 1.6;
+            background-color: #f8fafc;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border-left: 3px solid #cbd5e1;
+        }
+
+        /* Reply Block */
+        .reply-box {
+            background-color: #f5f3ff;
+            border-left: 3px solid #7c3aed;
+            padding: 16px 20px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 20px;
+        }
+
+        .reply-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #6d28d9;
+        }
+
+        .reply-content {
+            font-size: 13px;
+            color: #4c1d95;
+            line-height: 1.5;
+        }
+
+        .reply-date-tag {
+            font-size: 11px;
+            color: #a78bfa;
+            font-weight: 500;
+        }
+
+        /* Action row inside card */
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+            margin-top: 4px;
+        }
+
+        .btn-card {
+            padding: 8px 16px;
+            font-size: 12.5px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-reply-trigger {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-reply-trigger:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-edit-trigger {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-edit-trigger:hover {
+            background-color: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .btn-delete-trigger {
+            background-color: var(--white);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-delete-trigger:hover {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            border-color: var(--danger-bg);
+        }
+
+        /* Pagination container */
+        .pagination-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .pagination-buttons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #ffffff;
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-btn.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f8fafc;
+        }
+
+        /* Modal Overlay & styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-dialog {
+            background: #ffffff;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.25s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.25s ease;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-dialog {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 16.5px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 18px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 13.5px;
+            color: #334155;
+            transition: all 0.2s;
+            background-color: #ffffff;
+            outline: none;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 60, 201, 0.15);
+        }
+
+        .modal-footer {
+            padding: 16px 24px 20px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        .btn-primary {
+            background-color: #5b30a6;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #4a238a;
+        }
+
+        .btn-primary:disabled {
+            background-color: #cbd5e1;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* CUSTOM CONFIRM DIALOG */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 99998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .confirm-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .confirm-dialog {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            transform: scale(0.95);
+            transition: transform 0.2s cubic-bezier(0.34, 1.45, 0.64, 1);
+        }
+        .confirm-overlay.show .confirm-dialog {
+            transform: scale(1);
+        }
+        .confirm-icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--danger-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: var(--danger);
+        }
+        .confirm-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .confirm-message {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .confirm-btn-cancel {
+            flex: 1;
+            padding: 11px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-btn-cancel:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+        .confirm-btn-ok {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            background: var(--danger);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+        }
+        .confirm-btn-ok:hover {
+            background: #dc2626;
+        }
+    </style>
+    <script src="menu.js"></script>
+</head>
+<body>
+
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+        <!-- Left Sidebar Filter -->
+        <div class="sidebar-filter">
+            <!-- Search field -->
+            <div class="filter-section">
+                <span class="filter-label">Tìm kiếm</span>
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-bar" class="search-input" placeholder="Tên khách, tên phòng...">
+                </div>
+            </div>
+
+            <!-- Star filter -->
+            <div class="filter-section">
+                <span class="filter-label">Bộ lọc xếp hạng</span>
+                <select id="filter-rating" class="filter-select">
+                    <option value="">Tất cả số sao</option>
+                    <option value="5">5 sao ⭐⭐⭐⭐⭐</option>
+                    <option value="4">4 sao ⭐⭐⭐⭐</option>
+                    <option value="3">3 sao ⭐⭐⭐</option>
+                    <option value="2">2 sao ⭐⭐</option>
+                    <option value="1">1 sao ⭐</option>
+                </select>
+            </div>
+            
+            <!-- Reply status -->
+            <div class="filter-section">
+                <span class="filter-label">Trạng thái phản hồi</span>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="filter-reply" value="ALL">
+                        <span>Tất cả đánh giá</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="filter-reply" value="UNREPLIED" checked>
+                        <span>Chưa phản hồi</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="filter-reply" value="REPLIED">
+                        <span>Đã phản hồi</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content Panel -->
+        <div class="list-panel">
+            <div class="list-header">
+                <div class="title-block">
+                    <h1>Quản lý Đánh Giá & Phản Hồi</h1>
+                    <p>Theo dõi xếp hạng sao của khách sạn, xem bình luận và viết câu trả lời phản hồi cho khách hàng.</p>
+                </div>
+            </div>
+
+            <!-- Top statistics overview -->
+            <div class="stats-summary-row">
+                <!-- Stat 1: Avg Stars -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: var(--warning-bg); color: var(--warning);">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-value" id="stat-avg-rating">0.0</span>
+                        <span class="stat-label">Điểm đánh giá trung bình</span>
+                    </div>
+                </div>
+
+                <!-- Stat 2: Total Reviews -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: var(--primary-light); color: var(--primary);">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-value" id="stat-total-reviews">0</span>
+                        <span class="stat-label">Tổng số lượng đánh giá</span>
+                    </div>
+                </div>
+
+                <!-- Stat 3: Unreplied -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: var(--danger-bg); color: var(--danger);">
+                        <i class="fa-solid fa-comment-dots"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-value" id="stat-unreplied-reviews">0</span>
+                        <span class="stat-label">Số đánh giá chưa trả lời</span>
+                    </div>
+                </div>
+
+                <!-- Stat 4: 1 Star Warnings -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #fef3c7; color: #d97706;">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-value" id="stat-one-star-reviews">0</span>
+                        <span class="stat-label">Số đánh giá tiêu cực (1★)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Scroll Container -->
+            <div class="reviews-scroll-container" id="reviews-container">
+                <!-- Populated dynamically -->
+                <div style="text-align: center; padding: 48px 0; color: var(--text-muted);">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 12px; color: var(--primary);"></i>
+                    <p style="font-weight: 500;">Đang tải danh sách đánh giá...</p>
+                </div>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="pagination-footer">
+                <div class="pagination-info" id="pagination-info">
+                    Hiển thị 0 - 0 của 0 đánh giá
+                </div>
+                <div class="pagination-buttons" id="pagination-buttons">
+                    <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn" disabled><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPLY MODAL -->
+    <div class="modal-overlay" id="reply-modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="reply-modal-title"><i class="fa-solid fa-reply" style="color: var(--primary);"></i> Phản hồi đánh giá</h3>
+                <button class="modal-close-btn" id="reply-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="reply-form" data-async="true" onsubmit="return false;">
+                <div class="modal-body">
+                    <input type="hidden" id="reply-review-id">
+                    
+                    <!-- Guest review details block -->
+                    <div style="background-color: #f8fafc; border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; font-size: 13px;">
+                        <p style="font-weight: 700; margin-bottom: 4px;" id="reply-guest-name">Khách hàng: </p>
+                        <p style="color: var(--text-muted); margin-bottom: 8px;" id="reply-guest-comment">Nhận xét: </p>
+                    </div>
+
+                    <!-- Reply content -->
+                    <div class="form-group">
+                        <label class="form-label">Nội dung phản hồi từ khách sạn <span style="color: var(--danger);">*</span></label>
+                        <textarea id="reply-content-input" class="form-textarea" placeholder="Nhập câu trả lời phản hồi tới khách hàng..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-btn btn-secondary" id="reply-cancel-btn">Hủy</button>
+                    <button type="submit" class="btn-btn btn-primary" id="reply-submit-btn">Gửi phản hồi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM DIALOG -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-icon-circle">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="confirm-title" id="confirm-title">Xác nhận xóa</div>
+            <div class="confirm-message" id="confirm-message">Bạn có chắc chắn muốn xóa đánh giá này? Hành động này không thể hoàn tác.</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn-cancel" id="confirm-btn-cancel">Hủy bỏ</button>
+                <button class="confirm-btn-ok" id="confirm-btn-ok">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Logic -->
+    <script>
+        (function() {
+            // Retrieve JWT and setup endpoints
+            const jwtToken = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
+            const BASE_URL = 'http://localhost:8080/api';
+
+            if (!jwtToken) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const headers = {
+                'Authorization': 'Bearer ' + jwtToken,
+                'Content-Type': 'application/json'
+            };
+
+            // State
+            let loadedReviews = [];
+            let filteredReviews = [];
+            let currentPage = 0;
+            let pageSize = 6; // smaller size for card layouts
+            let totalElements = 0;
+            let totalPages = 0;
+
+            // DOM Elements
+            const container = document.getElementById('reviews-container');
+            const searchBar = document.getElementById('search-bar');
+            const filterRating = document.getElementById('filter-rating');
+            
+            // Reply Modal Elements
+            const replyModalOverlay = document.getElementById('reply-modal-overlay');
+            const replyForm = document.getElementById('reply-form');
+            const replyReviewId = document.getElementById('reply-review-id');
+            const replyGuestName = document.getElementById('reply-guest-name');
+            const replyGuestComment = document.getElementById('reply-guest-comment');
+            const replyContentInput = document.getElementById('reply-content-input');
+            const replyModalTitle = document.getElementById('reply-modal-title');
+            const replyCloseBtn = document.getElementById('reply-close-btn');
+            const replyCancelBtn = document.getElementById('reply-cancel-btn');
+            const replySubmitBtn = document.getElementById('reply-submit-btn');
+
+            // Accent-insensitive Vietnamese search helper
+            function removeAccents(str) {
+                if (!str) return '';
+                return str.normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
+                          .replace(/đ/g, "d")
+                          .replace(/Đ/g, "D");
+            }
+
+            // Toast Helper
+            function pageToast(message, type = 'success') {
+                let toastContainer = document.getElementById('pm-toast-container');
+                if (!toastContainer) {
+                    toastContainer = document.createElement('div');
+                    toastContainer.id = 'pm-toast-container';
+                    toastContainer.style.cssText = `
+                        position: fixed;
+                        top: 24px;
+                        right: 24px;
+                        z-index: 110000;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 12px;
+                        font-family: 'Outfit', 'Inter', sans-serif;
+                        pointer-events: none;
+                    `;
+                    document.body.appendChild(toastContainer);
+                }
+                
+                const toast = document.createElement('div');
+                let bgColor = '#10b981';
+                let icon = 'fa-circle-check';
+                if (type === 'error') {
+                    bgColor = '#ef4444';
+                    icon = 'fa-circle-xmark';
+                } else if (type === 'warning') {
+                    bgColor = '#f59e0b';
+                    icon = 'fa-circle-exclamation';
+                }
+                
+                toast.style.cssText = `
+                    background-color: ${bgColor};
+                    color: #ffffff;
+                    padding: 12px 20px;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    opacity: 0;
+                    transform: translateY(-20px);
+                    transition: all 0.25s cubic-bezier(0.34, 1.45, 0.64, 1);
+                    pointer-events: auto;
+                `;
+                
+                toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+                toastContainer.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateY(0)';
+                }, 10);
+                
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 300);
+                }, 3000);
+            }
+
+            // Custom Confirm Dialog
+            window.showConfirm = function(title, message) {
+                return new Promise((resolve) => {
+                    const overlay = document.getElementById('confirm-overlay');
+                    const titleEl = document.getElementById('confirm-title');
+                    const msgEl = document.getElementById('confirm-message');
+                    const btnOk = document.getElementById('confirm-btn-ok');
+                    const btnCancel = document.getElementById('confirm-btn-cancel');
+
+                    if (!overlay) {
+                        resolve(false);
+                        return;
+                    }
+
+                    titleEl.innerText = title;
+                    msgEl.innerText = message;
+
+                    const close = () => {
+                        overlay.classList.remove('show');
+                    };
+
+                    const handleOk = () => {
+                        close();
+                        cleanup();
+                        resolve(true);
+                    };
+
+                    const handleCancel = () => {
+                        close();
+                        cleanup();
+                        resolve(false);
+                    };
+
+                    const cleanup = () => {
+                        btnOk.removeEventListener('click', handleOk);
+                        btnCancel.removeEventListener('click', handleCancel);
+                    };
+
+                    btnOk.addEventListener('click', handleOk);
+                    btnCancel.addEventListener('click', handleCancel);
+
+                    overlay.classList.add('show');
+                });
+            };
+
+            // Render Stars HTML
+            function renderStars(rating) {
+                let html = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        html += `<i class="fa-solid fa-star" style="color: #f59e0b; margin-right: 2px;"></i>`;
+                    } else {
+                        html += `<i class="fa-regular fa-star" style="color: #cbd5e1; margin-right: 2px;"></i>`;
+                    }
+                }
+                return html;
+            }
+
+            // Fetch statistics and populate stat cards
+            async function fetchStats() {
+                try {
+                    const response = await fetch(`${BASE_URL}/admin/dashboard/review-rate-statistic`, {
+                        headers: headers
+                    });
+                    if (response.ok) {
+                        const res = await response.json();
+                        const stats = res.data || {};
+                        
+                        document.getElementById('stat-avg-rating').innerText = (stats.averageRating ?? 0.0).toFixed(1);
+                        document.getElementById('stat-total-reviews').innerText = stats.totalReviews ?? 0;
+                        document.getElementById('stat-unreplied-reviews').innerText = stats.unrepliedReviews ?? 0;
+                        document.getElementById('stat-one-star-reviews').innerText = stats.oneStarReviews ?? 0;
+                    }
+                } catch (error) {
+                    console.error("Fetch statistics error:", error);
+                }
+            }
+
+            // Get selected reply status radio value
+            function getSelectedReplyStatus() {
+                const checkedRadio = document.querySelector('input[name="filter-reply"]:checked');
+                return checkedRadio ? checkedRadio.value : 'UNREPLIED';
+            }
+
+            // Fetch paginated reviews list
+            async function fetchReviews(page = 0) {
+                try {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 48px 0; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 12px; color: var(--primary);"></i>
+                            <p style="font-weight: 500;">Đang tải danh sách đánh giá...</p>
+                        </div>
+                    `;
+
+                    const searchKeyword = searchBar.value.trim();
+                    const ratingFilter = filterRating.value;
+                    const replyStatus = getSelectedReplyStatus();
+
+                    let response;
+                    // If rating or search is active, utilize the backend search endpoint
+                    if (searchKeyword !== '' || ratingFilter !== '') {
+                        let url = `${BASE_URL}/admin/reviews/search?page=${page}&size=${pageSize}`;
+                        if (searchKeyword !== '') url += `&keyword=${encodeURIComponent(searchKeyword)}`;
+                        if (ratingFilter !== '') url += `&rating=${ratingFilter}`;
+                        
+                        response = await fetch(url, { headers: headers });
+                    } else {
+                        // Standard list endpoint with reply status
+                        response = await fetch(`${BASE_URL}/admin/reviews?replyStatus=${replyStatus}&page=${page}&size=${pageSize}`, {
+                            headers: headers
+                        });
+                    }
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        const pageData = result.data || {};
+                        loadedReviews = pageData.content || [];
+                        currentPage = pageData.page ?? page;
+                        totalElements = pageData.totalElements ?? loadedReviews.length;
+                        totalPages = pageData.totalPages ?? 1;
+
+                        applyFiltersLocally();
+                    } else {
+                        container.innerHTML = `
+                            <div style="text-align: center; padding: 48px 0; color: var(--danger);">
+                                <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; margin-bottom: 12px;"></i>
+                                <p style="font-weight: 600;">Không thể tải đánh giá từ máy chủ!</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error("Fetch reviews error:", error);
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 48px 0; color: var(--danger);">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size: 24px; margin-bottom: 12px;"></i>
+                            <p style="font-weight: 600;">Lỗi kết nối khi tải danh sách đánh giá!</p>
+                        </div>
+                    `;
+                }
+            }
+
+            // Local filtering for extra search capability
+            function applyFiltersLocally() {
+                const replyStatus = getSelectedReplyStatus();
+                const searchKeyword = searchBar.value.trim();
+                const ratingFilter = filterRating.value;
+
+                let result = [...loadedReviews];
+
+                // If backend search is active, we locally filter the replyStatus to combine filters if necessary
+                if (searchKeyword !== '' || ratingFilter !== '') {
+                    if (replyStatus === 'UNREPLIED') {
+                        result = result.filter(r => !r.hotelReply || r.hotelReply.trim() === '');
+                    } else if (replyStatus === 'REPLIED') {
+                        result = result.filter(r => r.hotelReply && r.hotelReply.trim() !== '');
+                    }
+                }
+
+                filteredReviews = result;
+                renderReviewsList();
+                renderPagination();
+            }
+
+            // Render Cards List
+            function renderReviewsList() {
+                if (filteredReviews.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 48px 0; color: var(--text-muted); background: white; border-radius: 16px; border: 1px solid var(--border-color);">
+                            <i class="fa-solid fa-comments-slash" style="font-size: 24px; margin-bottom: 12px;"></i>
+                            <p style="font-weight: 500;">Không tìm thấy đánh giá nào phù hợp với bộ lọc.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+                filteredReviews.forEach(review => {
+                    const card = document.createElement('div');
+                    card.className = 'review-card';
+                    card.setAttribute('data-id', review.id);
+
+                    // Avatar initials
+                    const name = (review.customer && review.customer.fullName) ? review.customer.fullName : 'Ẩn Danh';
+                    const initials = name.trim().split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+
+                    // Room Type name
+                    const roomName = (review.roomType && review.roomType.name) ? review.roomType.name : 'Phòng tiêu chuẩn';
+
+                    // Format Date
+                    let dateStr = 'Chưa xác định';
+                    if (review.createdAt) {
+                        const d = new Date(review.createdAt);
+                        dateStr = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                    }
+
+                    // Comments
+                    const comment = review.comment || 'Khách hàng không để lại nhận xét.';
+
+                    // Reply block
+                    let replyHtml = '';
+                    if (review.hotelReply && review.hotelReply.trim() !== '') {
+                        let replyDate = '';
+                        if (review.repliedAt) {
+                            const rd = new Date(review.repliedAt);
+                            replyDate = ` (${String(rd.getDate()).padStart(2, '0')}/${String(rd.getMonth() + 1).padStart(2, '0')}/${rd.getFullYear()})`;
+                        }
+                        replyHtml = `
+                            <div class="reply-box">
+                                <div class="reply-header">
+                                    <span><i class="fa-solid fa-reply"></i> Đã phản hồi từ khách sạn</span>
+                                    <span class="reply-date-tag">${replyDate}</span>
+                                </div>
+                                <div class="reply-content">${review.hotelReply}</div>
+                            </div>
+                        `;
+                    }
+
+                    // Action buttons
+                    const hasReplied = review.hotelReply && review.hotelReply.trim() !== '';
+                    const replyButtonText = hasReplied ? '<i class="fa-solid fa-pen"></i> Sửa phản hồi' : '<i class="fa-solid fa-reply"></i> Phản hồi ngay';
+                    const replyButtonClass = hasReplied ? 'btn-edit-trigger' : 'btn-reply-trigger';
+
+                    card.innerHTML = `
+                        <div class="review-card-header">
+                            <div class="guest-meta">
+                                <div class="guest-avatar">${initials}</div>
+                                <div class="guest-details">
+                                    <span class="guest-name">${name}</span>
+                                    <span class="room-type-tag">${roomName}</span>
+                                </div>
+                            </div>
+                            <div class="review-meta">
+                                <div class="stars-row">${renderStars(review.rating || 5)}</div>
+                                <span class="review-date">${dateStr}</span>
+                            </div>
+                        </div>
+                        <div class="review-comment">${comment}</div>
+                        ${replyHtml}
+                        <div class="card-actions">
+                            <button class="btn-card btn-delete-trigger" data-id="${review.id}"><i class="fa-solid fa-trash"></i> Xóa đánh giá</button>
+                            <button class="btn-card ${replyButtonClass}" data-id="${review.id}">${replyButtonText}</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                // Attach Event Listeners to cards actions
+                container.querySelectorAll('.btn-reply-trigger, .btn-edit-trigger').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(e.currentTarget.getAttribute('data-id'));
+                        openReplyModal(id);
+                    });
+                });
+
+                container.querySelectorAll('.btn-delete-trigger').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(e.currentTarget.getAttribute('data-id'));
+                        handleDeleteReview(id);
+                    });
+                });
+            }
+
+            // Render Pagination Row
+            function renderPagination() {
+                const isSearching = searchBar.value.trim() !== '' || filterRating.value !== '';
+                
+                // Info block
+                const start = totalElements === 0 ? 0 : (currentPage * pageSize) + 1;
+                const end = Math.min((currentPage + 1) * pageSize, totalElements);
+
+                if (isSearching) {
+                    document.getElementById('pagination-info').innerText = `Tìm thấy ${filteredReviews.length} kết quả trên trang này`;
+                } else {
+                    document.getElementById('pagination-info').innerText = `Hiển thị ${start} - ${end} của ${totalElements} đánh giá`;
+                }
+
+                // Buttons container
+                const btnContainer = document.getElementById('pagination-buttons');
+                btnContainer.innerHTML = '';
+
+                // Prev
+                const prev = document.createElement('button');
+                prev.className = 'page-btn';
+                prev.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+                prev.disabled = currentPage === 0 || isSearching;
+                prev.addEventListener('click', () => {
+                    if (currentPage > 0) fetchReviews(currentPage - 1);
+                });
+                btnContainer.appendChild(prev);
+
+                // Numbers
+                if (totalPages <= 1) {
+                    const btn = document.createElement('button');
+                    btn.className = 'page-btn active';
+                    btn.innerText = '1';
+                    btnContainer.appendChild(btn);
+                } else {
+                    for (let i = 0; i < totalPages; i++) {
+                        const btn = document.createElement('button');
+                        btn.className = `page-btn ${currentPage === i ? 'active' : ''}`;
+                        btn.innerText = i + 1;
+                        btn.disabled = isSearching;
+                        btn.addEventListener('click', () => {
+                            fetchReviews(i);
+                        });
+                        btnContainer.appendChild(btn);
+                    }
+                }
+
+                // Next
+                const next = document.createElement('button');
+                next.className = 'page-btn';
+                next.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                next.disabled = currentPage >= totalPages - 1 || isSearching;
+                next.addEventListener('click', () => {
+                    if (currentPage < totalPages - 1) fetchReviews(currentPage + 1);
+                });
+                btnContainer.appendChild(next);
+            }
+
+            // Reply Modal Logic
+            function closeReplyModal() {
+                replyModalOverlay.classList.remove('active');
+                replyForm.reset();
+                replyReviewId.value = '';
+                replyContentInput.value = '';
+            }
+
+            replyCloseBtn.addEventListener('click', closeReplyModal);
+            replyCancelBtn.addEventListener('click', closeReplyModal);
+            replyModalOverlay.addEventListener('click', (e) => {
+                if (e.target === replyModalOverlay) closeReplyModal();
+            });
+
+            function openReplyModal(id) {
+                const review = loadedReviews.find(r => r.id === id);
+                if (!review) return;
+
+                replyReviewId.value = id;
+                replyGuestName.innerText = `Khách hàng: ${(review.customer && review.customer.fullName) ? review.customer.fullName : 'Ẩn Danh'}`;
+                replyGuestComment.innerText = `Nhận xét: ${review.comment || 'Không có bình luận.'}`;
+                
+                if (review.hotelReply) {
+                    replyContentInput.value = review.hotelReply;
+                    replyModalTitle.innerHTML = `<i class="fa-solid fa-pen" style="color: var(--primary);"></i> Chỉnh sửa phản hồi #${id}`;
+                } else {
+                    replyContentInput.value = '';
+                    replyModalTitle.innerHTML = `<i class="fa-solid fa-reply" style="color: var(--primary);"></i> Phản hồi đánh giá #${id}`;
+                }
+
+                replyModalOverlay.classList.add('active');
+                replyContentInput.focus();
+            }
+
+            // Handle Reply Form Submit
+            replyForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const id = replyReviewId.value;
+                const replyText = replyContentInput.value.trim();
+
+                if (!id || !replyText) {
+                    pageToast("Vui lòng điền nội dung câu trả lời!", "warning");
+                    return;
+                }
+
+                replySubmitBtn.disabled = true;
+                replySubmitBtn.innerText = "Đang gửi...";
+
+                try {
+                    const payload = {
+                        replyContent: replyText
+                    };
+                    const response = await fetch(`${BASE_URL}/admin/reviews/${id}/reply`, {
+                        method: 'PUT',
+                        headers: headers,
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    replySubmitBtn.disabled = false;
+                    replySubmitBtn.innerText = "Gửi phản hồi";
+
+                    if (response.ok) {
+                        pageToast("Gửi câu trả lời phản hồi thành công!", "success");
+                        closeReplyModal();
+                        fetchReviews(currentPage);
+                        fetchStats();
+                    } else {
+                        pageToast(result.message || "Gửi phản hồi thất bại!", "error");
+                    }
+                } catch (err) {
+                    replySubmitBtn.disabled = false;
+                    replySubmitBtn.innerText = "Gửi phản hồi";
+                    console.error("Save reply error:", err);
+                    pageToast("Lỗi kết nối khi gửi phản hồi!", "error");
+                }
+            });
+
+            // Handle Delete Review
+            async function handleDeleteReview(id) {
+                const review = loadedReviews.find(r => r.id === id);
+                const guestName = (review && review.customer) ? review.customer.fullName : 'Ẩn Danh';
+
+                const confirm = await window.showConfirm(
+                    "Xác nhận xóa đánh giá",
+                    `Bạn có chắc chắn muốn xóa đánh giá của khách hàng "${guestName}" (ID #${id}) khỏi hệ thống?`
+                );
+
+                if (!confirm) return;
+
+                try {
+                    const response = await fetch(`${BASE_URL}/admin/reviews/${id}`, {
+                        method: 'DELETE',
+                        headers: headers
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        pageToast("Xóa đánh giá khỏi hệ thống thành công!", "success");
+                        fetchStats();
+                        if (filteredReviews.length === 1 && currentPage > 0) {
+                            fetchReviews(currentPage - 1);
+                        } else {
+                            fetchReviews(currentPage);
+                        }
+                    } else {
+                        pageToast(result.message || "Xóa đánh giá thất bại!", "error");
+                    }
+                } catch (error) {
+                    console.error("Delete review error:", error);
+                    pageToast("Lỗi kết nối khi xóa đánh giá!", "error");
+                }
+            }
+
+            // Filter Change Listeners
+            searchBar.addEventListener('input', () => {
+                // Debounce slightly if typing
+                currentPage = 0;
+                fetchReviews(0);
+            });
+
+            filterRating.addEventListener('change', () => {
+                currentPage = 0;
+                fetchReviews(0);
+            });
+
+            document.querySelectorAll('input[name="filter-reply"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    currentPage = 0;
+                    fetchReviews(0);
+                });
+            });
+
+            // Initial Loading
+            fetchStats();
+            fetchReviews(0);
+        })();
+    </script>
+</body>
+</html>

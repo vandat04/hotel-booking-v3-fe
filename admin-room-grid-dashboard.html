@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheckinX - Receptionist Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -308,7 +308,7 @@
         /* Dashboard Content */
         .content {
             flex: 1;
-            padding: 32px;
+            padding: 16px 24px;
             overflow-y: auto;
         }
 
@@ -780,6 +780,110 @@
             color: #9ca3af;
             border-color: #e5e7eb;
             cursor: not-allowed;
+        }
+
+        /* Workspace Container */
+        .workspace {
+            display: flex;
+            height: calc(100vh - 64px);
+            overflow: hidden;
+            flex: 1;
+        }
+
+        /* Sidebar Search & Filters */
+        .sidebar-filter {
+            width: 260px;
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 38px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #f8fafc;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            cursor: pointer;
+            color: var(--text-main);
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .radio-option input[type="radio"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option input[type="radio"]:checked {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            box-shadow: inset 0 0 0 3px var(--white);
+        }
     </style>
     <script src="menu.js"></script>
 </head>
@@ -788,27 +892,42 @@
     <!-- Header Container -->
     <div id="header-container"></div>
 
-    <!-- Main Wrapper -->
-    <div class="main-wrapper">
+    <!-- Workspace Wrapper -->
+    <div class="workspace">
+
+        <!-- Column 1: Sidebar Filter -->
+        <aside class="sidebar-filter">
+            <!-- TÌM KIẾM Section -->
+            <div class="filter-section">
+                <div class="filter-label">TÌM KIẾM</div>
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="sidebar-search-input" class="search-input" placeholder="Tìm phòng, tên khách...">
+                </div>
+            </div>
+
+            <!-- LỌC THEO TẦNG Section -->
+            <div class="filter-section">
+                <div class="filter-label">LỌC THEO TẦNG</div>
+                <div class="radio-group" id="floor-filter-group">
+                    <label class="radio-option">
+                        <input type="radio" name="floor-filter" value="all" checked>
+                        <span>Tất cả các tầng</span>
+                    </label>
+                </div>
+            </div>
+        </aside>
 
         <!-- Content -->
-        <div class="content">
+        <div class="content" style="flex: 1; overflow-y: auto;">
             <div class="page-title" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                 <div>
                     <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold; color: var(--text-main);">Sơ đồ phòng</h2>
                     <p style="margin: 5px 0 0; color: var(--text-muted);" id="room-summary">0 phòng trống · 0 đang có khách</p>
                 </div>
                 <div style="display:flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                    <div class="search-bar" style="display: flex; align-items: center; background-color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 14px; width: 260px; height: 38px;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted); margin-right: 8px;"></i>
-                        <input type="text" placeholder="Tìm kiếm phòng, khách..." style="border: none; outline: none; width: 100%; font-size: 13.5px;">
-                    </div>
                     <button id="btn-quick-checkin" class="btn-primary" style="background-color: var(--primary); color: white; border: none; padding: 0 16px; height: 38px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-bolt"></i> Quick Check-in</button>
                     <button id="btn-create-new" class="btn-primary" style="background-color: #10b981; color: white; border: none; padding: 0 16px; height: 38px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-plus"></i> Tạo mới</button>
-                    <div style="display:flex; gap: 8px;">
-                        <button class="btn-outline" style="background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px;">Tất cả các tầng</button>
-                        <button class="btn-outline" style="background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px;">Loại phòng</button>
-                    </div>
                 </div>
             </div>
 
@@ -1219,6 +1338,181 @@
             });
 
             
+            // Filter states
+            let allRooms = [];
+            let searchQuery = '';
+            let selectedFloor = 'all';
+
+            const updateRoomGrid = () => {
+                // Filter rooms based on query and floor
+                const filteredRooms = allRooms.filter(room => {
+                    if (selectedFloor !== 'all' && String(room.floor) !== String(selectedFloor)) {
+                        return false;
+                    }
+                    if (searchQuery) {
+                        const q = searchQuery.toLowerCase().trim();
+                        const roomNum = (room.roomNumber || '').toLowerCase();
+                        const custName = (room.customerName || '').toLowerCase();
+                        if (!roomNum.includes(q) && !custName.includes(q)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+
+                // Group by floor
+                const floorMap = {};
+                filteredRooms.forEach(room => {
+                    const floor = room.floor || 1;
+                    if (!floorMap[floor]) {
+                        floorMap[floor] = [];
+                    }
+                    floorMap[floor].push(room);
+                });
+
+                const container = document.getElementById('room-grid-container');
+                container.innerHTML = '';
+
+                if (filteredRooms.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 40px; color: #888;">Không tìm thấy phòng phù hợp!</div>';
+                    return;
+                }
+
+                // Sort floors
+                const sortedFloors = Object.keys(floorMap).sort((a,b) => parseInt(a) - parseInt(b));
+                
+                sortedFloors.forEach(floor => {
+                    const rooms = floorMap[floor];
+                    // Sort rooms by number (handling strings like S101, D201)
+                    rooms.sort((a,b) => {
+                        const numA = parseInt((a.roomNumber || '').replace(/\D/g, '')) || 0;
+                        const numB = parseInt((b.roomNumber || '').replace(/\D/g, '')) || 0;
+                        return numA - numB;
+                    });
+                    
+                    const floorSection = document.createElement('div');
+                    floorSection.style.marginBottom = '30px';
+                    
+                    const floorTitle = document.createElement('h3');
+                    floorTitle.innerText = `Tầng ${floor}`;
+                    floorTitle.style.fontSize = '1.1rem';
+                    floorTitle.style.marginBottom = '15px';
+                    floorTitle.style.color = '#333';
+                    floorTitle.style.borderBottom = '1px solid #eee';
+                    floorTitle.style.paddingBottom = '10px';
+                    floorSection.appendChild(floorTitle);
+                    
+                    const grid = document.createElement('div');
+                    grid.style.display = 'grid';
+                    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))';
+                    grid.style.gap = '20px';
+                    
+                    rooms.forEach(room => {
+                        let borderColor = '#10b981'; // Default: Trống (Green)
+                        let statusHtml = `<span style="border: 1px solid #10b981; color: #10b981; background: #ecfdf5; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; display: inline-block;">Trống</span>`;
+                        
+                        if (room.roomStatus === 'ACTIVE' || room.roomStatus === 'OCCUPIED') {
+                            borderColor = '#6366f1'; // Occupied (Purple)
+                            statusHtml = `<div style="font-weight: 500; font-size: 0.95rem; color: #333; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${room.customerName || 'Khách'}</div>
+                                          <div style="font-size: 0.75rem; color: #6366f1; display:flex; align-items:center; gap:5px;"><i class="fa-regular fa-clock"></i> Đang sử dụng</div>`;
+                        } else if (room.roomStatus === 'DIRTY') {
+                            borderColor = '#ef4444'; // Dirty (Red)
+                            statusHtml = `<span style="border: 1px solid #ef4444; color: #ef4444; background: #fef2f2; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; display: inline-block;">Dơ</span>`;
+                        } else if (room.roomStatus === 'DUE_OUT') {
+                            borderColor = '#f59e0b'; // Due Out (Orange)
+                            statusHtml = `<div style="font-weight: 500; font-size: 0.95rem; color: #333; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${room.customerName || 'Khách'}</div>
+                                          <span style="border: 1px solid #f59e0b; color: #f59e0b; background: #fffbeb; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; display: inline-block;">Sắp ra</span>`;
+                        } else if (room.roomStatus === 'READY' || room.roomStatus === 'AVAILABLE') {
+                            borderColor = '#10b981'; // Ready (Green)
+                            statusHtml = `<span style="border: 1px solid #10b981; color: #10b981; background: #ecfdf5; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; display: inline-block;">Trống</span>`;
+                        }
+                        
+                        // Clean up Room Type Name to be short like "Delux" or "Standard"
+                        let shortType = room.roomTypeName ? room.roomTypeName.split(' ')[0] : 'Room';
+                        shortType = shortType.charAt(0).toUpperCase() + shortType.slice(1).toLowerCase();
+                        
+                        const card = document.createElement('div');
+                        card.style.borderLeft = `4px solid ${borderColor}`;
+                        card.style.padding = '15px';
+                        card.style.background = 'white';
+                        card.style.borderRadius = '8px';
+                        card.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+                        card.style.borderTop = '1px solid #eee';
+                        card.style.borderRight = '1px solid #eee';
+                        card.style.borderBottom = '1px solid #eee';
+                        card.style.display = 'flex';
+                        card.style.flexDirection = 'column';
+                        card.style.justifyContent = 'space-between';
+                        card.style.minHeight = '120px';
+                        
+                        const isDirty = room.roomStatus === 'DIRTY';
+                        const btnText = isDirty ? 'Đánh dấu đã dọn' : 'Sạch sẽ';
+                        const btnIcon = isDirty ? 'fa-broom' : 'fa-circle-check';
+                        const btnDisabled = isDirty ? '' : 'disabled';
+
+                        card.innerHTML = `
+                            <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px;">
+                                <div style="font-size: 1.25rem; font-weight: bold; color: #333;">${room.roomNumber}</div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: #333;">${shortType}</div>
+                            </div>
+                            <div>
+                                ${statusHtml}
+                            </div>
+                            <button class="btn-clean-request" onclick="sendCleanRequest(event, ${room.roomId}, '${room.roomNumber}', this)" ${btnDisabled}>
+                                <i class="fa-solid ${btnIcon}"></i> ${btnText}
+                            </button>
+                        `;
+                        grid.appendChild(card);
+                    });
+                    
+                    floorSection.appendChild(grid);
+                    container.appendChild(floorSection);
+                });
+            };
+
+            const buildFloorFilterOptions = () => {
+                const floors = [...new Set(allRooms.map(room => room.floor || 1))].sort((a, b) => parseInt(a) - parseInt(b));
+                const filterGroup = document.getElementById('floor-filter-group');
+                if (!filterGroup) return;
+
+                const checkedFloorInput = filterGroup.querySelector('input[name="floor-filter"]:checked');
+                const prevChecked = checkedFloorInput ? checkedFloorInput.value : 'all';
+
+                let html = `
+                    <label class="radio-option">
+                        <input type="radio" name="floor-filter" value="all" ${prevChecked === 'all' ? 'checked' : ''}>
+                        <span>Tất cả các tầng</span>
+                    </label>
+                `;
+
+                floors.forEach(floor => {
+                    html += `
+                        <label class="radio-option">
+                            <input type="radio" name="floor-filter" value="${floor}" ${String(prevChecked) === String(floor) ? 'checked' : ''}>
+                            <span>Tầng ${floor}</span>
+                        </label>
+                    `;
+                });
+
+                filterGroup.innerHTML = html;
+
+                filterGroup.querySelectorAll('input[name="floor-filter"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        selectedFloor = e.target.value;
+                        updateRoomGrid();
+                    });
+                });
+            };
+
+            // Bind Sidebar Search Input
+            const sidebarSearchInput = document.getElementById('sidebar-search-input');
+            if (sidebarSearchInput) {
+                sidebarSearchInput.addEventListener('input', (e) => {
+                    searchQuery = e.target.value;
+                    updateRoomGrid();
+                });
+            }
+
             // Fetch Room Map Data
             const jwtToken = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
             if (jwtToken) {
@@ -1235,7 +1529,7 @@
                         const roomsData = result.data;
                         
                         // Flatten all rooms
-                        let allRooms = [];
+                        allRooms = [];
                         roomsData.forEach(typeGroup => {
                             if (typeGroup.rooms) {
                                 allRooms = allRooms.concat(typeGroup.rooms);
@@ -1246,115 +1540,15 @@
                         let availableCount = 0;
                         let occupiedCount = 0;
                         
-                        // Group by floor
-                        const floorMap = {};
-                        
                         allRooms.forEach(room => {
                             if (room.roomStatus === 'ACTIVE' || room.roomStatus === 'OCCUPIED') occupiedCount++;
                             else if (room.roomStatus === 'AVAILABLE' || room.roomStatus === 'READY' || room.roomStatus === 'TRỐNG') availableCount++;
-                            
-                            const floor = room.floor || 1;
-                            if (!floorMap[floor]) {
-                                floorMap[floor] = [];
-                            }
-                            floorMap[floor].push(room);
                         });
                         
                         document.getElementById('room-summary').innerText = `${availableCount} phòng trống · ${occupiedCount} đang có khách`;
                         
-                        const container = document.getElementById('room-grid-container');
-                        container.innerHTML = '';
-                        
-                        // Sort floors
-                        const sortedFloors = Object.keys(floorMap).sort((a,b) => parseInt(a) - parseInt(b));
-                        
-                        sortedFloors.forEach(floor => {
-                            const rooms = floorMap[floor];
-                            // Sort rooms by number (handling strings like S101, D201)
-                            rooms.sort((a,b) => {
-                                const numA = parseInt((a.roomNumber || '').replace(/\D/g, '')) || 0;
-                                const numB = parseInt((b.roomNumber || '').replace(/\D/g, '')) || 0;
-                                return numA - numB;
-                            });
-                            
-                            const floorSection = document.createElement('div');
-                            floorSection.style.marginBottom = '30px';
-                            
-                            const floorTitle = document.createElement('h3');
-                            floorTitle.innerText = `Tầng ${floor}`;
-                            floorTitle.style.fontSize = '1.1rem';
-                            floorTitle.style.marginBottom = '15px';
-                            floorTitle.style.color = '#333';
-                            floorTitle.style.borderBottom = '1px solid #eee';
-                            floorTitle.style.paddingBottom = '10px';
-                            floorSection.appendChild(floorTitle);
-                            
-                            const grid = document.createElement('div');
-                            grid.style.display = 'grid';
-                            grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))';
-                            grid.style.gap = '20px';
-                            
-                            rooms.forEach(room => {
-                                let borderColor = '#10b981'; // Default: Trống (Green)
-                                let statusHtml = `<span style="border: 1px solid #10b981; color: #10b981; background: #ecfdf5; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; display: inline-block;">Trống</span>`;
-                                
-                                if (room.roomStatus === 'ACTIVE' || room.roomStatus === 'OCCUPIED') {
-                                    borderColor = '#6366f1'; // Occupied (Purple)
-                                    statusHtml = `<div style="font-weight: 500; font-size: 0.95rem; color: #333; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${room.customerName || 'Khách'}</div>
-                                                  <div style="font-size: 0.75rem; color: #6366f1; display:flex; align-items:center; gap:5px;"><i class="fa-regular fa-clock"></i> Đang sử dụng</div>`;
-                                } else if (room.roomStatus === 'DIRTY') {
-                                    borderColor = '#ef4444'; // Dirty (Red)
-                                    statusHtml = `<span style="border: 1px solid #ef4444; color: #ef4444; background: #fef2f2; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; display: inline-block;">Dơ</span>`;
-                                } else if (room.roomStatus === 'DUE_OUT') {
-                                    borderColor = '#f59e0b'; // Due Out (Orange)
-                                    statusHtml = `<div style="font-weight: 500; font-size: 0.95rem; color: #333; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${room.customerName || 'Khách'}</div>
-                                                  <span style="border: 1px solid #f59e0b; color: #f59e0b; background: #fffbeb; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; display: inline-block;">Sắp ra</span>`;
-                                } else if (room.roomStatus === 'READY' || room.roomStatus === 'AVAILABLE') {
-                                    borderColor = '#10b981'; // Ready (Green)
-                                    statusHtml = `<span style="border: 1px solid #10b981; color: #10b981; background: #ecfdf5; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; display: inline-block;">Trống</span>`;
-                                }
-                                
-                                // Clean up Room Type Name to be short like "Delux" or "Standard"
-                                let shortType = room.roomTypeName ? room.roomTypeName.split(' ')[0] : 'Room';
-                                shortType = shortType.charAt(0).toUpperCase() + shortType.slice(1).toLowerCase();
-                                
-                                const card = document.createElement('div');
-                                card.style.borderLeft = `4px solid ${borderColor}`;
-                                card.style.padding = '15px';
-                                card.style.background = 'white';
-                                card.style.borderRadius = '8px';
-                                card.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
-                                card.style.borderTop = '1px solid #eee';
-                                card.style.borderRight = '1px solid #eee';
-                                card.style.borderBottom = '1px solid #eee';
-                                card.style.display = 'flex';
-                                card.style.flexDirection = 'column';
-                                card.style.justifyContent = 'space-between';
-                                card.style.minHeight = '120px';
-                                
-                                const isDirty = room.roomStatus === 'DIRTY';
-                                const btnText = isDirty ? 'Đánh dấu đã dọn' : 'Sạch sẽ';
-                                const btnIcon = isDirty ? 'fa-broom' : 'fa-circle-check';
-                                const btnDisabled = isDirty ? '' : 'disabled';
-
-                                card.innerHTML = `
-                                    <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px;">
-                                        <div style="font-size: 1.25rem; font-weight: bold; color: #333;">${room.roomNumber}</div>
-                                        <div style="font-size: 0.85rem; font-weight: 600; color: #333;">${shortType}</div>
-                                    </div>
-                                    <div>
-                                        ${statusHtml}
-                                    </div>
-                                    <button class="btn-clean-request" onclick="sendCleanRequest(event, ${room.roomId}, '${room.roomNumber}', this)" ${btnDisabled}>
-                                        <i class="fa-solid ${btnIcon}"></i> ${btnText}
-                                    </button>
-                                `;
-                                grid.appendChild(card);
-                            });
-                            
-                            floorSection.appendChild(grid);
-                            container.appendChild(floorSection);
-                        });
+                        buildFloorFilterOptions();
+                        updateRoomGrid();
                     }
                 })
                 .catch(error => {

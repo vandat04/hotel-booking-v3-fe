@@ -1425,22 +1425,28 @@
             }
 
             // Redirect handles
-            document.getElementById('btn-switch-receptionist').addEventListener('click', () => {
-                window.location.href = 'receptionist-dashboard.html';
-            });
-            document.getElementById('logo-redirect').addEventListener('click', () => {
-                window.location.reload();
-            });
-            document.getElementById('btn-profile').addEventListener('click', () => {
-                window.location.href = 'staff-profile.html';
-            });
+            const btnSwitch = document.getElementById('btn-switch-receptionist');
+            if (btnSwitch) {
+                btnSwitch.addEventListener('click', () => {
+                    window.location.href = 'receptionist-dashboard.html';
+                });
+            }
+            const logoRedirect = document.getElementById('logo-redirect');
+            if (logoRedirect) {
+                logoRedirect.addEventListener('click', () => {
+                    window.location.reload();
+                });
+            }
 
             // Set profile initials if staff details exist
             const staffName = localStorage.getItem('staffName');
             if (staffName) {
                 const parts = staffName.split(' ');
                 const initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]) : parts[0].substring(0, 2);
-                document.getElementById('btn-profile').innerText = initials.toUpperCase();
+                const btnProfile = document.getElementById('btn-profile');
+                if (btnProfile) {
+                    btnProfile.innerText = initials.toUpperCase();
+                }
             }
 
             // Format Currency Utility (VND)

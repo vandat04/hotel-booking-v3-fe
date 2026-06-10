@@ -227,7 +227,7 @@
 
         /* Stats & Page Header Row */
         .page-header-row {
-            padding: 24px 32px 12px 32px;
+            padding: 16px 24px 8px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -298,7 +298,7 @@
 
         /* Top 3 Circular Stats Row */
         .stats-summary-bar {
-            padding: 0 32px 16px 32px;
+            padding: 0 24px 12px 24px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
@@ -1256,12 +1256,18 @@
             const getHeaders  = { 'Authorization': 'Bearer ' + jwtToken };
 
             // Navigation Switch
-            document.getElementById('btn-switch-receptionist').addEventListener('click', () => {
-                window.location.href = 'receptionist-dashboard.html';
-            });
-            document.getElementById('logo-redirect').addEventListener('click', () => {
-                window.location.href = 'admin-dashboard.html';
-            });
+            const btnSwitch = document.getElementById('btn-switch-receptionist');
+            if (btnSwitch) {
+                btnSwitch.addEventListener('click', () => {
+                    window.location.href = 'receptionist-dashboard.html';
+                });
+            }
+            const logoRedirect = document.getElementById('logo-redirect');
+            if (logoRedirect) {
+                logoRedirect.addEventListener('click', () => {
+                    window.location.href = 'admin-dashboard.html';
+                });
+            }
 
             // Set Initials in Profile
             const staffName = localStorage.getItem('staffName');
@@ -1270,7 +1276,10 @@
                 const initials = parts.length > 1
                     ? (parts[0][0] + parts[parts.length - 1][0])
                     : parts[0].substring(0, 2);
-                document.getElementById('btn-profile').innerText = initials.toUpperCase();
+                const btnProfile = document.getElementById('btn-profile');
+                if (btnProfile) {
+                    btnProfile.innerText = initials.toUpperCase();
+                }
             }
 
             // ================================================================
