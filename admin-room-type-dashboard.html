@@ -997,46 +997,12 @@
 
         
     </style>
+    <script src="menu.js"></script>
 </head>
 <body>
 
-    <!-- Header Brand Bar -->
-    <header>
-        <div class="header-left">
-            <div class="logo" id="logo-redirect">
-                Checkin<span>X</span>
-            </div>
-            <nav>
-                <a href="admin-dashboard.html" class="nav-link">Tổng quan</a>
-                <a href="admin-room-grid-dashboard.html" class="nav-link">Sơ đồ phòng</a>
-                <a href="admin-book-dashboard.html" class="nav-link">Đặt phòng</a>
-                <a href="admin-room-timeline.html" class="nav-link">Timeline</a>
-                <a href="admin-schedule-dashboard.html" class="nav-link">Tối ưu AI</a>
-                <a href="admin-ota-booking.html" class="nav-link">Kênh bán</a>
-                <a href="admin-payment-dashboard.html" class="nav-link">Giao dịch</a>
-                <a href="admin-damage-dashboard.html" class="nav-link">Đền bù</a>
-                <a href="admin-room-dashboard.html" class="nav-link">Phòng</a>
-                <a href="admin-room-type-dashboard.html" class="nav-link active">Loại Phòng</a>
-            </nav>
-        </div>
-        <div class="header-right">
-            <button class="btn-le-tan" id="btn-switch-receptionist" style="display: none;">
-                <i class="fa-solid fa-hotel"></i> Lễ tân
-            </button>
-            <div class="header-icon">
-                <i class="fa-regular fa-bell"></i>
-            </div>
-            <div class="header-icon" id="btn-settings" onclick="window.location.href='admin-hotel-dashboard.html'">
-                <i class="fa-solid fa-gear"></i>
-            </div>
-            <div class="user-profile" id="btn-profile">
-                AD
-            </div>
-            <div class="header-icon" id="btn-logout" title="Đăng xuất" style="color: var(--danger, #ef4444); margin-left: 8px;">
-                <i class="fa-solid fa-right-from-bracket"></i>
-            </div>
-        </div>
-    </header>
+    <!-- Header Container -->
+    <div id="header-container"></div>
 
     <!-- Workspace -->
     <div class="workspace">
