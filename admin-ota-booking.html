@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Kênh Bán OTAs | CheckinX Admin</title>
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #4f3cc9;
+            --primary-light: #f5f3ff;
+            --primary-hover: #3b28b3;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --text-main: #0f172a;
+            --text-sub: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --body-bg: #f8fafc;
+            --white: #ffffff;
+            --header-bg: linear-gradient(135deg, #4f3cc9, #3b28b3);
+            --header-shadow: 0 4px 20px rgba(79, 60, 201, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Sticky full height layout */
+        }
+
+        /* Sleek custom scrollbars */
+        .sidebar-filter::-webkit-scrollbar,
+        .table-scroll-container::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .sidebar-filter::-webkit-scrollbar-track,
+        .table-scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-filter::-webkit-scrollbar-thumb,
+        .table-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .sidebar-filter::-webkit-scrollbar-thumb:hover,
+        .table-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* ---- Header Design ---- */
+        header {
+            background-color: var(--primary);
+            background: linear-gradient(90deg, #3b2bb0 0%, #4f3cc9 100%);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 64px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-link.active {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 4px;
+            background-color: #10b981;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-le-tan {
+            background-color: var(--white);
+            color: var(--primary);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn-le-tan:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .header-icon {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .header-icon:hover {
+            color: var(--white);
+        }
+
+        .header-icon .badge-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger);
+            border-radius: 50%;
+            border: 1.5px solid #3b2bb0;
+        }
+
+        .user-profile {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .user-profile:hover {
+            border-color: var(--white);
+        }
+
+        /* ---- Main Layout Structure ---- */
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+            background-color: var(--body-bg);
+        }
+
+        /* Stats & Page Header Row */
+        .page-header-row {
+            padding: 24px 32px 12px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .title-block h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .title-block p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .header-action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-action-outline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1.5px solid var(--border-color);
+            background: var(--white);
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .btn-action-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .btn-action-primary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            background: var(--primary);
+            color: #ffffff;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 60, 201, 0.2);
+        }
+
+        .btn-action-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Top 3 Circular Stats Row */
+        .stats-summary-bar {
+            padding: 0 32px 16px 32px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.01);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .stat-card.total::before { background-color: var(--primary); }
+        .stat-card.active::before { background-color: var(--success); }
+        .stat-card.errors::before { background-color: var(--warning); }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-name {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .stat-icon-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .stat-card.total .stat-icon-circle { background-color: var(--primary-light); color: var(--primary); }
+        .stat-card.active .stat-icon-circle { background-color: var(--success-bg); color: var(--success); }
+        .stat-card.errors .stat-icon-circle { background-color: var(--warning-bg); color: var(--warning); }
+
+        /* Split Grid Section */
+        .dashboard-split-grid {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            flex: 1;
+            overflow: hidden;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* ---- Column 1: Sidebar Filter ---- */
+        .sidebar-filter {
+            background-color: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-section-title {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .filter-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 60, 201, 0.1);
+        }
+
+        .choice-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-sub);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .choice-option input[type="radio"],
+        .choice-option input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* ---- Column 2: DataGrid Panel ---- */
+        .list-panel {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: var(--white);
+        }
+
+        .list-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .list-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Offline Alert Banner */
+        .offline-banner {
+            display: none;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 14px;
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--warning);
+            letter-spacing: 0.1px;
+            animation: pulseBorder 2s ease-in-out infinite;
+        }
+        .offline-banner.show { display: flex; }
+        @keyframes pulseBorder {
+            0%, 100% { border-color: rgba(245,158,11,0.3); }
+            50%       { border-color: rgba(245,158,11,0.6); }
+        }
+
+        /* Table Layout Scrollable */
+        .table-scroll-container {
+            flex: 1;
+            overflow: auto;
+            position: relative;
+        }
+
+        .datagrid-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 800px;
+        }
+
+        .datagrid-table th {
+            position: sticky;
+            top: 0;
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 14px 24px;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .datagrid-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13.5px;
+            color: var(--text-sub);
+            vertical-align: middle;
+        }
+
+        .datagrid-table tr {
+            transition: background-color 0.15s;
+        }
+
+        .datagrid-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Custom cell formatting styles */
+        .channel-info-cell {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .channel-logo-wrapper {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--body-bg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .channel-logo-img {
+            max-width: 24px;
+            max-height: 24px;
+        }
+
+        .channel-text-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .channel-title {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .channel-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Status Pills */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .status-pill.active {
+            background-color: var(--success-bg);
+            color: var(--success);
+        }
+
+        .status-pill.inactive {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: currentColor;
+        }
+
+        /* Key Preview Pills */
+        .secret-key-badge {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border: 1px dashed rgba(79, 60, 201, 0.3);
+            font-family: monospace;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .secret-key-badge.webhook {
+            background-color: #f1f5f9;
+            color: var(--text-sub);
+            border-color: #cbd5e1;
+        }
+
+        /* Action elements */
+        .btn-link-action {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.15s;
+        }
+
+        .btn-link-action:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-hover);
+        }
+
+        /* Pagination Layout */
+        .pagination-bar {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            flex-shrink: 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .page-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .page-btn {
+            border: 1px solid var(--border-color);
+            background: var(--white);
+            color: var(--text-sub);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .page-btn.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ---- Modern Modal Dialog Overlays ---- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background-color: var(--white);
+            border-radius: 16px;
+            width: 520px;
+            max-width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.show .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+        }
+
+        .modal-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-modal-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .btn-modal-close:hover {
+            background-color: var(--body-bg);
+            color: var(--text-main);
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13.5px;
+            outline: none;
+            background-color: var(--white);
+            color: var(--text-main);
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background-color: #f8fafc;
+        }
+
+        .btn-cancel {
+            border: 1.5px solid var(--border-color);
+            background: var(--white);
+            color: var(--text-sub);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text-muted);
+            background-color: var(--body-bg);
+        }
+
+        /* Webhook Live Simulator Output Style */
+        .terminal-output {
+            background-color: #0f172a;
+            color: #38bdf8;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            padding: 14px;
+            border-radius: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            line-height: 1.6;
+            margin-top: 8px;
+            border: 1.5px solid #1e293b;
+        }
+
+        .terminal-line.success { color: #4ade80; }
+        .terminal-line.error { color: #f87171; }
+        .terminal-line.info { color: #e2e8f0; }
+
+        /* Toast notifications styling */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #ffffff;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            padding: 14px 20px;
+            width: 320px;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.danger { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast.info { border-left-color: var(--primary); }
+
+        .toast-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toast-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .toast-msg {
+            font-size: 12.5px;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Brand Bar -->
+    <header>
+        <div class="header-left">
+            <div class="logo" id="logo-redirect">
+                Checkin<span>X</span>
+            </div>
+            <nav>
+                <a href="admin-dashboard.html" class="nav-link">Tổng quan</a>
+                <a href="receptionist-room-dashboard.html" class="nav-link">Sơ đồ phòng</a>
+                <a href="receptionist-book-dashboard.html" class="nav-link">Đặt phòng</a>
+                <a href="admin-schedule-dashborad.html" class="nav-link">Timeline</a>
+                <a href="admin-ota-booking.html" class="nav-link active">Kênh bán</a>
+                <a href="admin-payment-dashboard.html" class="nav-link">Giao dịch</a>
+                <a href="receptionist-damage-dashboard.html" class="nav-link">Đền bù</a>
+                <a href="admin-room-dashboard.html" class="nav-link">Phòng</a>
+                <a href="admin-room-type-dashboard.html" class="nav-link">Loại Phòng</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="btn-le-tan" id="btn-switch-receptionist" style="display: none;">
+                <i class="fa-solid fa-hotel"></i> Lễ tân
+            </button>
+            <div class="header-icon">
+                <i class="fa-regular fa-bell"></i>
+                <div class="badge-dot"></div>
+            </div>
+            <div class="header-icon" id="btn-settings" onclick="window.location.href='admin-hotel-dashboard.html'">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+            <div class="user-profile" id="btn-profile">
+                AD
+            </div>
+            <div class="header-icon" id="btn-logout" title="Đăng xuất" style="color: var(--danger, #ef4444); margin-left: 8px;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Workspace Container -->
+    <div class="workspace">
+        
+        <!-- Header Page Title Row -->
+        <div class="page-header-row">
+            <div class="title-block">
+                <h1>Đồng bộ Kênh bán phòng OTAs</h1>
+                <p>Kết nối và quản lý phân bổ phòng tự động trên các sàn giao dịch trực tuyến.</p>
+            </div>
+            <div class="header-action-buttons">
+                <button class="btn-action-outline" id="btn-open-webhook-simulator">
+                    <i class="fa-solid fa-code" style="color:var(--primary);"></i> Mô phỏng đặt phòng OTA
+                </button>
+                <button class="btn-action-primary" id="btn-add-ota">
+                    <i class="fa-solid fa-link"></i> Thêm kết nối OTAs
+                </button>
+            </div>
+        </div>
+
+        <!-- Circular stats summary row -->
+        <div class="stats-summary-bar">
+            <div class="stat-card total">
+                <div class="stat-info">
+                    <span class="stat-name">TỔNG KÊNH KẾT NỐI</span>
+                    <span class="stat-value" id="stat-val-total">0</span>
+                </div>
+                <div class="stat-icon-circle">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                </div>
+            </div>
+            <div class="stat-card active">
+                <div class="stat-info">
+                    <span class="stat-name">ĐANG HOẠT ĐỘNG</span>
+                    <span class="stat-value" id="stat-val-active">0</span>
+                </div>
+                <div class="stat-icon-circle">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+            <div class="stat-card errors">
+                <div class="stat-info">
+                    <span class="stat-name">ĐÃ TẠM DỪNG / BỊ LỖI</span>
+                    <span class="stat-value" id="stat-val-inactive">0</span>
+                </div>
+                <div class="stat-icon-circle">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Split Grid Section -->
+        <div class="dashboard-split-grid">
+            
+            <!-- COLUMN 1: SIDEBAR FILTER -->
+            <aside class="sidebar-filter">
+                <div class="filter-section">
+                    <span class="filter-section-title">Tìm kiếm kênh</span>
+                    <input type="text" class="filter-input" id="search-keyword" placeholder="Nhập tên kênh, mã...">
+                </div>
+
+                <div class="filter-section">
+                    <span class="filter-section-title">Trạng thái kết nối</span>
+                    <div class="radio-group">
+                        <label class="choice-option">
+                            <input type="radio" name="filter-status" value="all" checked> Tất cả trạng thái
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="filter-status" value="active"> Đang hoạt động
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="filter-status" value="inactive"> Đã tạm dừng
+                        </label>
+                    </div>
+                </div>
+
+                <div style="margin-top:auto; background:var(--primary-light); border-radius:10px; padding:14px; font-size:12px; line-height:1.5; color:var(--primary);">
+                    <i class="fa-solid fa-lightbulb" style="margin-bottom:6px; display:block; font-size:14px;"></i>
+                    Hệ thống sẽ đồng bộ lượng phòng trống tự động sang các kênh OTA được kích hoạt khi có giao dịch phát sinh.
+                </div>
+            </aside>
+
+            <!-- COLUMN 2: DATAGRID OTA CHANNELS LIST -->
+            <section class="list-panel">
+                <div class="list-header">
+                    <span class="list-title">Danh sách kênh OTAs đã liên kết</span>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div class="offline-banner" id="offline-banner">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            Demo Mode – Dữ liệu mẫu (Backend offline)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scroll table container -->
+                <div class="table-scroll-container">
+                    <table class="datagrid-table">
+                        <thead>
+                            <tr>
+                                <th>Kênh & Logo</th>
+                                <th>API Key / API Secret</th>
+                                <th>Webhook Secret Key</th>
+                                <th>Trạng thái</th>
+                                <th>Lần đồng bộ cuối</th>
+                                <th style="text-align: right;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ota-channels-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+                                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 20px; margin-bottom: 8px; color: var(--primary);"></i>
+                                    <p>Đang tải danh sách kênh OTA...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination footer -->
+                <div class="pagination-bar">
+                    <span id="pagination-summary">Hiển thị 0-0 trong 0 kênh liên kết</span>
+                    <div class="page-buttons" id="pagination-buttons">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- MODAL 1: ADD OTA CONNECTION -->
+    <div class="modal-overlay" id="add-ota-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span class="modal-title"><i class="fa-solid fa-link" style="color:var(--primary); margin-right:8px;"></i>Liên kết kênh OTA mới</span>
+                <button class="btn-modal-close" onclick="closeModal('add-ota-modal')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="field-group">
+                    <span class="field-label">Kênh bán phòng *</span>
+                    <select class="filter-select" id="add-ota-name-select" onchange="toggleCustomNameInput()">
+                        <option value="Agoda">Agoda (Simulated Webhook ready)</option>
+                        <option value="Booking.com">Booking.com</option>
+                        <option value="Airbnb">Airbnb</option>
+                        <option value="Expedia">Expedia</option>
+                        <option value="custom">-- Kênh bán khác (Tự nhập tên) --</option>
+                    </select>
+                </div>
+                <div class="field-group" id="add-ota-custom-name-row" style="display: none;">
+                    <span class="field-label">Tên kênh bán tùy chỉnh *</span>
+                    <input type="text" class="filter-input" id="add-ota-name-input" placeholder="Ví dụ: Traveloka, Vntrip...">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">API Access Key / API Secret *</span>
+                    <input type="text" class="filter-input" id="add-ota-api-key" placeholder="Nhập API Key cung cấp bởi sàn OTA">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Webhook Verification Secret *</span>
+                    <input type="text" class="filter-input" id="add-ota-webhook-secret" placeholder="Mã bảo mật xác thực webhook">
+                </div>
+                <div class="field-group" style="margin-top: 6px;">
+                    <label class="choice-option">
+                        <input type="checkbox" id="add-ota-active" checked> Kích hoạt đồng bộ hóa ngay lập tức
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('add-ota-modal')">Hủy bỏ</button>
+                <button class="btn-action-primary" id="btn-save-new-ota">
+                    <i class="fa-solid fa-link"></i> Lưu liên kết
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: UPDATE/EDIT OTA CONNECTION -->
+    <div class="modal-overlay" id="edit-ota-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span class="modal-title"><i class="fa-solid fa-gear" style="color:var(--primary); margin-right:8px;"></i>Cấu hình kênh OTA</span>
+                <button class="btn-modal-close" onclick="closeModal('edit-ota-modal')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-ota-id">
+                <div class="field-group">
+                    <span class="field-label">Tên Kênh bán phòng</span>
+                    <input type="text" class="filter-input" id="edit-ota-name" readonly style="background:#f1f5f9; font-weight:600;">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">API Access Key / API Secret *</span>
+                    <input type="text" class="filter-input" id="edit-ota-api-key" placeholder="Nhập API Key mới">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Webhook Verification Secret *</span>
+                    <input type="text" class="filter-input" id="edit-ota-webhook-secret" placeholder="Mã bảo mật xác thực webhook">
+                </div>
+                <div class="field-group" style="margin-top: 6px;">
+                    <label class="choice-option">
+                        <input type="checkbox" id="edit-ota-active"> Kích hoạt đồng bộ hóa
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('edit-ota-modal')">Hủy</button>
+                <button class="btn-action-primary" id="btn-save-edit-ota">
+                    <i class="fa-solid fa-check"></i> Lưu thay đổi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: WEBHOOK SIMULATOR -->
+    <div class="modal-overlay" id="webhook-simulator-modal">
+        <div class="modal-container" style="width: 580px;">
+            <div class="modal-header">
+                <span class="modal-title">
+                    <i class="fa-solid fa-terminal" style="color:var(--primary); margin-right:8px;"></i>
+                    OTA Webhook Simulator (Khu vực thử nghiệm)
+                </span>
+                <button class="btn-modal-close" onclick="closeModal('webhook-simulator-modal')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:12.5px; color:var(--text-muted); line-height:1.4;">
+                    Mô phỏng một lệnh gọi Webhook đặt phòng của bên thứ ba (như Agoda) gửi đến máy chủ của bạn để tạo đặt phòng tự động.
+                </p>
+                <div class="field-group">
+                    <span class="field-label">Mã Đặt Phòng Đối Tác (Partner Booking ID)</span>
+                    <input type="text" class="filter-input" id="sim-booking-id" value="AGO-20260528-9843">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Thông tin khách hàng & Phòng đặt</span>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div>
+                            <span class="field-label" style="font-size:10px;">Họ tên khách</span>
+                            <input type="text" class="filter-input" id="sim-guest-name" value="Nguyễn Văn A">
+                        </div>
+                        <div>
+                            <span class="field-label" style="font-size:10px;">Mã loại phòng (Room Type Code)</span>
+                            <input type="text" class="filter-input" id="sim-room-type-code" value="DELUXE">
+                        </div>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Tổng tiền đặt phòng (Pricing Room Amount)</span>
+                    <input type="number" class="filter-input" id="sim-total-amount" value="1500000">
+                </div>
+                
+                <span class="field-label" style="margin-top:4px;">Kết quả Live Log nhận từ máy chủ:</span>
+                <div class="terminal-output" id="simulator-terminal">
+                    <div class="terminal-line info">[SẴN SÀNG] Chờ lệnh bắn mô phỏng từ người dùng...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('webhook-simulator-modal')">Đóng</button>
+                <button class="btn-action-primary" id="btn-fire-simulated-webhook">
+                    <i class="fa-solid fa-paper-plane"></i> Gửi Mô Phỏng Webhook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Logout click handler
+            const btnLogout = document.getElementById('btn-logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', () => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('checkinXToken');
+                    localStorage.removeItem('checkinXRole');
+                    localStorage.removeItem('staffName');
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // ================================================================
+            // === TOAST NOTIFICATION ===
+            // ================================================================
+            const showToast = (message, type = 'success', title = '') => {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                let defaultTitle = 'Thành công';
+                if (type === 'danger') defaultTitle = 'Thất bại';
+                else if (type === 'warning') defaultTitle = 'Cảnh báo';
+                else if (type === 'info') defaultTitle = 'Thông báo';
+                
+                toast.innerHTML = `
+                    <div class="toast-header-row">
+                        <span class="toast-title">${title || defaultTitle}</span>
+                        <i class="fa-solid fa-xmark" style="font-size:12px; color:var(--text-muted); cursor:pointer;"></i>
+                    </div>
+                    <span class="toast-msg">${message}</span>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 50);
+                const dismiss = () => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 350);
+                };
+                toast.querySelector('.fa-xmark').addEventListener('click', dismiss);
+                setTimeout(dismiss, 4000);
+            };
+            window.showToast = showToast;
+
+            // ================================================================
+            // === AUTH CHECK ===
+            // ================================================================
+            const jwtToken = localStorage.getItem('jwtToken')
+                          || localStorage.getItem('token')
+                          || localStorage.getItem('accessToken');
+            if (!jwtToken) {
+                showToast('Vui lòng đăng nhập hệ thống admin!', 'warning', 'Yêu cầu đăng nhập');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+                return;
+            }
+            const authHeaders = { 'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json' };
+            const getHeaders  = { 'Authorization': 'Bearer ' + jwtToken };
+
+            // Navigation Switch
+            document.getElementById('btn-switch-receptionist').addEventListener('click', () => {
+                window.location.href = 'receptionist-dashboard.html';
+            });
+            document.getElementById('logo-redirect').addEventListener('click', () => {
+                window.location.href = 'admin-dashboard.html';
+            });
+
+            // Set Initials in Profile
+            const staffName = localStorage.getItem('staffName');
+            if (staffName) {
+                const parts = staffName.split(' ');
+                const initials = parts.length > 1
+                    ? (parts[0][0] + parts[parts.length - 1][0])
+                    : parts[0].substring(0, 2);
+                document.getElementById('btn-profile').innerText = initials.toUpperCase();
+            }
+
+            // ================================================================
+            // === APPLICATION STATE ===
+            // ================================================================
+            let otaChannels     = [];
+            let currentPage     = 0;
+            const pageSize      = 10;
+            let totalElements   = 0;
+            let totalPages      = 1;
+            let isOfflineMode   = false;
+
+            // Filtering State
+            let filterKeyword   = '';
+            let filterStatus    = 'all'; // all | active | inactive
+
+            // DOM Elements
+            const channelsTbody       = document.getElementById('ota-channels-tbody');
+            const paginationSummary   = document.getElementById('pagination-summary');
+            const paginationButtons   = document.getElementById('pagination-buttons');
+            const searchKeywordInput  = document.getElementById('search-keyword');
+            const filterStatusRadios  = document.getElementsByName('filter-status');
+            const offlineBanner       = document.getElementById('offline-banner');
+
+            // SVG Logo Providers for aesthetic excellence
+            const getOTASvgLogo = (name) => {
+                const lowerName = (name || '').toLowerCase();
+                if (lowerName.includes('agoda')) {
+                    return `<svg viewBox="0 0 100 100" class="channel-logo-img"><circle cx="20" cy="50" r="12" fill="#ef4444"/><circle cx="50" cy="20" r="12" fill="#f59e0b"/><circle cx="80" cy="50" r="12" fill="#10b981"/><circle cx="50" cy="80" r="12" fill="#3b82f6"/><circle cx="50" cy="50" r="14" fill="#8b5cf6"/></svg>`;
+                } else if (lowerName.includes('booking')) {
+                    return `<svg viewBox="0 0 100 100" class="channel-logo-img"><rect width="100" height="100" rx="15" fill="#003580"/><text x="50" y="65" font-family="'Outfit', sans-serif" font-weight="900" font-size="54" fill="#ffffff" text-anchor="middle">B.</text></svg>`;
+                } else if (lowerName.includes('airbnb')) {
+                    return `<svg viewBox="0 0 32 32" class="channel-logo-img"><path d="M16 1c-2.007 0-3.727 1.203-4.832 3.013l-9.42 16.32a5.55 5.55 0 0 0 4.811 8.324c1.69 0 3.25-.79 4.316-2.148l.063-.082c.44-.6.945-1.42 1.488-2.316.716 1.18 1.472 2.27 2.148 3.196.44.6.945 1.42 1.488 2.316 1.066 1.358 2.627 2.148 4.316 2.148a5.55 5.55 0 0 0 4.811-8.324l-9.42-16.32C19.727 2.203 18.007 1 16 1zm0 2.222c1.296 0 2.408.777 3.12 1.95l9.42 16.32a3.327 3.327 0 0 1-2.885 4.991c-1.014 0-1.95-.472-2.589-1.288l-.063-.08a34.793 34.793 0 0 1-2.28-3.336 1.111 1.111 0 0 0-1.89 0c-.579.888-1.579 2.502-2.343 3.416-.64.816-1.575 1.288-2.589 1.288a3.327 3.327 0 0 1-2.885-4.991l9.42-16.32c.712-1.173 1.824-1.95 3.12-1.95zm0 8.89a3.33 3.33 0 1 0 0 6.66 3.33 3.33 0 0 0 0-6.66zm0 2.222a1.11 1.11 0 1 1 0 2.22 1.11 1.11 0 0 1 0-2.22z" fill="#FF5A5F"/></svg>`;
+                } else if (lowerName.includes('expedia')) {
+                    return `<svg viewBox="0 0 100 100" class="channel-logo-img"><rect width="100" height="100" rx="15" fill="#ffcc00"/><circle cx="50" cy="50" r="30" fill="#000000"/><path d="M42,50 L58,40 L58,60 Z" fill="#ffffff"/></svg>`;
+                }
+                // Custom or unknown channels
+                return `<svg viewBox="0 0 100 100" class="channel-logo-img"><rect width="100" height="100" rx="15" fill="#cbd5e1"/><path d="M50 30 C38 30 30 38 30 50 C30 62 38 70 50 70 C62 70 70 62 70 50 C70 38 62 30 50 30 Z M50 38 C56.6 38 62 43.4 62 50 C62 56.6 56.6 62 50 62 C43.4 62 38 56.6 38 50 C38 43.4 43.4 38 50 38 Z" fill="#475569"/></svg>`;
+            };
+
+            // Mock Data fallback when backend is offline
+            const mockOTAChannels = [
+                { id: 101, name: 'Agoda', apiKeySecret: 'AGO-KEY-7848-X912', webhookSecret: 'AGO-WH-SEC-92934', isActive: true },
+                { id: 102, name: 'Booking.com', apiKeySecret: 'BKG-KEY-1102-Y847', webhookSecret: 'BKG-WH-SEC-20491', isActive: true },
+                { id: 103, name: 'Airbnb', apiKeySecret: 'AIR-KEY-9943-Z122', webhookSecret: 'AIR-WH-SEC-09384', isActive: false },
+            ];
+
+            // ================================================================
+            // === 1. FETCH DASHBOARD STATISTICS ===
+            // ================================================================
+            const fetchDashboardStats = async () => {
+                try {
+                    const url = 'http://localhost:8080/api/admin/dashboard/ota-statistic';
+                    const response = await fetch(url, { headers: getHeaders });
+                    const res = await response.json();
+
+                    if (res.success && res.data) {
+                        document.getElementById('stat-val-total').innerText    = res.data.totalChannels ?? 0;
+                        document.getElementById('stat-val-active').innerText   = res.data.activeChannels ?? 0;
+                        document.getElementById('stat-val-inactive').innerText = res.data.inactiveChannels ?? 0;
+                    } else {
+                        throw new Error(res.message || 'Lỗi server');
+                    }
+                } catch (err) {
+                    console.warn('[CheckinX] Dashboard Stats API error, computing locally.');
+                    // Local compute from current ota list
+                    const total = otaChannels.length;
+                    const active = otaChannels.filter(c => c.isActive).length;
+                    const inactive = total - active;
+
+                    document.getElementById('stat-val-total').innerText    = total;
+                    document.getElementById('stat-val-active').innerText   = active;
+                    document.getElementById('stat-val-inactive').innerText = inactive;
+                }
+            };
+
+            // ================================================================
+            // === 2. FETCH OTA CHANNELS LIST ===
+            // ================================================================
+            const fetchOTAChannels = async () => {
+                channelsTbody.innerHTML = `
+                    <tr><td colspan="6" style="text-align:center;padding:48px 0;color:var(--text-muted);">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size:22px;color:var(--primary);display:block;margin-bottom:10px;"></i>
+                        Đang tải danh sách kênh OTA...
+                    </td></tr>`;
+
+                try {
+                    const params = new URLSearchParams();
+                    params.set('page', currentPage);
+                    params.set('size', pageSize);
+                    
+                    if (filterKeyword) params.set('keyword', filterKeyword);
+                    
+                    // FilterOTAChannelRequest supports isActive: Boolean
+                    if (filterStatus === 'active') params.set('isActive', true);
+                    else if (filterStatus === 'inactive') params.set('isActive', false);
+
+                    const url = `http://localhost:8080/api/admin/ota-channels?${params.toString()}`;
+                    const response = await fetch(url, { headers: getHeaders });
+                    const res = await response.json();
+
+                    if (res.success && res.data) {
+                        otaChannels   = res.data.content || [];
+                        totalElements = res.data.totalElements || 0;
+                        totalPages    = res.data.totalPages || 1;
+                        isOfflineMode = false;
+                        offlineBanner.classList.remove('show');
+                    } else {
+                        throw new Error(res.message || 'Lỗi server');
+                    }
+                } catch (error) {
+                    console.warn('[CheckinX] Backend offline - Loading mock OTA data');
+                    isOfflineMode = true;
+                    offlineBanner.classList.add('show');
+                    
+                    // Filter locally
+                    let filtered = [...mockOTAChannels];
+                    if (filterKeyword) {
+                        const kw = filterKeyword.toLowerCase();
+                        filtered = filtered.filter(c => c.name.toLowerCase().includes(kw));
+                    }
+                    if (filterStatus === 'active') {
+                        filtered = filtered.filter(c => c.isActive);
+                    } else if (filterStatus === 'inactive') {
+                        filtered = filtered.filter(c => !c.isActive);
+                    }
+
+                    otaChannels   = filtered;
+                    totalElements = filtered.length;
+                    totalPages    = Math.ceil(filtered.length / pageSize) || 1;
+                }
+
+                renderOTAChannels();
+                fetchDashboardStats();
+            };
+
+            // Render channels into table
+            const renderOTAChannels = () => {
+                if (otaChannels.length === 0) {
+                    channelsTbody.innerHTML = `
+                        <tr><td colspan="6" style="text-align:center;padding:48px 0;color:var(--text-muted);">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size:24px;margin-bottom:8px;color:#cbd5e1;"></i>
+                            <p>Không tìm thấy kênh bán OTAs nào liên kết phù hợp.</p>
+                        </td></tr>`;
+                    paginationSummary.innerText = "Hiển thị 0-0 trong 0 kênh liên kết";
+                    paginationButtons.innerHTML = "";
+                    return;
+                }
+
+                channelsTbody.innerHTML = '';
+                otaChannels.forEach(ota => {
+                    const tr = document.createElement('tr');
+                    
+                    // Format active pill
+                    const statusHtml = ota.isActive 
+                        ? `<span class="status-pill active"><span class="status-dot"></span>Đang hoạt động</span>`
+                        : `<span class="status-pill inactive"><span class="status-dot"></span>Đã tạm dừng</span>`;
+
+                    // Format mock sync time
+                    const syncTimes = ["Vừa xong", "5 phút trước", "10 phút trước", "Hôm qua, 14:30", "1 giờ trước"];
+                    const randomSync = syncTimes[ota.id % syncTimes.length] || "Vừa xong";
+
+                    // Prevent displaying complete raw API Key / Webhook secrets inside preview for premium aesthetics
+                    const apiKeyPreview = ota.apiKeySecret 
+                        ? `${ota.apiKeySecret.substring(0, 7)}••••` 
+                        : 'N/A';
+                    const webhookPreview = ota.webhookSecret 
+                        ? `${ota.webhookSecret.substring(0, 7)}••••` 
+                        : 'N/A';
+
+                    tr.innerHTML = `
+                        <td>
+                            <div class="channel-info-cell">
+                                <div class="channel-logo-wrapper">
+                                    ${getOTASvgLogo(ota.name)}
+                                </div>
+                                <div class="channel-text-details">
+                                    <span class="channel-title">${escapeHTML(ota.name)}</span>
+                                    <span class="channel-sub">Mã kênh: ID-${ota.id}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="secret-key-badge">
+                                <i class="fa-solid fa-key" style="font-size:10px;"></i>
+                                <code>${escapeHTML(apiKeyPreview)}</code>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="secret-key-badge webhook">
+                                <i class="fa-solid fa-lock" style="font-size:10px;"></i>
+                                <code>${escapeHTML(webhookPreview)}</code>
+                            </span>
+                        </td>
+                        <td>${statusHtml}</td>
+                        <td>${randomSync}</td>
+                        <td style="text-align: right;">
+                            <button class="btn-link-action" data-id="${ota.id}">
+                                Xem thiết lập <i class="fa-solid fa-chevron-right" style="font-size:10px; margin-left:2px;"></i>
+                            </button>
+                        </td>
+                    `;
+
+                    // Register action click
+                    tr.querySelector('.btn-link-action').addEventListener('click', () => {
+                        openEditModal(ota);
+                    });
+
+                    channelsTbody.appendChild(tr);
+                });
+
+                // Update pagination layout
+                const startNum = currentPage * pageSize + 1;
+                const endNum   = Math.min(startNum + otaChannels.length - 1, totalElements);
+                paginationSummary.innerText = `Hiển thị ${startNum}-${endNum} trong ${totalElements} kênh liên kết`;
+
+                renderPaginationButtons();
+            };
+
+            const renderPaginationButtons = () => {
+                paginationButtons.innerHTML = '';
+                
+                // Prev button
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'page-btn';
+                prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+                prevBtn.disabled = currentPage === 0;
+                prevBtn.onclick = () => { if (currentPage > 0) { currentPage--; fetchOTAChannels(); } };
+                paginationButtons.appendChild(prevBtn);
+
+                // Page numbers
+                for (let i = 0; i < totalPages; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = `page-btn ${currentPage === i ? 'active' : ''}`;
+                    btn.innerText = i + 1;
+                    btn.onclick = () => { currentPage = i; fetchOTAChannels(); };
+                    paginationButtons.appendChild(btn);
+                }
+
+                // Next button
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'page-btn';
+                nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                nextBtn.disabled = currentPage >= totalPages - 1;
+                nextBtn.onclick = () => { if (currentPage < totalPages - 1) { currentPage++; fetchOTAChannels(); } };
+                paginationButtons.appendChild(nextBtn);
+            };
+
+            // ================================================================
+            // === 3. CREATE NEW OTA CONNECTION ===
+            // ================================================================
+            document.getElementById('btn-add-ota').addEventListener('click', () => {
+                // Clear fields
+                document.getElementById('add-ota-name-select').value = 'Agoda';
+                document.getElementById('add-ota-name-input').value = '';
+                document.getElementById('add-ota-api-key').value = '';
+                document.getElementById('add-ota-webhook-secret').value = '';
+                document.getElementById('add-ota-active').checked = true;
+                
+                toggleCustomNameInput();
+                openModal('add-ota-modal');
+            });
+
+            document.getElementById('btn-save-new-ota').addEventListener('click', async () => {
+                const selectVal = document.getElementById('add-ota-name-select').value;
+                const customVal = document.getElementById('add-ota-name-input').value.trim();
+                const name = selectVal === 'custom' ? customVal : selectVal;
+
+                const apiKeySecret = document.getElementById('add-ota-api-key').value.trim();
+                const webhookSecret = document.getElementById('add-ota-webhook-secret').value.trim();
+                const isActive = document.getElementById('add-ota-active').checked;
+
+                if (!name) {
+                    showToast('Vui lòng nhập tên kênh bán!', 'warning', 'Thiếu thông tin');
+                    return;
+                }
+                if (!apiKeySecret) {
+                    showToast('Vui lòng cung cấp API Secret Key!', 'warning', 'Thiếu thông tin');
+                    return;
+                }
+                if (!webhookSecret) {
+                    showToast('Vui lòng cung cấp Webhook Secret Key!', 'warning', 'Thiếu thông tin');
+                    return;
+                }
+
+                const requestBody = { name, apiKeySecret, webhookSecret, isActive };
+
+                try {
+                    if (isOfflineMode) {
+                        // Simulate local creation
+                        const newOta = {
+                            id: Math.floor(Math.random() * 1000) + 200,
+                            name,
+                            apiKeySecret,
+                            webhookSecret,
+                            isActive
+                        };
+                        mockOTAChannels.push(newOta);
+                        showToast('Đã thêm kênh bán thành công (Demo Mode)', 'success');
+                        closeModal('add-ota-modal');
+                        fetchOTAChannels();
+                        return;
+                    }
+
+                    const response = await fetch('http://localhost:8080/api/admin/ota-channels', {
+                        method: 'POST',
+                        headers: authHeaders,
+                        body: JSON.stringify(requestBody)
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast('Liên kết kênh bán OTA thành công!', 'success');
+                        closeModal('add-ota-modal');
+                        fetchOTAChannels();
+                    } else {
+                        showToast(res.message || 'Lỗi tạo liên kết', 'danger');
+                    }
+                } catch (error) {
+                    showToast('Lỗi mạng, không kết nối được máy chủ', 'danger');
+                }
+            });
+
+            // ================================================================
+            // === 4. UPDATE OTA CONNECTION ===
+            // ================================================================
+            const openEditModal = (ota) => {
+                document.getElementById('edit-ota-id').value = ota.id;
+                document.getElementById('edit-ota-name').value = ota.name;
+                document.getElementById('edit-ota-api-key').value = ota.apiKeySecret || '';
+                document.getElementById('edit-ota-webhook-secret').value = ota.webhookSecret || '';
+                document.getElementById('edit-ota-active').checked = ota.isActive;
+
+                openModal('edit-ota-modal');
+            };
+
+            document.getElementById('btn-save-edit-ota').addEventListener('click', async () => {
+                const id = parseInt(document.getElementById('edit-ota-id').value);
+                const name = document.getElementById('edit-ota-name').value;
+                const apiKeySecret = document.getElementById('edit-ota-api-key').value.trim();
+                const webhookSecret = document.getElementById('edit-ota-webhook-secret').value.trim();
+                const isActive = document.getElementById('edit-ota-active').checked;
+
+                if (!apiKeySecret || !webhookSecret) {
+                    showToast('Vui lòng không để trống khóa bảo mật!', 'warning', 'Nhập liệu thiếu');
+                    return;
+                }
+
+                const requestBody = { name, apiKeySecret, webhookSecret, isActive };
+
+                try {
+                    if (isOfflineMode) {
+                        // Simulate local update
+                        const index = mockOTAChannels.findIndex(c => c.id === id);
+                        if (index !== -1) {
+                            mockOTAChannels[index].apiKeySecret = apiKeySecret;
+                            mockOTAChannels[index].webhookSecret = webhookSecret;
+                            mockOTAChannels[index].isActive = isActive;
+                            showToast('Đã lưu thay đổi cấu hình (Demo Mode)', 'success');
+                            closeModal('edit-ota-modal');
+                            fetchOTAChannels();
+                        }
+                        return;
+                    }
+
+                    const response = await fetch(`http://localhost:8080/api/admin/ota-channels/${id}`, {
+                        method: 'PUT',
+                        headers: authHeaders,
+                        body: JSON.stringify(requestBody)
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast('Cập nhật cấu hình kênh OTA thành công!', 'success');
+                        closeModal('edit-ota-modal');
+                        fetchOTAChannels();
+                    } else {
+                        showToast(res.message || 'Lỗi cập nhật cấu hình', 'danger');
+                    }
+                } catch (error) {
+                    showToast('Không kết nối được với máy chủ', 'danger');
+                }
+            });
+
+            // ================================================================
+            // === 5. WEBHOOK SIMULATION TOOL ===
+            // ================================================================
+            document.getElementById('btn-open-webhook-simulator').addEventListener('click', () => {
+                // Prepopulate
+                document.getElementById('sim-booking-id').value = 'AGO-' + Math.floor(Date.now() / 1000);
+                const term = document.getElementById('simulator-terminal');
+                term.innerHTML = '<div class="terminal-line info">[SẴN SÀNG] Đang chờ yêu cầu mô phỏng từ người dùng...</div>';
+                
+                openModal('webhook-simulator-modal');
+            });
+
+            document.getElementById('btn-fire-simulated-webhook').addEventListener('click', async () => {
+                const bookingId = document.getElementById('sim-booking-id').value.trim();
+                const fullName = document.getElementById('sim-guest-name').value.trim();
+                const roomTypeCode = document.getElementById('sim-room-type-code').value.trim();
+                const roomAmount = parseFloat(document.getElementById('sim-total-amount').value) || 1200000;
+
+                const term = document.getElementById('simulator-terminal');
+                term.innerHTML += `<div class="terminal-line">🤖 Đang khởi tạo Agoda simulated payload cho Booking ID ${bookingId}...</div>`;
+                term.scrollTop = term.scrollHeight;
+
+                const agodaWebhookPayload = {
+                    bookingId: bookingId,
+                    otaChannel: "AGODA",
+                    otaHotelId: "H-AGO-49293",
+                    guest: {
+                        fullName: fullName,
+                        phone: "0912345678",
+                        email: "simulated_guest@example.com",
+                        nationality: "VN"
+                    },
+                    room: {
+                        roomTypeCode: roomTypeCode,
+                        roomTypeName: roomTypeCode + " Premium Room",
+                        quantity: 1,
+                        adults: 2,
+                        children: 0
+                    },
+                    stay: {
+                        checkIn: new Date(Date.now() + 86400000).toISOString().split('T')[0] + "T14:00:00",
+                        checkOut: new Date(Date.now() + 172800000).toISOString().split('T')[0] + "T12:00:00",
+                        nights: 1
+                    },
+                    pricing: {
+                        currency: "VND",
+                        roomAmount: roomAmount,
+                        taxAmount: roomAmount * 0.1,
+                        serviceFee: 0,
+                        totalAmount: roomAmount * 1.1,
+                        commissionAmount: roomAmount * 0.15
+                    },
+                    payment: {
+                        paymentType: "OTA_COLLECT",
+                        paymentStatus: "PAID"
+                    },
+                    specialRequests: ["Non-smoking room", "High floor"],
+                    status: "CONFIRMED",
+                    createdAt: new Date().toISOString(),
+                    lastUpdatedAt: new Date().toISOString()
+                };
+
+                try {
+                    term.innerHTML += `<div class="terminal-line">📤 Đang gửi POST request đến endpoint: /admin/ota-channels/booking...</div>`;
+                    term.scrollTop = term.scrollHeight;
+
+                    if (isOfflineMode) {
+                        setTimeout(() => {
+                            term.innerHTML += `<div class="terminal-line success">✅ [THÀNH CÔNG (MÔ PHỎNG LOCAL)] Máy chủ nhận lệnh webhook thành công!</div>`;
+                            term.innerHTML += `<div class="terminal-line info">> Mã phản hồi: HTTP 201 Created</div>`;
+                            term.innerHTML += `<div class="terminal-line info">> Nội dung: {"success": true, "message": "OTA Channel webhook mock successful", "data": "OTA_BOOKING_CREATED"}</div>`;
+                            term.scrollTop = term.scrollHeight;
+                            showToast('Mô phỏng webhook thành công!', 'success');
+                        }, 800);
+                        return;
+                    }
+
+                    const response = await fetch('http://localhost:8080/api/admin/ota-channels/booking', {
+                        method: 'POST',
+                        headers: authHeaders,
+                        body: JSON.stringify(agodaWebhookPayload)
+                    });
+                    const res = await response.json();
+
+                    if (response.status === 201 || res.success) {
+                        term.innerHTML += `<div class="terminal-line success">✅ [THÀNH CÔNG] Đã nhận phản hồi từ backend!</div>`;
+                        term.innerHTML += `<div class="terminal-line info">> Mã phản hồi: HTTP ${response.status}</div>`;
+                        term.innerHTML += `<div class="terminal-line info">> Nội dung trả về: ${JSON.stringify(res)}</div>`;
+                        showToast('Webhook đồng bộ hóa booking thành công!', 'success');
+                    } else {
+                        term.innerHTML += `<div class="terminal-line error">❌ [THẤT BẠI] Lỗi xử lý webhook từ backend:</div>`;
+                        term.innerHTML += `<div class="terminal-line error">> Chi tiết: ${res.message || 'Mã lỗi không xác định'}</div>`;
+                        showToast(res.message || 'Lỗi đồng bộ webhook', 'danger');
+                    }
+                } catch (error) {
+                    term.innerHTML += `<div class="terminal-line error">❌ [LỖI MẠNG] Không thể kết nối với endpoint backend.</div>`;
+                    term.innerHTML += `<div class="terminal-line error">> Chi tiết: ${error.message}</div>`;
+                    showToast('Lỗi mạng khi mô phỏng webhook', 'danger');
+                }
+                term.scrollTop = term.scrollHeight;
+            });
+
+            // ================================================================
+            // === 6. INTERACTIVE UTILITIES & EVENT BINDING ===
+            // ================================================================
+            // Handle select changes in Link Modal
+            window.toggleCustomNameInput = () => {
+                const select = document.getElementById('add-ota-name-select');
+                const row = document.getElementById('add-ota-custom-name-row');
+                if (select.value === 'custom') {
+                    row.style.display = 'flex';
+                } else {
+                    row.style.display = 'none';
+                }
+            };
+
+            // Simple HTML escape to prevent XSS injection
+            const escapeHTML = (str) => {
+                if (!str) return '';
+                return str.replace(/[&<>'"]/g, 
+                    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+                );
+            };
+
+            // Modal Management
+            window.openModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if (modal) modal.classList.add('show');
+            };
+
+            window.closeModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if (modal) modal.classList.remove('show');
+            };
+
+            // Filter binding events
+            searchKeywordInput.addEventListener('input', debounce(() => {
+                filterKeyword = searchKeywordInput.value.trim();
+                currentPage = 0;
+                fetchOTAChannels();
+            }, 400));
+
+            Array.from(filterStatusRadios).forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.checked) {
+                        filterStatus = radio.value;
+                        currentPage = 0;
+                        fetchOTAChannels();
+                    }
+                });
+            });
+
+            // Debouncing utility
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // ================================================================
+            // === INITIAL KICKSTART ===
+            // ================================================================
+            fetchOTAChannels();
+        });
+    </script>
+
+    <!-- CheckinX Style Unification & Smart Toast Alert Overrides -->
+    <script>
+        (function() {
+            if (window.alertOverridden) return;
+            window.alertOverridden = true;
+
+            // 1. Tự động tiêm Google Font Outfit nếu chưa có
+            if (!document.querySelector('link[href*="Outfit"]')) {
+                const linkPreconnect1 = document.createElement('link');
+                linkPreconnect1.rel = 'preconnect';
+                linkPreconnect1.href = 'https://fonts.googleapis.com';
+                document.head.appendChild(linkPreconnect1);
+
+                const linkPreconnect2 = document.createElement('link');
+                linkPreconnect2.rel = 'preconnect';
+                linkPreconnect2.href = 'https://fonts.gstatic.com';
+                linkPreconnect2.crossOrigin = 'anonymous';
+                document.head.appendChild(linkPreconnect2);
+
+                const linkFont = document.createElement('link');
+                linkFont.rel = 'stylesheet';
+                linkFont.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
+                document.head.appendChild(linkFont);
+            }
+
+            // 2. Ép font-family Outfit cho toàn bộ trang
+            const styleElement = document.createElement('style');
+            styleElement.id = 'checkinx-unified-styles';
+            styleElement.innerHTML = `
+                body, html, input, select, textarea, button {
+                    font-family: 'Outfit', sans-serif !important;
+                }
+                #toast-container {
+                    position: fixed;
+                    top: 1rem;
+                    right: 1rem;
+                    z-index: 99999;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    pointer-events: none;
+                }
+                .toast-item {
+                    pointer-events: auto;
+                    animation: toastSlideIn 0.3s ease-out forwards;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                    transition: all 0.3s ease;
+                }
+                @keyframes toastSlideIn {
+                    from { transform: translateX(120%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                /* Tailwind utility overrides for pages without Tailwind loaded */
+                .toast-item.flex { display: flex !important; }
+                .toast-item.items-center { align-items: center !important; }
+                .toast-item.gap-3 { gap: 0.75rem !important; }
+                .toast-item.px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .toast-item.py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+                .toast-item.rounded-2xl { border-radius: 1rem !important; }
+                .toast-item.border { border: 1px solid rgba(226, 232, 240, 0.8) !important; }
+                .toast-item.text-xs { font-size: 0.75rem !important; }
+                .toast-item.font-semibold { font-weight: 600 !important; }
+                .toast-item.bg-white { background-color: #ffffff !important; }
+                .toast-item.text-emerald-800 { color: #065f46 !important; }
+                .toast-item.border-emerald-100 { border-color: #a7f3d0 !important; }
+                .toast-item.bg-emerald-50\/95 { background-color: rgba(240, 253, 250, 0.95) !important; }
+                .toast-item.text-blue-800 { color: #1e40af !important; }
+                .toast-item.border-blue-100 { border-color: #bfdbfe !important; }
+                .toast-item.bg-blue-50\/95 { background-color: rgba(239, 246, 255, 0.95) !important; }
+                .toast-item.text-red-800 { color: #991b1b !important; }
+                .toast-item.border-red-100 { border-color: #fecaca !important; }
+                .toast-item.bg-red-50\/95 { background-color: rgba(254, 242, 242, 0.95) !important; }
+                .toast-item.text-amber-800 { color: #92400e !important; }
+                .toast-item.border-amber-100 { border-color: #fde68a !important; }
+                .toast-item.bg-amber-50\/95 { background-color: rgba(255, 251, 235, 0.95) !important; }
+                .toast-item.backdrop-blur-sm { backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important; }
+                .toast-item .flex-1 { flex: 1 1 0% !important; }
+            `;
+            document.head.appendChild(styleElement);
+
+            // 3. Tự động tiêm toast-container vào body
+            function injectToastContainer() {
+                if (!document.getElementById('toast-container')) {
+                    const container = document.createElement('div');
+                    container.id = 'toast-container';
+                    container.className = 'flex flex-col gap-2';
+                    document.body.appendChild(container);
+                }
+            }
+
+            if (document.body) {
+                injectToastContainer();
+            } else {
+                window.addEventListener('DOMContentLoaded', injectToastContainer);
+            }
+
+            // 4. Định nghĩa hàm showToast mượt mà cao cấp
+            window.showToast = function(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                
+                let bgClass = 'text-emerald-800 border-emerald-100 bg-emerald-50/95 backdrop-blur-sm';
+                let icon = '<i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>';
+                
+                if (type === 'info') {
+                    bgClass = 'text-blue-800 border-blue-100 bg-blue-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-info text-blue-500 text-lg"></i>';
+                } else if (type === 'error') {
+                    bgClass = 'text-red-800 border-red-100 bg-red-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-xmark text-red-500 text-lg"></i>';
+                } else if (type === 'warning') {
+                    bgClass = 'text-amber-800 border-amber-100 bg-amber-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg"></i>';
+                }
+
+                toast.className = `toast-item flex items-center gap-3 px-4 py-3 rounded-2xl border text-xs font-semibold bg-white ${bgClass}`;
+                toast.innerHTML = `${icon} <span class="flex-1">${message}</span>`;
+                
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'scale(0.9) translateX(20px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            };
+
+            // 5. Ghi đè hàm alert() truyền thống
+            window.alert = function(message) {
+                if (!message) return;
+                const msgStr = String(message);
+                
+                // Phân loại màu thông báo dựa trên từ khóa
+                let type = 'info';
+                const msgLower = msgStr.toLowerCase();
+                if (msgLower.includes('thành công') || msgLower.includes('success') || msgLower.includes('hoàn tất') || msgLower.includes('đăng nhập thành công') || msgLower.includes('đăng ký thành công')) {
+                    type = 'success';
+                } else if (msgLower.includes('lỗi') || msgLower.includes('thất bại') || msgLower.includes('error') || msgLower.includes('hỏng') || msgLower.includes('không thể') || msgLower.includes('chưa') || msgLower.includes('không đúng') || msgLower.includes('không tìm thấy')) {
+                    type = 'error';
+                } else if (msgLower.includes('cảnh báo') || msgLower.includes('chú ý') || msgLower.includes('warning') || msgLower.includes('vui lòng') || msgLower.includes('yêu cầu') || msgLower.includes('hết hạn')) {
+                    type = 'warning';
+                }
+
+                window.showToast(msgStr, type);
+                console.log("CheckinX Smart Toast: Đã đánh chặn alert ->", msgStr);
+            };
+        })();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+
+tạo ra mã html/css cho trang này, với yêu cầu: 
+[Upload ảnh từng trang trong figma]
+
+Form cần chứa chính xác các trường dữ liệu theo mẫu JSON sau:
+[UPload json trong excel] - tuỳ json input hay output bảo nó hiển thị hay là tạo form nhập
+
+Tích hợp thêm JavaScript (Fetch API) để khi người dùng submit form, hệ thống sẽ chặn sự kiện mặc định, tự động gom dữ liệu thành JSON như mẫu và gửi tới API: 
+[API trong excel]
+
+
+hiển thị thông báo kết quả (Thành công/Thất bại) bằng thông báo nổi (Toast Notification) ở góc màn hình thay vì dùng alert().
+
+[Điều chỉnh cấc nút khi ấn vào chuyển đến trang - vd: Nút Trang chủ thì chuyển đến trang customer-home.html]
+
+[Thêm các ràng buộc như như nếu đăng nhập CUSTOMER trả về customer-home.html, CLEANER - cleaner-dashboard.html, ...]

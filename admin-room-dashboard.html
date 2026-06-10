@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckinX - Admin Rooms Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f3cc9;
+            --primary-dark: #3b2bb0;
+            --primary-light: #eef2ff;
+            --primary-gradient: linear-gradient(135deg, #4f3cc9 0%, #7c3aed 100%);
+            --bg-color: #f4f5f8;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --white: #ffffff;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --info: #0284c7;
+            --info-bg: #f0f9ff;
+            --header-bg: #4f3cc9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Header Styles --- */
+        header {
+            background: linear-gradient(90deg, #3b2bb0 0%, #4f3cc9 100%);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            color: var(--white);
+            flex-shrink: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 64px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-link.active {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 4px;
+            background-color: #10b981;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-le-tan {
+            background-color: var(--white);
+            color: var(--primary);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn-le-tan:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .header-icon {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .header-icon:hover {
+            color: var(--white);
+        }
+
+        .user-profile {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: border 0.2s;
+        }
+
+        .user-profile:hover {
+            border-color: var(--white);
+        }
+
+        /* --- Workspace Structure --- */
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Column 1: Sidebar Filter */
+        .sidebar-filter {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 38px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13.5px;
+            outline: none;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13.5px;
+            outline: none;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .radio-option input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Column 2: Rooms List Panel */
+        .list-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #f8fafc;
+        }
+
+        .list-header {
+            padding: 24px 32px;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-block h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .title-block p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .btn-add-type {
+            background: var(--primary-gradient);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 60, 201, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add-type:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(79, 60, 201, 0.3);
+        }
+
+        /* Scrollable list container */
+        .rooms-scroll-container {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Room Card Styles */
+        .room-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.01);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .room-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(79, 60, 201, 0.05);
+        }
+
+        .room-card.active {
+            border-color: var(--primary);
+            border-width: 2px;
+            background-color: #fafaff;
+            box-shadow: 0 4px 15px rgba(79, 60, 201, 0.08);
+            padding: 19px; /* adjust padding for border weight */
+        }
+
+        .card-room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .room-number-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .room-status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Status Colors */
+        .status-ready {
+            color: var(--success);
+            background-color: var(--success-bg);
+        }
+        .status-dirty {
+            color: var(--warning);
+            background-color: var(--warning-bg);
+        }
+        .status-maintenance {
+            color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+        .status-checked-in {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .card-room-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .card-footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            margin-top: 4px;
+        }
+
+        .active-dot-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .active-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .active-dot.active {
+            background-color: var(--success);
+        }
+        .active-dot.inactive {
+            background-color: var(--text-muted);
+        }
+
+        .room-type-tag {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--primary);
+            background-color: var(--primary-light);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        /* Column 3: Room Details Panel */
+        .detail-panel {
+            width: 480px;
+            background-color: var(--sidebar-bg);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .detail-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .detail-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .detail-scroll-area {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 13.5px;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+            background-color: #f8fafc;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(79, 60, 201, 0.05);
+        }
+
+        .form-input[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .switch-label-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .switch-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .switch-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* IOS Switch styling */
+        .ios-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .ios-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--success);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Bottom Action Bar */
+        .bottom-action-bar {
+            border-top: 1px solid var(--border-color);
+            padding: 18px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .delete-btn:hover {
+            opacity: 0.8;
+        }
+
+        .right-buttons {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cancel-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .cancel-btn:hover {
+            color: var(--text-main);
+        }
+
+        .save-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(79, 60, 201, 0.15);
+            transition: background-color 0.2s;
+        }
+
+        .save-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        
+
+        /* ---- Active Filter Tab Bar ---- */
+        .active-tab-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 16px 32px 0 32px;
+            flex-shrink: 0;
+        }
+
+        .active-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border-color);
+            background: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .active-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .active-tab.selected {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(79, 60, 201, 0.25);
+        }
+
+        .active-tab.selected-active {
+            border-color: var(--success);
+            background-color: var(--success);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .active-tab.selected-inactive {
+            border-color: #64748b;
+            background-color: #64748b;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.25);
+        }
+
+        .tab-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            padding: 0 6px;
+            font-size: 11px;
+            font-weight: 700;
+            background-color: rgba(255,255,255,0.22);
+            color: inherit;
+        }
+
+        .active-tab:not([class*="selected"]) .tab-count-badge {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        /* Stats Summary Row Styles */
+        .rooms-stats-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            padding: 14px 32px 0 32px;
+            flex-shrink: 0;
+        }
+
+        .stat-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.01);
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(79, 60, 201, 0.03);
+        }
+
+        .stat-card.active {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stat-name {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .stat-card.active .stat-name {
+            color: var(--primary);
+        }
+        .stat-card.active .stat-value {
+            color: var(--primary);
+        }
+
+        .stat-icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .stat-card.total .stat-icon-circle {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+        .stat-card.active-rooms .stat-icon-circle {
+            background-color: var(--success-bg);
+            color: var(--success);
+        }
+        .stat-card.inactive-rooms .stat-icon-circle {
+            background-color: #f1f5f9;
+            color: #64748b;
+        }
+        .stat-card.ready-rooms .stat-icon-circle {
+            background-color: var(--success-bg);
+            color: var(--success);
+        }
+        .stat-card.dirty-rooms .stat-icon-circle {
+            background-color: var(--warning-bg);
+            color: var(--warning);
+        }
+        .stat-card.maintenance-rooms .stat-icon-circle {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        /* Skeleton loading */
+        .skeleton-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .skeleton-line {
+            height: 14px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+        .skeleton-line.short { width: 50%; }
+        .skeleton-line.medium { width: 70%; }
+        .skeleton-line.long { width: 90%; }
+        .skeleton-line.tall { height: 20px; width: 40%; }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ---- Custom Confirm Dialog ---- */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 99998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .confirm-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .confirm-dialog {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+            transform: scale(0.92) translateY(10px);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .confirm-overlay.show .confirm-dialog {
+            transform: scale(1) translateY(0);
+        }
+        .confirm-icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--danger-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: var(--danger);
+        }
+        .confirm-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .confirm-message {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .confirm-btn-cancel {
+            flex: 1;
+            padding: 11px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-btn-cancel:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+        .confirm-btn-ok {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            background: var(--danger);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+        }
+        .confirm-btn-ok:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Brand Bar -->
+    <header>
+        <div class="header-left">
+            <div class="logo" id="logo-redirect">
+                Checkin<span>X</span>
+            </div>
+            <nav>
+                <a href="admin-dashboard.html" class="nav-link">Tổng quan</a>
+                <a href="receptionist-room-dashboard.html" class="nav-link">Sơ đồ phòng</a>
+                <a href="receptionist-book-dashboard.html" class="nav-link">Đặt phòng</a>
+                <a href="admin-schedule-dashborad.html" class="nav-link">Timeline</a>
+                <a href="admin-ota-booking.html" class="nav-link">Kênh bán</a>
+                <a href="admin-payment-dashboard.html" class="nav-link">Giao dịch</a>
+                <a href="receptionist-damage-dashboard.html" class="nav-link">Đền bù</a>
+                <a href="admin-room-dashboard.html" class="nav-link active">Phòng</a>
+                <a href="admin-room-type-dashboard.html" class="nav-link">Loại Phòng</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="btn-le-tan" id="btn-switch-receptionist" style="display: none;">
+                <i class="fa-solid fa-hotel"></i> Lễ tân
+            </button>
+            <div class="header-icon">
+                <i class="fa-regular fa-bell"></i>
+            </div>
+            <div class="header-icon" id="btn-settings" onclick="window.location.href='admin-hotel-dashboard.html'">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+            <div class="user-profile" id="btn-profile">
+                AD
+            </div>
+            <div class="header-icon" id="btn-logout" title="Đăng xuất" style="color: var(--danger, #ef4444); margin-left: 8px;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="workspace">
+        
+        <!-- COLUMN 1: SIDEBAR FILTERS -->
+        <aside class="sidebar-filter">
+            
+            <div class="filter-section">
+                <span class="filter-label">Tìm kiếm</span>
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" class="search-input" id="sidebar-search-number" placeholder="Số phòng...">
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <span class="filter-label">Hạng phòng</span>
+                <select class="filter-select" id="sidebar-filter-type">
+                    <option value="all">Tất cả hạng phòng</option>
+                    <!-- Dynamically Loaded Options -->
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <span class="filter-label">Tầng</span>
+                <select class="filter-select" id="sidebar-filter-floor">
+                    <option value="all">Tất cả các tầng</option>
+                    <option value="0">Tầng trệt (0)</option>
+                    <option value="1">Tầng 1</option>
+                    <option value="2">Tầng 2</option>
+                    <option value="3">Tầng 3</option>
+                    <option value="4">Tầng 4</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <span class="filter-label">Tình trạng vận hành</span>
+                <select class="filter-select" id="sidebar-filter-status">
+                    <option value="all">Tất cả tình trạng</option>
+                    <option value="READY">Sẵn sàng (READY)</option>
+                    <option value="DIRTY">Phòng bẩn (DIRTY)</option>
+                    <option value="MAINTENANCE">Bảo trì (MAINTENANCE)</option>
+                    <option value="CHECKED_IN">Đang ở (CHECKED_IN)</option>
+                </select>
+            </div>
+
+        </aside>
+
+        <!-- COLUMN 2: ROOMS LIST PANEL -->
+        <section class="list-panel">
+            
+            <div class="list-header">
+                <div class="title-row">
+                    <div class="title-block">
+                        <h1>Quản lý Sơ đồ Phòng</h1>
+                        <p>Danh sách các phòng vật lý cụ thể, trạng thái vận hành và phân tầng.</p>
+                    </div>
+                    <button class="btn-add-type" id="btn-add-room">
+                        <i class="fa-solid fa-plus"></i> Thêm Phòng
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Status Tab Bar -->
+            <div class="active-tab-bar" id="active-tab-bar">
+                <button class="active-tab selected" id="tab-all" data-filter="all">
+                    <i class="fa-solid fa-layer-group"></i>
+                    Tất cả
+                    <span class="tab-count-badge" id="tab-count-all">0</span>
+                </button>
+                <button class="active-tab" id="tab-active" data-filter="active">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Đang hoạt động
+                    <span class="tab-count-badge" id="tab-count-active">0</span>
+                </button>
+                <button class="active-tab" id="tab-inactive" data-filter="inactive">
+                    <i class="fa-solid fa-circle-minus"></i>
+                    Tạm khóa
+                    <span class="tab-count-badge" id="tab-count-inactive">0</span>
+                </button>
+            </div>
+
+            <!-- Stats Summary Cards Row -->
+            <div class="rooms-stats-bar" id="rooms-stats-bar-container">
+                <div class="stat-card total">
+                    <div class="stat-info">
+                        <span class="stat-name">Tổng phòng</span>
+                        <span class="stat-value" id="stat-val-total">0</span>
+                    </div>
+                    <div class="stat-icon-circle">
+                        <i class="fa-solid fa-hotel"></i>
+                    </div>
+                </div>
+                <div class="stat-card active-rooms">
+                    <div class="stat-info">
+                        <span class="stat-name">Kinh doanh</span>
+                        <span class="stat-value" id="stat-val-active">0</span>
+                    </div>
+                    <div class="stat-icon-circle">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+                <div class="stat-card inactive-rooms">
+                    <div class="stat-info">
+                        <span class="stat-name">Tạm khóa</span>
+                        <span class="stat-value" id="stat-val-inactive">0</span>
+                    </div>
+                    <div class="stat-icon-circle">
+                        <i class="fa-solid fa-circle-minus"></i>
+                    </div>
+                </div>
+                <div class="stat-card ready-rooms">
+                    <div class="stat-info">
+                        <span class="stat-name">Sẵn sàng</span>
+                        <span class="stat-value" id="stat-val-ready">0</span>
+                    </div>
+                    <div class="stat-icon-circle">
+                        <i class="fa-solid fa-door-open"></i>
+                    </div>
+                </div>
+                <div class="stat-card dirty-rooms">
+                    <div class="stat-info">
+                        <span class="stat-name">Cần dọn dẹp</span>
+                        <span class="stat-value" id="stat-val-dirty">0</span>
+                    </div>
+                    <div class="stat-icon-circle">
+                        <i class="fa-solid fa-broom"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll list container -->
+            <div class="rooms-scroll-container" id="rooms-list-scroll">
+                <div class="rooms-grid" id="rooms-grid-container">
+                    <!-- Dynamically Loaded -->
+                    <div style="text-align: center; grid-column: 1/-1; padding: 40px 0; color: var(--text-muted);">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 12px; color: var(--primary);"></i>
+                        <p style="font-size: 13px;">Đang tải danh sách phòng...</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- COLUMN 3: DETAILS & CRUD FORM -->
+        <main class="detail-panel" id="detail-panel-container">
+            <!-- Loaded Dynamically -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); gap: 16px;">
+                <i class="fa-solid fa-hotel" style="font-size: 48px; color: #cbd5e1;"></i>
+                <p style="font-size: 14px; font-weight: 500; text-align: center; padding: 0 32px;">Chọn một phòng từ danh sách bên trái hoặc nhấn nút Thêm Phòng để cấu hình</p>
+            </div>
+        </main>
+
+    </div>
+
+
+
+    <!-- CUSTOM CONFIRM DIALOG -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-icon-circle">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <div class="confirm-title" id="confirm-title">Xác nhận xóa</div>
+            <div class="confirm-message" id="confirm-message">Bạn có chắc chắn muốn xóa phòng này?</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn-cancel" id="confirm-btn-cancel">Hủy bỏ</button>
+                <button class="confirm-btn-ok" id="confirm-btn-ok">Xóa phòng</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Logout click handler
+            const btnLogout = document.getElementById('btn-logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', () => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('checkinXToken');
+                    localStorage.removeItem('checkinXRole');
+                    localStorage.removeItem('staffName');
+                    window.location.href = 'login.html';
+                });
+            }
+            
+            const showConfirm = (title, message, onConfirm) => {
+                const overlay = document.getElementById('confirm-overlay');
+                const titleEl = document.getElementById('confirm-title');
+                const msgEl = document.getElementById('confirm-message');
+                const btnOk = document.getElementById('confirm-btn-ok');
+                const btnCancel = document.getElementById('confirm-btn-cancel');
+
+                if (!overlay) return;
+
+                titleEl.innerText = title;
+                msgEl.innerText = message;
+
+                const close = () => {
+                    overlay.classList.remove('show');
+                };
+
+                const handleOk = () => {
+                    close();
+                    btnOk.removeEventListener('click', handleOk);
+                    btnCancel.removeEventListener('click', handleCancel);
+                    onConfirm();
+                };
+
+                const handleCancel = () => {
+                    close();
+                    btnOk.removeEventListener('click', handleOk);
+                    btnCancel.removeEventListener('click', handleCancel);
+                };
+
+                btnOk.addEventListener('click', handleOk);
+                btnCancel.addEventListener('click', handleCancel);
+
+                overlay.classList.add('show');
+            };
+
+            // Override global alert
+            window.showToast = showToast;
+            window.showConfirm = showConfirm;
+            window.alert = (message) => {
+                let type = 'success';
+                let title = 'Thành công';
+                const lower = message.toLowerCase();
+                if (lower.includes('vui lòng') || lower.includes('bắt buộc') || lower.includes('phải') || lower.includes('chưa chọn') || lower.includes('trống')) {
+                    type = 'warning';
+                    title = 'Cảnh báo';
+                } else if (lower.includes('thất bại') || lower.includes('lỗi') || lower.includes('offline') || lower.includes('không thành công')) {
+                    type = 'danger';
+                    title = 'Thất bại';
+                }
+                showToast(message, type, title);
+            };
+
+            // Authentication & Security checks
+            const jwtToken = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
+            if (!jwtToken) {
+                showToast("Vui lòng đăng nhập hệ thống!", "warning", "Yêu cầu đăng nhập");
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1200);
+                return;
+            }
+
+            // Bind top navigation actions
+            document.getElementById('btn-switch-receptionist').addEventListener('click', () => {
+                window.location.href = 'receptionist-dashboard.html';
+            });
+            document.getElementById('logo-redirect').addEventListener('click', () => {
+                window.location.href = 'admin-dashboard.html';
+            });
+            document.getElementById('btn-profile').addEventListener('click', () => {
+                window.location.href = 'staff-profile.html';
+            });
+
+            // Set user profile avatar initials
+            const staffName = localStorage.getItem('staffName');
+            if (staffName) {
+                const parts = staffName.split(' ');
+                const initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]) : parts[0].substring(0, 2);
+                document.getElementById('btn-profile').innerText = initials.toUpperCase();
+            }
+
+            // Operational states
+            let allRooms = [];
+            let roomTypes = [];
+            let activeRoom = null;
+            let isCreatingNew = false;
+
+            // Filters
+            let filterSearchNumber = '';
+            let filterRoomType = 'all';
+            let filterFloor = 'all';
+            let filterActive = 'all'; // all, active, inactive
+            let filterStatus = 'all'; // all, READY, DIRTY, MAINTENANCE, CHECKED_IN
+
+            const listScrollContainer = document.getElementById('rooms-list-scroll');
+            const roomsGrid = document.getElementById('rooms-grid-container');
+            const detailContainer = document.getElementById('detail-panel-container');
+
+            // --- LOAD ROOM TYPES ---
+            const fetchRoomTypes = async () => {
+                try {
+                    const headers = { 'Authorization': 'Bearer ' + jwtToken };
+                    const res = await fetch('http://localhost:8080/api/admin/room-types?page=0&size=50', { headers }).then(r => r.json());
+                    if (res.success && res.data && res.data.content) {
+                        roomTypes = res.data.content;
+                    }
+                } catch (error) {
+                    console.warn("API Room Types offline. Using mock room types.");
+                }
+
+                if (roomTypes.length === 0) {
+                    roomTypes = [
+                        { id: 1, name: "Deluxe Ocean View" },
+                        { id: 2, name: "Standard City Room" },
+                        { id: 3, name: "Presidential Suite" }
+                    ];
+                }
+
+                // Render in sidebar dropdown filter
+                const selectFilter = document.getElementById('sidebar-filter-type');
+                selectFilter.innerHTML = '<option value="all">Tất cả hạng phòng</option>';
+                roomTypes.forEach(rt => {
+                    selectFilter.innerHTML += `<option value="${rt.id}">${rt.name}</option>`;
+                });
+            };
+
+            // --- LOAD PHYSICAL ROOMS ---
+            const showSkeletonLoading = () => {
+                roomsGrid.innerHTML = Array.from({ length: 6 }, () => `
+                    <div class="skeleton-card">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div class="skeleton-line tall"></div>
+                            <div class="skeleton-line" style="width:22%;height:24px;border-radius:12px"></div>
+                        </div>
+                        <div class="skeleton-line medium"></div>
+                        <div class="skeleton-line long"></div>
+                        <div class="skeleton-line short"></div>
+                        <div style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:4px;display:flex;justify-content:space-between">
+                            <div class="skeleton-line" style="width:30%;height:12px"></div>
+                            <div class="skeleton-line" style="width:20%;height:12px"></div>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            const fetchRooms = async () => {
+                showSkeletonLoading();
+                try {
+                    const headers = { 'Authorization': 'Bearer ' + jwtToken };
+                    const res = await fetch('http://localhost:8080/api/admin/rooms?page=0&size=200&filterActive=all', { headers }).then(r => r.json());
+                    if (res.success && res.data && res.data.content) {
+                        allRooms = res.data.content;
+                        showToast(`Đã tải ${allRooms.length} phòng từ hệ thống`, 'success', 'Tải dữ liệu');
+                    }
+                } catch (error) {
+                    console.warn("Spring Boot Rooms API offline. Loading high-fidelity Mock Rooms data!");
+                }
+
+                if (allRooms.length === 0) {
+                    // Prepopulate with matching beautiful mock rooms
+                    allRooms = [
+                        { id: 10, roomNumber: "101", floor: 1, allocatedFor: "DAILY", status: "READY",       isActive: true,  roomTypeId: 1, roomTypeName: "Deluxe Ocean View" },
+                        { id: 11, roomNumber: "102", floor: 1, allocatedFor: "HOURLY", status: "READY",      isActive: true,  roomTypeId: 2, roomTypeName: "Standard City Room" },
+                        { id: 12, roomNumber: "201", floor: 2, allocatedFor: "DAILY", status: "DIRTY",       isActive: true,  roomTypeId: 2, roomTypeName: "Standard City Room" },
+                        { id: 13, roomNumber: "202", floor: 2, allocatedFor: "DAILY", status: "READY",       isActive: true,  roomTypeId: 1, roomTypeName: "Deluxe Ocean View" },
+                        { id: 14, roomNumber: "301", floor: 3, allocatedFor: "DAILY", status: "MAINTENANCE", isActive: false, roomTypeId: 3, roomTypeName: "Presidential Suite" },
+                        { id: 15, roomNumber: "302", floor: 3, allocatedFor: "HOURLY", status: "CHECKED_IN", isActive: true,  roomTypeId: 1, roomTypeName: "Deluxe Ocean View" },
+                        { id: 16, roomNumber: "401", floor: 4, allocatedFor: "DAILY", status: "READY",       isActive: false, roomTypeId: 3, roomTypeName: "Presidential Suite" },
+                        { id: 17, roomNumber: "402", floor: 4, allocatedFor: "DAILY", status: "DIRTY",       isActive: true,  roomTypeId: 2, roomTypeName: "Standard City Room" },
+                    ];
+                    showToast('Backend offline — đang dùng dữ liệu demo', 'info', 'Chế độ offline');
+                }
+
+                renderRoomsGrid();
+            };
+
+            // --- UPDATE STATS SUMMARY & TAB BADGES ---
+            const updateStatsSummary = () => {
+                const totalCount    = allRooms.length;
+                const activeCount   = allRooms.filter(r => r.isActive === true).length;
+                const inactiveCount = allRooms.filter(r => r.isActive === false).length;
+                const readyCount    = allRooms.filter(r => r.status === 'READY').length;
+                const dirtyCount    = allRooms.filter(r => r.status === 'DIRTY' || r.status === 'MAINTENANCE').length;
+
+                // Update stat cards
+                const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+                set('stat-val-total',    totalCount);
+                set('stat-val-active',   activeCount);
+                set('stat-val-inactive', inactiveCount);
+                set('stat-val-ready',    readyCount);
+                set('stat-val-dirty',    dirtyCount);
+
+                // Update tab count badges
+                set('tab-count-all',      totalCount);
+                set('tab-count-active',   activeCount);
+                set('tab-count-inactive', inactiveCount);
+
+                // Sync tab selected style
+                document.querySelectorAll('.active-tab').forEach(tab => {
+                    const f = tab.dataset.filter;
+                    tab.classList.remove('selected', 'selected-active', 'selected-inactive');
+                    if (f === filterActive) {
+                        if (f === 'active')   tab.classList.add('selected-active');
+                        else if (f === 'inactive') tab.classList.add('selected-inactive');
+                        else                  tab.classList.add('selected');
+                    }
+                });
+            };
+
+            // --- RENDER GRID ---
+            const renderRoomsGrid = () => {
+                updateStatsSummary();
+                // Save current scroll position
+                const savedScrollTop = listScrollContainer.scrollTop;
+                roomsGrid.innerHTML = '';
+
+                // Apply Filters
+                const filtered = allRooms.filter(room => {
+                    const matchSearch = room.roomNumber.toLowerCase().includes(filterSearchNumber.toLowerCase());
+                    const matchType = filterRoomType === 'all' ? true : room.roomTypeId == filterRoomType;
+                    const matchFloor = filterFloor === 'all' ? true : room.floor == filterFloor;
+                    const matchStatus = filterStatus === 'all' ? true : room.status === filterStatus;
+                    
+                    let matchActive = true;
+                    if (filterActive === 'active') matchActive = room.isActive === true;
+                    if (filterActive === 'inactive') matchActive = room.isActive === false;
+
+                    return matchSearch && matchType && matchFloor && matchActive && matchStatus;
+                });
+
+                if (filtered.length === 0) {
+                    roomsGrid.innerHTML = `
+                        <div style="text-align: center; grid-column: 1/-1; padding: 40px 0; color: var(--text-muted);">
+                            <i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 12px; color: #cbd5e1;"></i>
+                            <p style="font-size: 13px;">Không tìm thấy phòng nào khớp với bộ lọc</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                filtered.forEach(room => {
+                    const card = document.createElement('div');
+                    const isActiveCard = activeRoom && activeRoom.id === room.id && !isCreatingNew;
+                    card.className = `room-card ${isActiveCard ? 'active' : ''}`;
+                    
+                    // Style attributes
+                    let statusLabel = 'Sẵn sàng';
+                    let statusClass = 'status-ready';
+                    if (room.status === 'DIRTY') {
+                        statusLabel = 'Phòng bẩn';
+                        statusClass = 'status-dirty';
+                    } else if (room.status === 'MAINTENANCE') {
+                        statusLabel = 'Bảo trì';
+                        statusClass = 'status-maintenance';
+                    } else if (room.status === 'CHECKED_IN') {
+                        statusLabel = 'Đang ở';
+                        statusClass = 'status-checked-in';
+                    }
+
+                    card.innerHTML = `
+                        <div class="card-room-header">
+                            <span class="room-number-badge">Phòng ${room.roomNumber}</span>
+                            <span class="room-status-badge ${statusClass}">${statusLabel}</span>
+                        </div>
+                        <div class="card-room-info">
+                            <div class="info-row">
+                                <span>Hạng phòng:</span>
+                                <span class="info-value">${room.roomTypeName}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Tầng:</span>
+                                <span class="info-value">Tầng ${room.floor}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Mục đích:</span>
+                                <span class="info-value">${room.allocatedFor}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer-row">
+                            <span class="active-dot-label">
+                                <span class="active-dot ${room.isActive ? 'active' : 'inactive'}"></span>
+                                ${room.isActive ? 'Hoạt động' : 'Tạm khóa'}
+                            </span>
+                            <span class="room-type-tag">ID: ${room.id}</span>
+                        </div>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        isCreatingNew = false;
+                        selectRoom(room.id);
+                    });
+
+                    roomsGrid.appendChild(card);
+                });
+
+                // Restore scroll
+                listScrollContainer.scrollTop = savedScrollTop;
+            };
+
+            // --- SELECT ROOM ---
+            const selectRoom = (roomId) => {
+                const room = allRooms.find(r => r.id === roomId);
+                if (!room) return;
+
+                activeRoom = room;
+                renderDetailsPanel();
+                renderRoomsGrid(); // update active styling on card
+            };
+
+            // --- RENDER DETAIL / EDIT SHEET PANEL ---
+            const renderDetailsPanel = () => {
+                const savedScrollTop = detailContainer.scrollTop;
+                detailContainer.innerHTML = '';
+
+                if (isCreatingNew) {
+                    // Create Form
+                    detailContainer.innerHTML = `
+                        <div class="detail-header">
+                            <h2>Thêm Phòng Mới</h2>
+                            <span class="room-type-tag" style="background-color: var(--success-bg); color: var(--success);">Tạo mới</span>
+                        </div>
+                        <div class="detail-scroll-area" id="detail-scroll-pane">
+                            <div class="form-group">
+                                <label class="form-label">Số phòng (Room Number) *</label>
+                                <input type="text" class="form-input" id="edit-room-number" placeholder="Ví dụ: 301, Deluxe01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tầng (Floor) *</label>
+                                <input type="number" class="form-input" id="edit-floor" placeholder="Ví dụ: 1, 2, 3" min="0" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mục đích phân bổ (Allocated For) *</label>
+                                <select class="filter-select" id="edit-allocated-for">
+                                    <option value="DAILY" selected>DAILY (Theo ngày)</option>
+                                    <option value="HOURLY">HOURLY (Theo giờ)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Hạng phòng (Room Type) *</label>
+                                <select class="filter-select" id="edit-room-type-id">
+                                    ${roomTypes.map(rt => `<option value="${rt.id}">${rt.name}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="bottom-action-bar">
+                            <button class="cancel-btn" id="btn-cancel-edit">Hủy bỏ</button>
+                            <div class="right-buttons">
+                                <button class="save-btn" id="btn-save-room">Tạo Phòng</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (activeRoom) {
+                    // Update Form
+                    detailContainer.innerHTML = `
+                        <div class="detail-header">
+                            <h2>Chi tiết Phòng ${activeRoom.roomNumber}</h2>
+                            <span class="room-type-tag">ID: ${activeRoom.id}</span>
+                        </div>
+                        <div class="detail-scroll-area" id="detail-scroll-pane">
+                            <div class="form-group">
+                                <label class="form-label">Số phòng (Room Number) *</label>
+                                <input type="text" class="form-input" id="edit-room-number" value="${activeRoom.roomNumber}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tầng (Floor) *</label>
+                                <input type="number" class="form-input" id="edit-floor" value="${activeRoom.floor}" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mục đích phân bổ (Allocated For) *</label>
+                                <select class="filter-select" id="edit-allocated-for">
+                                    <option value="DAILY" ${activeRoom.allocatedFor === 'DAILY' ? 'selected' : ''}>DAILY (Theo ngày)</option>
+                                    <option value="HOURLY" ${activeRoom.allocatedFor === 'HOURLY' ? 'selected' : ''}>HOURLY (Theo giờ)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Hạng phòng (Room Type) *</label>
+                                <select class="filter-select" id="edit-room-type-id">
+                                    ${roomTypes.map(rt => `<option value="${rt.id}" ${rt.id === activeRoom.roomTypeId ? 'selected' : ''}>${rt.name}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tình trạng phòng (Status) *</label>
+                                <select class="filter-select" id="edit-status">
+                                    <option value="READY" ${activeRoom.status === 'READY' ? 'selected' : ''}>Sẵn sàng (READY)</option>
+                                    <option value="DIRTY" ${activeRoom.status === 'DIRTY' ? 'selected' : ''}>Phòng bẩn (DIRTY)</option>
+                                    <option value="MAINTENANCE" ${activeRoom.status === 'MAINTENANCE' ? 'selected' : ''}>Bảo trì (MAINTENANCE)</option>
+                                    <option value="CHECKED_IN" ${activeRoom.status === 'CHECKED_IN' ? 'selected' : ''}>Đang ở (CHECKED_IN)</option>
+                                </select>
+                            </div>
+                            <div class="switch-container">
+                                <div class="switch-label-block">
+                                    <span class="switch-title">Cho phép kinh doanh</span>
+                                    <span class="switch-desc">Trạng thái phòng hoạt động đón khách</span>
+                                </div>
+                                <label class="ios-switch">
+                                    <input type="checkbox" id="edit-is-active" ${activeRoom.isActive ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="bottom-action-bar">
+                            <button class="delete-btn" id="btn-delete-room">
+                                <i class="fa-solid fa-trash"></i> Xóa phòng
+                            </button>
+                            <div class="right-buttons">
+                                <button class="cancel-btn" id="btn-cancel-edit">Hủy</button>
+                                <button class="save-btn" id="btn-save-room">Cập nhật</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    detailContainer.innerHTML = `
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); gap: 16px;">
+                            <i class="fa-solid fa-hotel" style="font-size: 48px; color: #cbd5e1;"></i>
+                            <p style="font-size: 14px; font-weight: 500; text-align: center; padding: 0 32px;">Chọn một phòng từ danh sách bên trái hoặc nhấn nút Thêm Phòng để cấu hình</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Restore scroll positions
+                const detailScroll = document.getElementById('detail-scroll-pane');
+                if (detailScroll && savedScrollTop) {
+                    detailScroll.scrollTop = savedScrollTop;
+                }
+
+                // Bind Form actions
+                document.getElementById('btn-cancel-edit').addEventListener('click', () => {
+                    isCreatingNew = false;
+                    renderDetailsPanel();
+                    renderRoomsGrid();
+                });
+
+                document.getElementById('btn-save-room').addEventListener('click', saveRoomChanges);
+
+                const deleteBtn = document.getElementById('btn-delete-room');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', deleteRoomHandler);
+                }
+            };
+
+            // --- CREATE OR UPDATE OPERATION ---
+            const saveRoomChanges = async () => {
+                const roomNumber = document.getElementById('edit-room-number').value.trim();
+                const floor = parseInt(document.getElementById('edit-floor').value);
+                const allocatedFor = document.getElementById('edit-allocated-for').value.trim();
+                const roomTypeId = parseInt(document.getElementById('edit-room-type-id').value);
+
+                if (!roomNumber) {
+                    alert("Số phòng không được bỏ trống!");
+                    return;
+                }
+                if (isNaN(floor) || floor < 0) {
+                    alert("Tầng phải là số nguyên lớn hơn hoặc bằng 0!");
+                    return;
+                }
+                if (!allocatedFor) {
+                    alert("Mục đích phân bổ không được bỏ trống!");
+                    return;
+                }
+
+                const selectedType = roomTypes.find(rt => rt.id === roomTypeId);
+                const roomTypeName = selectedType ? selectedType.name : "Unknown Hạng phòng";
+
+                const headers = {
+                    'Authorization': 'Bearer ' + jwtToken,
+                    'Content-Type': 'application/json'
+                };
+
+                if (isCreatingNew) {
+                    // ================= POST CREATE =================
+                    const payload = { roomTypeId, roomNumber, floor, allocatedFor };
+                    try {
+                        const res = await fetch('http://localhost:8080/api/admin/rooms', {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify(payload)
+                        }).then(r => r.json());
+
+                        if (res.success && res.data) {
+                            showToast("Tạo phòng mới thành công!", "success");
+                            allRooms.push(res.data);
+                            isCreatingNew = false;
+                            selectRoom(res.data.id);
+                        } else {
+                            alert(res.message || "Tạo phòng mới thất bại!");
+                        }
+                    } catch (error) {
+                        console.warn("Spring Boot offline. Save locally!");
+                        const localNewId = Date.now();
+                        const localNewRoom = {
+                            id: localNewId,
+                            roomNumber,
+                            floor,
+                            allocatedFor,
+                            status: "READY",
+                            isActive: true,
+                            roomTypeId,
+                            roomTypeName
+                        };
+                        allRooms.push(localNewRoom);
+                        showToast("Đang offline: Đã tạo phòng cục bộ thành công!", "info");
+                        isCreatingNew = false;
+                        selectRoom(localNewId);
+                    }
+                } else if (activeRoom) {
+                    // ================= PUT UPDATE =================
+                    const status = document.getElementById('edit-status').value;
+                    const isActive = document.getElementById('edit-is-active').checked;
+
+                    const payload = { roomTypeId, roomNumber, floor, allocatedFor, status, isActive };
+                    try {
+                        const res = await fetch(`http://localhost:8080/api/admin/rooms/${activeRoom.id}`, {
+                            method: 'PUT',
+                            headers,
+                            body: JSON.stringify(payload)
+                        }).then(r => r.json());
+
+                        if (res.success && res.data) {
+                            showToast("Cập nhật phòng thành công!", "success");
+                            const index = allRooms.findIndex(r => r.id === activeRoom.id);
+                            if (index !== -1) {
+                                allRooms[index] = res.data;
+                            }
+                            selectRoom(res.data.id);
+                        } else {
+                            alert(res.message || "Cập nhật thất bại!");
+                        }
+                    } catch (error) {
+                        console.warn("Spring Boot offline. Update locally!");
+                        const index = allRooms.findIndex(r => r.id === activeRoom.id);
+                        if (index !== -1) {
+                            allRooms[index] = {
+                                ...activeRoom,
+                                roomNumber,
+                                floor,
+                                allocatedFor,
+                                roomTypeId,
+                                roomTypeName,
+                                status,
+                                isActive
+                            };
+                            showToast("Đang offline: Cập nhật phòng cục bộ thành công!", "info");
+                            selectRoom(activeRoom.id);
+                        }
+                    }
+                }
+            };
+
+            // --- DELETE OPERATION ---
+            const deleteRoomHandler = () => {
+                if (!activeRoom) return;
+
+                showConfirm(
+                    `Xóa Phòng ${activeRoom.roomNumber}`,
+                    `Bạn có chắc chắn muốn xóa Phòng ${activeRoom.roomNumber} khỏi hệ thống? Hành động này không thể hoàn tác.`,
+                    async () => {
+                        const headers = { 'Authorization': 'Bearer ' + jwtToken };
+                        try {
+                            const res = await fetch(`http://localhost:8080/api/admin/rooms/${activeRoom.id}`, {
+                                method: 'DELETE',
+                                headers
+                            }).then(r => r.json());
+
+                            if (res.success) {
+                                showToast("Xóa phòng thành công!", "success");
+                                allRooms = allRooms.filter(r => r.id !== activeRoom.id);
+                                activeRoom = null;
+                                renderDetailsPanel();
+                                renderRoomsGrid();
+                            } else {
+                                alert(res.message || "Xóa phòng thất bại!");
+                            }
+                        } catch (error) {
+                            console.warn("Spring Boot offline. Delete locally!");
+                            allRooms = allRooms.filter(r => r.id !== activeRoom.id);
+                            showToast("Đang offline: Đã xóa phòng cục bộ thành công!", "info");
+                            activeRoom = null;
+                            renderDetailsPanel();
+                            renderRoomsGrid();
+                        }
+                    }
+                );
+            };
+
+            // Bind filters
+            document.getElementById('sidebar-search-number').addEventListener('input', (e) => {
+                filterSearchNumber = e.target.value;
+                renderRoomsGrid();
+            });
+
+            document.getElementById('sidebar-filter-type').addEventListener('change', (e) => {
+                filterRoomType = e.target.value;
+                renderRoomsGrid();
+            });
+
+            document.getElementById('sidebar-filter-floor').addEventListener('change', (e) => {
+                filterFloor = e.target.value;
+                renderRoomsGrid();
+            });
+
+            document.getElementById('sidebar-filter-status').addEventListener('change', (e) => {
+                filterStatus = e.target.value;
+                renderRoomsGrid();
+            });
+
+            // Bind Tab Bar — is_active filter
+            document.querySelectorAll('.active-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    filterActive = tab.dataset.filter; // 'all' | 'active' | 'inactive'
+                    renderRoomsGrid();
+                });
+            });
+
+            // Bind "Thêm Phòng" button click
+            document.getElementById('btn-add-room').addEventListener('click', () => {
+                isCreatingNew = true;
+                activeRoom = null;
+                renderDetailsPanel();
+                renderRoomsGrid();
+            });
+
+            // --- INITIALIZE ---
+            const init = async () => {
+                await fetchRoomTypes();
+                await fetchRooms();
+            };
+
+            init();
+        });
+    </script>
+
+    <!-- CheckinX Style Unification & Smart Toast Alert Overrides -->
+    <script>
+        (function() {
+            if (window.alertOverridden) return;
+            window.alertOverridden = true;
+
+            // 1. Tự động tiêm Google Font Outfit nếu chưa có
+            if (!document.querySelector('link[href*="Outfit"]')) {
+                const linkPreconnect1 = document.createElement('link');
+                linkPreconnect1.rel = 'preconnect';
+                linkPreconnect1.href = 'https://fonts.googleapis.com';
+                document.head.appendChild(linkPreconnect1);
+
+                const linkPreconnect2 = document.createElement('link');
+                linkPreconnect2.rel = 'preconnect';
+                linkPreconnect2.href = 'https://fonts.gstatic.com';
+                linkPreconnect2.crossOrigin = 'anonymous';
+                document.head.appendChild(linkPreconnect2);
+
+                const linkFont = document.createElement('link');
+                linkFont.rel = 'stylesheet';
+                linkFont.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
+                document.head.appendChild(linkFont);
+            }
+
+            // 2. Ép font-family Outfit cho toàn bộ trang
+            const styleElement = document.createElement('style');
+            styleElement.id = 'checkinx-unified-styles';
+            styleElement.innerHTML = `
+                body, html, input, select, textarea, button {
+                    font-family: 'Outfit', sans-serif !important;
+                }
+                #toast-container {
+                    position: fixed;
+                    top: 1rem;
+                    right: 1rem;
+                    z-index: 99999;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    pointer-events: none;
+                }
+                .toast-item {
+                    pointer-events: auto;
+                    animation: toastSlideIn 0.3s ease-out forwards;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                    transition: all 0.3s ease;
+                }
+                @keyframes toastSlideIn {
+                    from { transform: translateX(120%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                /* Tailwind utility overrides for pages without Tailwind loaded */
+                .toast-item.flex { display: flex !important; }
+                .toast-item.items-center { align-items: center !important; }
+                .toast-item.gap-3 { gap: 0.75rem !important; }
+                .toast-item.px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .toast-item.py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+                .toast-item.rounded-2xl { border-radius: 1rem !important; }
+                .toast-item.border { border: 1px solid rgba(226, 232, 240, 0.8) !important; }
+                .toast-item.text-xs { font-size: 0.75rem !important; }
+                .toast-item.font-semibold { font-weight: 600 !important; }
+                .toast-item.bg-white { background-color: #ffffff !important; }
+                .toast-item.text-emerald-800 { color: #065f46 !important; }
+                .toast-item.border-emerald-100 { border-color: #a7f3d0 !important; }
+                .toast-item.bg-emerald-50\/95 { background-color: rgba(240, 253, 250, 0.95) !important; }
+                .toast-item.text-blue-800 { color: #1e40af !important; }
+                .toast-item.border-blue-100 { border-color: #bfdbfe !important; }
+                .toast-item.bg-blue-50\/95 { background-color: rgba(239, 246, 255, 0.95) !important; }
+                .toast-item.text-red-800 { color: #991b1b !important; }
+                .toast-item.border-red-100 { border-color: #fecaca !important; }
+                .toast-item.bg-red-50\/95 { background-color: rgba(254, 242, 242, 0.95) !important; }
+                .toast-item.text-amber-800 { color: #92400e !important; }
+                .toast-item.border-amber-100 { border-color: #fde68a !important; }
+                .toast-item.bg-amber-50\/95 { background-color: rgba(255, 251, 235, 0.95) !important; }
+                .toast-item.backdrop-blur-sm { backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important; }
+                .toast-item .flex-1 { flex: 1 1 0% !important; }
+            `;
+            document.head.appendChild(styleElement);
+
+            // 3. Tự động tiêm toast-container vào body
+            function injectToastContainer() {
+                if (!document.getElementById('toast-container')) {
+                    const container = document.createElement('div');
+                    container.id = 'toast-container';
+                    container.className = 'flex flex-col gap-2';
+                    document.body.appendChild(container);
+                }
+            }
+
+            if (document.body) {
+                injectToastContainer();
+            } else {
+                window.addEventListener('DOMContentLoaded', injectToastContainer);
+            }
+
+            // 4. Định nghĩa hàm showToast mượt mà cao cấp
+            window.showToast = function(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                
+                let bgClass = 'text-emerald-800 border-emerald-100 bg-emerald-50/95 backdrop-blur-sm';
+                let icon = '<i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>';
+                
+                if (type === 'info') {
+                    bgClass = 'text-blue-800 border-blue-100 bg-blue-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-info text-blue-500 text-lg"></i>';
+                } else if (type === 'error') {
+                    bgClass = 'text-red-800 border-red-100 bg-red-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-xmark text-red-500 text-lg"></i>';
+                } else if (type === 'warning') {
+                    bgClass = 'text-amber-800 border-amber-100 bg-amber-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg"></i>';
+                }
+
+                toast.className = `toast-item flex items-center gap-3 px-4 py-3 rounded-2xl border text-xs font-semibold bg-white ${bgClass}`;
+                toast.innerHTML = `${icon} <span class="flex-1">${message}</span>`;
+                
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'scale(0.9) translateX(20px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            };
+
+            // 5. Ghi đè hàm alert() truyền thống
+            window.alert = function(message) {
+                if (!message) return;
+                const msgStr = String(message);
+                
+                // Phân loại màu thông báo dựa trên từ khóa
+                let type = 'info';
+                const msgLower = msgStr.toLowerCase();
+                if (msgLower.includes('thành công') || msgLower.includes('success') || msgLower.includes('hoàn tất') || msgLower.includes('đăng nhập thành công') || msgLower.includes('đăng ký thành công')) {
+                    type = 'success';
+                } else if (msgLower.includes('lỗi') || msgLower.includes('thất bại') || msgLower.includes('error') || msgLower.includes('hỏng') || msgLower.includes('không thể') || msgLower.includes('chưa') || msgLower.includes('không đúng') || msgLower.includes('không tìm thấy')) {
+                    type = 'error';
+                } else if (msgLower.includes('cảnh báo') || msgLower.includes('chú ý') || msgLower.includes('warning') || msgLower.includes('vui lòng') || msgLower.includes('yêu cầu') || msgLower.includes('hết hạn')) {
+                    type = 'warning';
+                }
+
+                window.showToast(msgStr, type);
+                console.log("CheckinX Smart Toast: Đã đánh chặn alert ->", msgStr);
+            };
+        })();
+    </script>
+
+</body>
+</html>

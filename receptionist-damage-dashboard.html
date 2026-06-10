@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Bồi Thường Hư Hỏng - CheckinX</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #5c3b9e;
+            --primary-light: #f3effb;
+            --primary-dark: #472b7d;
+            --white: #ffffff;
+            --gray-bg: #f8f9fa;
+            --border-color: #eef0f2;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--gray-bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--white);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .create-btn-container {
+            padding: 20px 24px 10px;
+        }
+
+        .btn-create {
+            width: 100%;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-create:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .nav-menu {
+            padding: 10px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        /* Sidebar Footer & Logout Button styling */
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        #btn-logout {
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--danger) !important;
+            font-weight: 500;
+            font-size: 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        #btn-logout:hover {
+            background-color: var(--danger-bg) !important;
+            color: var(--danger) !important;
+        }
+
+        #btn-logout i {
+            color: var(--danger) !important;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Wrapper */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* Header */
+        .header {
+            height: 70px;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--gray-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            width: 320px;
+            gap: 10px;
+        }
+
+        .search-bar i {
+            color: var(--text-muted);
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 14px;
+            width: 100%;
+            color: var(--text-main);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        .header-icons i {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .header-icons i:hover {
+            color: var(--primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Content Area */
+        .content {
+            padding: 32px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Split Layout Grid */
+        .split-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            flex: 1;
+            min-height: 550px;
+        }
+
+        .panel-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        /* Booking List left side */
+        .booking-list-container {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 4px;
+        }
+
+        .booking-item-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .booking-item-card:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .booking-item-card.active {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+            box-shadow: 0 2px 4px rgba(92, 59, 158, 0.08);
+        }
+
+        .card-header-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .booking-id-tag {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--primary);
+        }
+
+        .room-number-badge {
+            background-color: var(--primary);
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .card-customer-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .card-customer-phone {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .card-warning-tag {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--danger);
+            background-color: var(--danger-bg);
+            padding: 2px 8px;
+            border-radius: 12px;
+            align-self: flex-start;
+            margin-top: 4px;
+        }
+
+        /* Detail panel right side */
+        .detail-panel-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            color: var(--text-muted);
+            gap: 16px;
+        }
+
+        .detail-panel-placeholder i {
+            font-size: 48px;
+            color: #cbd5e1;
+        }
+
+        .detail-container {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .detail-header-block {
+            background-color: var(--gray-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .detail-guest-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-guest-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .detail-total-block {
+            text-align: right;
+        }
+
+        .detail-total-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .detail-total-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--danger);
+        }
+
+        /* Damages Items Grid */
+        .damages-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .damage-item-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            gap: 16px;
+            background-color: var(--white);
+            transition: all 0.2s;
+        }
+
+        .damage-item-card:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border-color: #cbd5e1;
+        }
+
+        .evidence-thumbnail-container {
+            width: 90px;
+            height: 90px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+            cursor: pointer;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .evidence-thumbnail-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .evidence-no-img {
+            font-size: 24px;
+            color: #94a3b8;
+        }
+
+        .evidence-zoom-hover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .evidence-thumbnail-container:hover .evidence-zoom-hover {
+            opacity: 1;
+        }
+
+        .damage-item-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .damage-item-title-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .damage-item-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .damage-item-qty {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .damage-item-fee {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--danger);
+        }
+
+        .damage-item-note {
+            font-size: 12px;
+            color: #475569;
+            background-color: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #94a3b8;
+            margin-top: 8px;
+        }
+
+        .action-container {
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-pay-damage {
+            background-color: var(--success);
+            color: var(--white);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-pay-damage:hover {
+            filter: brightness(0.95);
+            transform: translateY(-1px);
+        }
+
+        /* Overlay modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 420px;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+            background-color: var(--white);
+            color: var(--text-main);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-status-msg {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+        }
+
+        .modal-footer-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* Image modal */
+        .image-modal-content {
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background-color: var(--white);
+            position: relative;
+        }
+
+        .image-modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h1>CheckinX</h1>
+            <p>Hotel Management System</p>
+        </div>
+        <div class="create-btn-container">
+            <button id="btn-create-new" class="btn-create"><i class="fa-solid fa-plus"></i> Tạo mới</button>
+        </div>
+        <div class="nav-menu">
+            <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-border-all"></i> Tổng quan</a>
+            <a href="receptionist-room-dashboard.html" class="nav-item"><i class="fa-solid fa-table-cells-large"></i> Sơ đồ phòng</a>
+            <a href="receptionist-book-dashboard.html" class="nav-item"><i class="fa-regular fa-calendar-check"></i> Đặt phòng</a>
+            <a href="admin-schedule-dashborad.html" class="nav-item"><i class="fa-regular fa-clock"></i> Timeline</a>
+            <a href="admin-ota-booking.html" class="nav-item"><i class="fa-solid fa-globe"></i> Kênh bán</a>
+            <a href="admin-payment-dashboard.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Giao dịch</a>
+            <a href="receptionist-damage-dashboard.html" class="nav-item active"><i class="fa-solid fa-triangle-exclamation"></i> Đền bù</a>
+            <a href="admin-room-dashboard.html" class="nav-item"><i class="fa-solid fa-hotel"></i> Phòng</a>
+            <a href="admin-room-type-dashboard.html" class="nav-item"><i class="fa-solid fa-layer-group"></i> Loại Phòng</a>
+            <a href="admin-hotel-dashboard.html" class="nav-item"><i class="fa-solid fa-gear"></i> Cài đặt</a>
+        </div>
+        <div class="sidebar-footer">
+            <button id="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <div class="header">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="panel-search-input" placeholder="Tìm tên khách, số phòng...">
+            </div>
+            <div class="header-actions">
+                
+                <button id="btn-admin-dashboard" class="btn-admin-switch" style="display: none; background: var(--primary-light); border: 1.5px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; align-items: center; gap: 8px; margin-right: 12px;" onclick="window.location.href='admin-dashboard.html'">
+                    <i class="fa-solid fa-arrow-left"></i> Về Admin Dashboard
+                </button>
+                <button id="btn-quick-checkin" class="btn-primary">Quick Check-in</button>
+                <div class="header-icons">
+                    <i class="fa-regular fa-bell"></i>
+                    <i class="fa-solid fa-location-dot"></i>
+                    <a href="staff-profile.html" class="user-avatar" style="text-decoration: none; color: inherit;">
+                        <i class="fa-regular fa-user"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="page-title">
+                <h2 style="font-size: 24px; font-weight: 700; font-family: 'Outfit'; color: var(--text-main);">Quản lý Bồi Thường Hư Hỏng</h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Tính toán và thanh toán chi phí đền bù hỏng/mất vật dụng buồng phòng từ Cleaner gửi lên.</p>
+            </div>
+
+            <!-- Split Panel Grid -->
+            <div class="split-layout">
+                <!-- Left panel list of CHECKED_DAMAGE_ROOM bookings -->
+                <div class="panel-card">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                        <span>Danh sách chờ đền bù</span>
+                    </div>
+                    <div class="booking-list-container" id="bookings-waiting-list">
+                        <!-- Bookings will be loaded here dynamically -->
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 8px; color: var(--primary);"></i>
+                            <p>Đang tải danh sách...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right panel booking damage detail details -->
+                <div class="panel-card" style="flex: 1;">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>Chi tiết kiểm kê đền bù</span>
+                    </div>
+
+                    <!-- Placeholder before selection -->
+                    <div class="detail-panel-placeholder" id="details-placeholder">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        <p style="font-size: 14px; font-weight: 500;">Vui lòng chọn một phòng bên trái để xem chi tiết hư hại bồi thường</p>
+                    </div>
+
+                    <!-- Details Box -->
+                    <div class="detail-container" id="details-container">
+                        <!-- Header Guest Information -->
+                        <div class="detail-header-block">
+                            <div class="detail-guest-info">
+                                <div class="detail-guest-name" id="det-guest-name">Alex M.</div>
+                                <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;" id="det-guest-phone">SĐT: 0987-xxx-xxx</div>
+                                <div style="font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px;" id="det-booking-id">Đặt phòng: #7721</div>
+                            </div>
+                            <div class="detail-total-block">
+                                <div class="detail-total-label">TỔNG PHÍ BỒI THƯỜNG</div>
+                                <div class="detail-total-value" id="det-total-fee">4.800.000đ</div>
+                            </div>
+                        </div>
+
+                        <!-- Damage items listing -->
+                        <div class="damages-grid" id="details-damages-list">
+                            <!-- Items will be loaded dynamically -->
+                        </div>
+
+                        <!-- Action footer checkout button -->
+                        <div class="action-container">
+                            <button class="btn-pay-damage" id="btn-trigger-payment">
+                                <i class="fa-solid fa-credit-card"></i>
+                                Thanh Toán Bồi Thường & Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Damage Payment Modal -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Thanh toán bồi thường</h3>
+                <button class="modal-close" id="btn-close-payment-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="payment-form" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div class="form-group">
+                        <label>MÃ ĐẶT PHÒNG</label>
+                        <input type="text" id="pay-booking-id" class="form-input" disabled style="background-color: #f1f5f9; font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                        <label>SỐ TIỀN THANH TOÁN (PHÍ DAMAGE)</label>
+                        <input type="text" id="pay-amount" class="form-input" disabled style="background-color: #f1f5f9; font-weight: 700; color: var(--danger);">
+                    </div>
+                    <div class="form-group">
+                        <label>PHƯƠNG THỨC THANH TOÁN</label>
+                        <select id="pay-method" class="form-input" style="font-weight: 600;">
+                            <option value="CASH">Tiền mặt (CASH)</option>
+                            <option value="ONLINE">Chuyển khoản / Quẹt thẻ (ONLINE)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>GHI CHÚ HÓA ĐƠN</label>
+                        <input type="text" id="pay-notes" class="form-input" placeholder="VD: Khách bồi thường tiền mặt tại quầy">
+                    </div>
+                    <div class="modal-status-msg" id="pay-status-msg"></div>
+                </form>
+            </div>
+            <div class="modal-footer-btns">
+                <button id="btn-confirm-submit-payment" class="btn-primary" style="width: 100%; padding: 12px; font-weight: 700;">Xác nhận & Hoàn tất Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image lightbox modal -->
+    <div class="modal-overlay" id="image-modal" style="background: rgba(0,0,0,0.8);">
+        <div class="image-modal-content">
+            <button class="modal-close" id="btn-close-image-modal" style="color: black; background: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; top: 10px; right: 10px;">&times;</button>
+            <img id="image-lightbox-src" src="" alt="Evidence Image">
+        </div>
+    </div>
+
+    <!-- Core Logic JavaScript -->
+    <script>
+        const jwtToken = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
+        if (!jwtToken) {
+            window.location.href = 'login.html';
+        }
+
+        let selectedBookingId = null;
+        let selectedTotalFee = 0;
+        let allWaitingBookings = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Role check to display Về Admin Dashboard button
+            const userRole = localStorage.getItem('checkinXRole') || '';
+            const btnAdmin = document.getElementById('btn-admin-dashboard');
+            if (btnAdmin && userRole.toUpperCase() === 'ADMIN') {
+                btnAdmin.style.display = 'inline-flex';
+            }
+
+            // Safe alias for CheckinX Smart Toast
+            const showToast = (message, type = 'success') => window.showToast ? window.showToast(message, type) : console.log(message, type);
+            // --- Logout Logic ---
+            const btnLogout = document.getElementById('btn-logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', () => {
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = 'login.html';
+                });
+            }
+            loadWaitingBookings();
+
+            // Setup Event Handlers
+            document.getElementById('btn-close-payment-modal').addEventListener('click', () => {
+                document.getElementById('payment-modal').style.display = 'none';
+            });
+
+            document.getElementById('btn-close-image-modal').addEventListener('click', () => {
+                document.getElementById('image-modal').style.display = 'none';
+            });
+
+            document.getElementById('btn-trigger-payment').addEventListener('click', () => {
+                if (!selectedBookingId) return;
+                
+                document.getElementById('pay-booking-id').value = `#${selectedBookingId}`;
+                document.getElementById('pay-amount').value = formatMoney(selectedTotalFee);
+                document.getElementById('pay-notes').value = `Thu phí bồi thường hư hại phòng vật dụng cho booking #${selectedBookingId}`;
+                document.getElementById('pay-status-msg').style.display = 'none';
+                
+                document.getElementById('payment-modal').style.display = 'flex';
+            });
+
+            document.getElementById('btn-confirm-submit-payment').addEventListener('click', submitDamagePayment);
+
+            // Left panel search filter
+            document.getElementById('panel-search-input').addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase().trim();
+                filterAndRenderLeftList(keyword);
+            });
+        });
+
+        // 1. Fetch Bookings list with status CHECKED_DAMAGE_ROOM
+        async function loadWaitingBookings() {
+            const listContainer = document.getElementById('bookings-waiting-list');
+            try {
+                // Fetch page 0 to 100 to get a large set of active bookings
+                const response = await fetch('http://localhost:8080/api/receptionist/bookings?page=0&size=100', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + jwtToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const result = await response.json();
+
+                if (result.success && result.data && result.data.content) {
+                    // Filter bookings that are waiting for damage checks
+                    allWaitingBookings = result.data.content.filter(b => b.status === 'CHECKED_DAMAGE_ROOM');
+                    renderLeftList(allWaitingBookings);
+                } else {
+                    listContainer.innerHTML = '<div style="text-align:center; color:var(--danger); padding:20px;">Tải danh sách thất bại!</div>';
+                }
+            } catch (error) {
+                console.error("Error loading bookings:", error);
+                listContainer.innerHTML = '<div style="text-align:center; color:var(--danger); padding:20px;">Lỗi kết nối máy chủ!</div>';
+            }
+        }
+
+        // 2. Render Left bookings list
+        function renderLeftList(bookingsList) {
+            const listContainer = document.getElementById('bookings-waiting-list');
+            if (bookingsList.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align:center; padding: 40px 10px; color: var(--text-muted);">
+                        <i class="fa-solid fa-circle-check" style="font-size: 32px; color: var(--success); margin-bottom: 8px;"></i>
+                        <p style="font-size: 13px; font-weight: 600;">Không có phòng nào đang chờ đền bù</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            bookingsList.forEach(bk => {
+                const isActive = bk.id === selectedBookingId ? 'active' : '';
+                html += `
+                    <div class="booking-item-card ${isActive}" onclick="selectBooking(${bk.id})">
+                        <div class="card-header-line">
+                            <span class="booking-id-tag">Đặt phòng #${bk.id}</span>
+                            <span class="room-number-badge">${bk.roomTypeName || 'Phòng'}</span>
+                        </div>
+                        <div class="card-customer-name">${bk.customerName}</div>
+                        <div class="card-customer-phone">${bk.customerPhone}</div>
+                        <div class="card-warning-tag"><i class="fa-solid fa-triangle-exclamation"></i> Cleaner phát hiện hư hại</div>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        // 3. Filter left list by input search
+        function filterAndRenderLeftList(keyword) {
+            if (!keyword) {
+                renderLeftList(allWaitingBookings);
+                return;
+            }
+            const filtered = allWaitingBookings.filter(b => 
+                b.id.toString().includes(keyword) || 
+                b.customerName.toLowerCase().includes(keyword) || 
+                b.customerPhone.includes(keyword)
+            );
+            renderLeftList(filtered);
+        }
+
+        // 4. Select a booking and query detail damages
+        async function selectBooking(bookingId) {
+            selectedBookingId = bookingId;
+            
+            // Re-render list to highlight selected card
+            filterAndRenderLeftList(document.getElementById('panel-search-input').value.toLowerCase().trim());
+
+            const placeholder = document.getElementById('details-placeholder');
+            const detailContainer = document.getElementById('details-container');
+            const damagesListEl = document.getElementById('details-damages-list');
+            
+            placeholder.style.display = 'none';
+            detailContainer.style.display = 'none';
+            
+            damagesListEl.innerHTML = '<div style="text-align:center; padding: 40px;"><i class="fa-solid fa-spinner fa-spin" style="font-size:24px; color:var(--primary);"></i></div>';
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/receptionist/bookings/${bookingId}/damages`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + jwtToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const data = result.data;
+                    selectedTotalFee = data.totalDamageFee;
+
+                    // Update UI Details
+                    document.getElementById('det-guest-name').innerText = data.customerName;
+                    document.getElementById('det-guest-phone').innerText = `SĐT: ${data.customerPhone}`;
+                    document.getElementById('det-booking-id').innerText = `Mã đặt phòng: #${data.bookingId} (Số phòng: ${data.roomNumber})`;
+                    document.getElementById('det-total-fee').innerText = formatMoney(data.totalDamageFee);
+
+                    // Render damage items
+                    let itemsHtml = '';
+                    if (!data.damages || data.damages.length === 0) {
+                        itemsHtml = '<div style="text-align:center; padding:30px; color:var(--text-muted);">Không có báo cáo kê khai hư hại nào cho phòng này!</div>';
+                    } else {
+                        data.damages.forEach(d => {
+                            let evidenceHtml = `
+                                <div class="evidence-thumbnail-container" style="cursor: default;">
+                                    <i class="fa-regular fa-image evidence-no-img"></i>
+                                </div>
+                            `;
+                            if (d.evidenceImageUrl) {
+                                evidenceHtml = `
+                                    <div class="evidence-thumbnail-container" onclick="openImageLightbox('${d.evidenceImageUrl}')">
+                                        <img src="${d.evidenceImageUrl}" alt="Evidence thumbnail">
+                                        <div class="evidence-zoom-hover"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                                    </div>
+                                `;
+                            }
+
+                            itemsHtml += `
+                                <div class="damage-item-card">
+                                    ${evidenceHtml}
+                                    <div class="damage-item-body">
+                                        <div class="damage-item-title-line">
+                                            <div>
+                                                <div class="damage-item-name">${d.itemName}</div>
+                                                <div class="damage-item-qty">Số lượng báo hỏng: <strong style="color:var(--text-main); font-size:13px;">${d.quantity} cái</strong></div>
+                                            </div>
+                                            <div class="damage-item-fee">${formatMoney(d.actualDamageFee)}</div>
+                                        </div>
+                                        ${d.note ? `<div class="damage-item-note"><strong>Cleaner ghi chú:</strong> "${d.note}"</div>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    damagesListEl.innerHTML = itemsHtml;
+                    detailContainer.style.display = 'flex';
+                } else {
+                    placeholder.style.display = 'flex';
+                    placeholder.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:var(--danger)"></i><p style="color:var(--danger)">Lỗi tải dữ liệu: ${result.message}</p>`;
+                }
+            } catch (error) {
+                console.error("Error loading damage details:", error);
+                placeholder.style.display = 'flex';
+                placeholder.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:var(--danger)"></i><p style="color:var(--danger)">Lỗi kết nối máy chủ!</p>';
+            }
+        }
+
+        // 5. Submit damage payment and complete checkout
+        async function submitDamagePayment() {
+            const btnSubmit = document.getElementById('btn-confirm-submit-payment');
+            const statusMsg = document.getElementById('pay-status-msg');
+            const method = document.getElementById('pay-method').value;
+            const notes = document.getElementById('pay-notes').value;
+
+            statusMsg.style.display = 'block';
+            statusMsg.style.backgroundColor = '#eff6ff';
+            statusMsg.style.color = '#1d4ed8';
+            statusMsg.innerText = 'Đang xử lý giao dịch thanh toán...';
+
+            btnSubmit.disabled = true;
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/receptionist/bookings/${selectedBookingId}/pay-damages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + jwtToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        paymentMethod: method,
+                        notes: notes
+                    })
+                });
+                const result = await response.json();
+
+                if (response.ok || result.success) {
+                    statusMsg.style.backgroundColor = '#d1fae5';
+                    statusMsg.style.color = '#047857';
+                    statusMsg.innerText = 'Thanh toán đền bù thành công! Đã hoàn tất check-out phòng.';
+
+                    setTimeout(() => {
+                        document.getElementById('payment-modal').style.display = 'none';
+                        selectedBookingId = null;
+                        document.getElementById('details-placeholder').style.display = 'flex';
+                        document.getElementById('details-container').style.display = 'none';
+                        loadWaitingBookings(); // Reload left panel list
+                    }, 1800);
+                } else {
+                    statusMsg.style.backgroundColor = '#fee2e2';
+                    statusMsg.style.color = '#b91c1c';
+                    statusMsg.innerText = result.message || 'Lỗi khi thanh toán!';
+                    btnSubmit.disabled = false;
+                }
+            } catch (error) {
+                console.error("Payment submit error:", error);
+                statusMsg.style.backgroundColor = '#fee2e2';
+                statusMsg.style.color = '#b91c1c';
+                statusMsg.innerText = 'Lỗi kết nối đến máy chủ!';
+                btnSubmit.disabled = false;
+            }
+        }
+
+        // Image zoom lightbox handler
+        function openImageLightbox(url) {
+            document.getElementById('image-lightbox-src').src = url;
+            document.getElementById('image-modal').style.display = 'flex';
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('vi-VN').format(amount) + ' đồng';
+        }
+    </script>
+
+    <!-- CheckinX Style Unification & Smart Toast Alert Overrides -->
+    <script>
+        (function() {
+            if (window.alertOverridden) return;
+            window.alertOverridden = true;
+
+            // 1. Tự động tiêm Google Font Outfit nếu chưa có
+            if (!document.querySelector('link[href*="Outfit"]')) {
+                const linkPreconnect1 = document.createElement('link');
+                linkPreconnect1.rel = 'preconnect';
+                linkPreconnect1.href = 'https://fonts.googleapis.com';
+                document.head.appendChild(linkPreconnect1);
+
+                const linkPreconnect2 = document.createElement('link');
+                linkPreconnect2.rel = 'preconnect';
+                linkPreconnect2.href = 'https://fonts.gstatic.com';
+                linkPreconnect2.crossOrigin = 'anonymous';
+                document.head.appendChild(linkPreconnect2);
+
+                const linkFont = document.createElement('link');
+                linkFont.rel = 'stylesheet';
+                linkFont.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
+                document.head.appendChild(linkFont);
+            }
+
+            // 2. Ép font-family Outfit cho toàn bộ trang
+            const styleElement = document.createElement('style');
+            styleElement.id = 'checkinx-unified-styles';
+            styleElement.innerHTML = `
+                body, html, input, select, textarea, button {
+                    font-family: 'Outfit', sans-serif !important;
+                }
+                #toast-container {
+                    position: fixed;
+                    top: 1rem;
+                    right: 1rem;
+                    z-index: 99999;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    pointer-events: none;
+                }
+                .toast-item {
+                    pointer-events: auto;
+                    animation: toastSlideIn 0.3s ease-out forwards;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                    transition: all 0.3s ease;
+                }
+                @keyframes toastSlideIn {
+                    from { transform: translateX(120%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                /* Tailwind utility overrides for pages without Tailwind loaded */
+                .toast-item.flex { display: flex !important; }
+                .toast-item.items-center { align-items: center !important; }
+                .toast-item.gap-3 { gap: 0.75rem !important; }
+                .toast-item.px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .toast-item.py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+                .toast-item.rounded-2xl { border-radius: 1rem !important; }
+                .toast-item.border { border: 1px solid rgba(226, 232, 240, 0.8) !important; }
+                .toast-item.text-xs { font-size: 0.75rem !important; }
+                .toast-item.font-semibold { font-weight: 600 !important; }
+                .toast-item.bg-white { background-color: #ffffff !important; }
+                .toast-item.text-emerald-800 { color: #065f46 !important; }
+                .toast-item.border-emerald-100 { border-color: #a7f3d0 !important; }
+                .toast-item.bg-emerald-50\/95 { background-color: rgba(240, 253, 250, 0.95) !important; }
+                .toast-item.text-blue-800 { color: #1e40af !important; }
+                .toast-item.border-blue-100 { border-color: #bfdbfe !important; }
+                .toast-item.bg-blue-50\/95 { background-color: rgba(239, 246, 255, 0.95) !important; }
+                .toast-item.text-red-800 { color: #991b1b !important; }
+                .toast-item.border-red-100 { border-color: #fecaca !important; }
+                .toast-item.bg-red-50\/95 { background-color: rgba(254, 242, 242, 0.95) !important; }
+                .toast-item.text-amber-800 { color: #92400e !important; }
+                .toast-item.border-amber-100 { border-color: #fde68a !important; }
+                .toast-item.bg-amber-50\/95 { background-color: rgba(255, 251, 235, 0.95) !important; }
+                .toast-item.backdrop-blur-sm { backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important; }
+                .toast-item .flex-1 { flex: 1 1 0% !important; }
+            `;
+            document.head.appendChild(styleElement);
+
+            // 3. Tự động tiêm toast-container vào body
+            function injectToastContainer() {
+                if (!document.getElementById('toast-container')) {
+                    const container = document.createElement('div');
+                    container.id = 'toast-container';
+                    container.className = 'flex flex-col gap-2';
+                    document.body.appendChild(container);
+                }
+            }
+
+            if (document.body) {
+                injectToastContainer();
+            } else {
+                window.addEventListener('DOMContentLoaded', injectToastContainer);
+            }
+
+            // 4. Định nghĩa hàm showToast mượt mà cao cấp
+            window.showToast = function(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                
+                let bgClass = 'text-emerald-800 border-emerald-100 bg-emerald-50/95 backdrop-blur-sm';
+                let icon = '<i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>';
+                
+                if (type === 'info') {
+                    bgClass = 'text-blue-800 border-blue-100 bg-blue-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-info text-blue-500 text-lg"></i>';
+                } else if (type === 'error') {
+                    bgClass = 'text-red-800 border-red-100 bg-red-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-xmark text-red-500 text-lg"></i>';
+                } else if (type === 'warning') {
+                    bgClass = 'text-amber-800 border-amber-100 bg-amber-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg"></i>';
+                }
+
+                toast.className = `toast-item flex items-center gap-3 px-4 py-3 rounded-2xl border text-xs font-semibold bg-white ${bgClass}`;
+                toast.innerHTML = `${icon} <span class="flex-1">${message}</span>`;
+                
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'scale(0.9) translateX(20px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            };
+
+            // 5. Ghi đè hàm alert() truyền thống
+            window.alert = function(message) {
+                if (!message) return;
+                const msgStr = String(message);
+                
+                // Phân loại màu thông báo dựa trên từ khóa
+                let type = 'info';
+                const msgLower = msgStr.toLowerCase();
+                if (msgLower.includes('thành công') || msgLower.includes('success') || msgLower.includes('hoàn tất') || msgLower.includes('đăng nhập thành công') || msgLower.includes('đăng ký thành công')) {
+                    type = 'success';
+                } else if (msgLower.includes('lỗi') || msgLower.includes('thất bại') || msgLower.includes('error') || msgLower.includes('hỏng') || msgLower.includes('không thể') || msgLower.includes('chưa') || msgLower.includes('không đúng') || msgLower.includes('không tìm thấy')) {
+                    type = 'error';
+                } else if (msgLower.includes('cảnh báo') || msgLower.includes('chú ý') || msgLower.includes('warning') || msgLower.includes('vui lòng') || msgLower.includes('yêu cầu') || msgLower.includes('hết hạn')) {
+                    type = 'warning';
+                }
+
+                window.showToast(msgStr, type);
+                console.log("CheckinX Smart Toast: Đã đánh chặn alert ->", msgStr);
+            };
+        })();
+    </script>
+
+</body>
+</html>

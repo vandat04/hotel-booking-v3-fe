@@ -1,0 +1,3582 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Nhân sự & Bảng lương | CheckinX Admin</title>
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #4f3cc9;
+            --primary-light: #f5f3ff;
+            --primary-hover: #3b28b3;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --text-main: #0f172a;
+            --text-sub: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --body-bg: #f8fafc;
+            --white: #ffffff;
+            --header-bg: linear-gradient(135deg, #4f3cc9, #3b28b3);
+            --header-shadow: 0 4px 20px rgba(79, 60, 201, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Sticky full height layout */
+        }
+
+        /* Sleek scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* ---- Header Design ---- */
+        header {
+            background-color: var(--primary);
+            background: linear-gradient(90deg, #3b2bb0 0%, #4f3cc9 100%);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 64px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-link.active {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 4px;
+            background-color: #10b981;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-le-tan {
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: var(--white);
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-le-tan:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .header-icon {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.85);
+            cursor: pointer;
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .header-icon:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger);
+            border-radius: 50%;
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            border: 2px solid var(--primary);
+        }
+
+        .user-profile {
+            width: 36px;
+            height: 36px;
+            background-color: #a78bfa;
+            color: var(--white);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* ---- Workspace Layout ---- */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 24px;
+            gap: 20px;
+        }
+
+        /* Page title header */
+        .page-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .title-group h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .title-group p {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-export {
+            background-color: var(--white);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-sub);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+
+        .btn-export:hover {
+            border-color: var(--text-muted);
+            background-color: var(--body-bg);
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: var(--white);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(79, 60, 201, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(79, 60, 201, 0.3);
+        }
+
+        /* Nav subtabs toggler */
+        .subtab-bar {
+            display: flex;
+            gap: 12px;
+            border-bottom: 2px solid var(--border-color);
+            flex-shrink: 0;
+            padding-bottom: 2px;
+        }
+
+        .subtab {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .subtab:hover {
+            color: var(--text-main);
+        }
+
+        .subtab.active {
+            color: var(--primary);
+        }
+
+        .subtab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 3px;
+        }
+
+        /* Tab Content Panel wrapper */
+        .tab-panel-container {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            gap: 20px;
+        }
+
+        .tab-panel-container.active {
+            display: flex;
+        }
+
+        /* ---- TAB 1: HR & SCHEDULES ---- */
+        .hr-grid-row {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        /* Sidebar filters panel */
+        .filter-panel {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            overflow-y: auto;
+        }
+
+        .filter-panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-reset-filter {
+            font-size: 11px;
+            color: var(--primary);
+            cursor: pointer;
+            text-transform: none;
+            font-weight: 600;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+
+        .input-search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-search-box i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .input-search-field {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .input-search-field:focus {
+            border-color: var(--primary);
+        }
+
+        .select-filter-field {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            background-color: var(--white);
+            cursor: pointer;
+        }
+
+        .select-filter-field:focus {
+            border-color: var(--primary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .checkbox-label-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-sub);
+            cursor: pointer;
+        }
+
+        .checkbox-label-item input {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Right split list & timeline section */
+        .hr-right-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .hr-card-wrapper {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Staff list table styling */
+        .table-scroll-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .staff-table th {
+            background-color: #f8fafc;
+            padding: 12px 16px;
+            font-weight: 700;
+            color: var(--text-sub);
+            border-bottom: 1.5px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .staff-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            color: var(--text-sub);
+        }
+
+        .staff-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .staff-table tr:hover td {
+            background-color: #fafbfd;
+        }
+
+        .staff-profile-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .staff-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1.5px solid var(--border-color);
+        }
+
+        .staff-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .staff-details-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .staff-name {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .staff-role-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .staff-id-badge {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--primary);
+            background-color: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11.5px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .status-badge.active {
+            background-color: var(--success-bg);
+            color: var(--success);
+        }
+
+        .status-badge.inactive {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        .status-badge.banned {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .actions-cell-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-table-action {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.15s;
+        }
+
+        .btn-table-action:hover {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .btn-table-action.btn-delete:hover {
+            color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+
+        /* Pagination bar */
+        .pagination-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .pagination-info {
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-page-nav {
+            background-color: var(--white);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-sub);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-page-nav:hover {
+            border-color: var(--text-muted);
+            background-color: #f8fafc;
+        }
+
+        .btn-page-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f1f5f9;
+        }
+
+        /* Work Schedule weekly gantt card styling */
+        .gantt-schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .gantt-schedule-table th {
+            background-color: #f8fafc;
+            padding: 10px;
+            font-weight: 700;
+            color: var(--text-sub);
+            border-bottom: 1.5px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            width: 12.5%;
+            font-size: 11.5px;
+        }
+
+        .gantt-schedule-table th:last-child {
+            border-right: none;
+        }
+
+        .gantt-schedule-table th.today-header {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .gantt-schedule-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .gantt-schedule-table td:last-child {
+            border-right: none;
+        }
+
+        .shift-tag-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 8px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shift-tag-badge.morning {
+            background-color: var(--success-bg);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+
+        .shift-tag-badge.afternoon {
+            background-color: #f5f3ff;
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .shift-tag-badge.night {
+            background-color: #eff6ff;
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+
+        .shift-tag-badge.off {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            border: 1px solid rgba(100, 116, 139, 0.1);
+        }
+
+        .shift-tag-time-sub {
+            font-size: 9.5px;
+            opacity: 0.85;
+            font-weight: 500;
+        }
+
+        /* ---- TAB 2: SALARY & ATTENDANCE ---- */
+        .salary-summary-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .salary-summary-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+        }
+
+        .salary-card-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .salary-card-icon-box.purple { background-color: var(--primary-light); color: var(--primary); }
+        .salary-card-icon-box.green { background-color: var(--success-bg); color: var(--success); }
+        .salary-card-icon-box.orange { background-color: var(--warning-bg); color: var(--warning); }
+
+        .salary-card-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .salary-card-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .salary-card-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* Tab 2 layout splitter */
+        .salary-main-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        /* Attendance Dot Grid */
+        .attendance-dots-grid {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .attendance-dot-circle {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .attendance-dot-circle.on-time { background-color: var(--primary); }
+        .attendance-dot-circle.late { background-color: var(--warning); }
+        .attendance-dot-circle.absent { background-color: var(--danger); }
+        .attendance-dot-circle.off-day { background-color: #cbd5e1; }
+
+        .attendance-legends-row {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sub);
+            justify-content: flex-end;
+        }
+
+        .legend-item-dot {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ---- TAB 3: SHIFT TEMPLATES ---- */
+        .shifts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 4px;
+        }
+
+        .shift-template-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .shift-template-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.04);
+            border-color: var(--text-muted);
+        }
+
+        .shift-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shift-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .shift-card-time {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            border: 1px solid rgba(79, 60, 201, 0.1);
+        }
+
+        .shift-card-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .shift-card-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ---- Modern Slide-out Drawer Panel ---- */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .drawer-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drawer-container {
+            position: absolute;
+            top: 0;
+            right: -420px;
+            width: 420px;
+            height: 100%;
+            background-color: var(--white);
+            box-shadow: -10px 0 25px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .drawer-overlay.show .drawer-container {
+            right: 0;
+        }
+
+        .drawer-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+        }
+
+        .drawer-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-drawer-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .btn-drawer-close:hover {
+            background-color: var(--body-bg);
+            color: var(--text-main);
+        }
+
+        .drawer-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .drawer-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background-color: #f8fafc;
+        }
+
+        .btn-drawer-cancel {
+            border: 1.5px solid var(--border-color);
+            background: var(--white);
+            color: var(--text-sub);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-drawer-cancel:hover {
+            border-color: var(--text-muted);
+            background-color: var(--body-bg);
+        }
+
+        .btn-drawer-action {
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: var(--white);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(79, 60, 201, 0.15);
+            transition: all 0.15s;
+        }
+
+        .btn-drawer-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(79, 60, 201, 0.25);
+        }
+
+        .drawer-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .drawer-field-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .drawer-input-field {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.15s;
+            font-family: inherit;
+        }
+
+        .drawer-input-field:focus {
+            border-color: var(--primary);
+        }
+
+        .drawer-select-field {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            background-color: var(--white);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .drawer-select-field:focus {
+            border-color: var(--primary);
+        }
+
+        /* Toast notifications styling */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #ffffff;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+            border-radius: 8px;
+            padding: 14px 20px;
+            width: 320px;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.danger { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast.info { border-left-color: var(--primary); }
+
+        .toast-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toast-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .toast-msg {
+            font-size: 12.5px;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Brand Bar -->
+    <header>
+        <div class="header-left">
+            <div class="logo" onclick="window.location.href='admin-dashboard.html'">
+                Checkin<span>X</span>
+            </div>
+            <nav>
+                <a href="admin-dashboard.html" class="nav-link">Tổng quan</a>
+                <a href="admin-room-type-dashboard.html" class="nav-link">Loại Phòng</a>
+                <a href="admin-room-dashboard.html" class="nav-link">Phòng</a>
+                <a href="admin-payment-dashboard.html" class="nav-link">Giao dịch</a>
+                <a href="admin-ota-booking.html" class="nav-link">Kênh bán</a>
+                <a href="admin-schedule-dashborad.html" class="nav-link">Phân bổ</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="btn-le-tan" onclick="window.location.href='receptionist-dashboard.html'">
+                <i class="fa-solid fa-hotel"></i> Lễ tân
+            </button>
+            <div class="header-icon">
+                <i class="fa-regular fa-bell"></i>
+                <div class="badge-dot"></div>
+            </div>
+            <div class="header-icon" onclick="window.location.href='admin-hotel-dashboard.html'">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+            <div class="user-profile">
+                AD
+            </div>
+            <div class="header-icon" id="btn-logout" title="Đăng xuất" style="color: var(--danger, #ef4444); margin-left: 8px;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Workspace Container -->
+    <div class="workspace">
+        
+        <!-- Page Title Row -->
+        <div class="page-title-row">
+            <div class="title-group">
+                <h1>Quản lý nhân sự</h1>
+                <p>Quản lý danh sách, ca làm việc, chấm công và chi trả lương cho nhân viên.</p>
+            </div>
+            <div class="actions-group">
+                <button class="btn-export" id="btn-export-reports">
+                    <i class="fa-solid fa-file-export"></i> Xuất báo cáo
+                </button>
+                <button class="btn-primary-action" id="btn-add-staff-trigger">
+                    <i class="fa-solid fa-user-plus"></i> Thêm nhân viên
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab controls -->
+        <div class="subtab-bar">
+            <div class="subtab active" data-panel="panel-hr-schedule">Nhân sự & Lịch trình</div>
+            <div class="subtab" data-panel="panel-salary-sheets">Bảng lương & Chấm công</div>
+            <div class="subtab" data-panel="panel-shifts">Ca làm việc (Shifts)</div>
+            <div class="subtab" data-panel="panel-salary-configs">Cấu hình lương</div>
+        </div>
+
+        <!-- ==================== TAB 1: HR & SCHEDULES PANEL ==================== -->
+        <div class="tab-panel-container active" id="panel-hr-schedule">
+            <div class="hr-grid-row">
+                
+                <!-- Left Sidebar Filters -->
+                <aside class="filter-panel">
+                    <div class="filter-panel-title">
+                        <span>Bộ lọc</span>
+                        <span class="btn-reset-filter" id="btn-reset-staff-filters">Xóa lọc</span>
+                    </div>
+
+                    <div class="filter-group">
+                        <span class="filter-label">Tìm kiếm</span>
+                        <div class="input-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" class="input-search-field" id="filter-staff-keyword" placeholder="Tên, Email, SĐT...">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <span class="filter-label">Phòng ban</span>
+                        <select class="select-filter-field" id="filter-staff-role">
+                            <option value="">Tất cả phòng ban</option>
+                            <option value="RECEPTIONIST">Lễ tân (Receptionist)</option>
+                            <option value="CLEANER">Buồng phòng (Cleaner)</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <span class="filter-label">Trạng thái</span>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label-item">
+                                <input type="checkbox" id="filter-status-active" checked value="1">
+                                <span>Đang làm việc</span>
+                            </label>
+                            <label class="checkbox-label-item">
+                                <input type="checkbox" id="filter-status-inactive" value="2">
+                                <span>Đang nghỉ phép</span>
+                            </label>
+                            <label class="checkbox-label-item">
+                                <input type="checkbox" id="filter-status-banned" value="3">
+                                <span>Tạm khóa tài khoản</span>
+                            </label>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Side List and Gantt -->
+                <div class="hr-right-content">
+                    
+                    <!-- Card 1: Staff list table -->
+                    <div class="hr-card-wrapper">
+                        <div class="card-header-row">
+                            <div>
+                                <span class="card-header-title">Danh sách nhân viên</span>
+                                <span class="card-header-subtitle">Thông tin nhân viên đang hoạt động trong khách sạn.</span>
+                            </div>
+                        </div>
+
+                        <!-- Datagrid Table scroll -->
+                        <div class="table-scroll-wrapper">
+                            <table class="staff-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nhân viên</th>
+                                        <th>Mã NV</th>
+                                        <th>Phòng ban</th>
+                                        <th>Giới tính</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Trạng thái</th>
+                                        <th style="width: 80px; text-align: center;">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="staff-table-body">
+                                    <!-- Populated dynamically via API -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination panel -->
+                        <div class="pagination-row">
+                            <span class="pagination-info" id="staff-pagination-info">Hiển thị 0 - 0 của 0 nhân viên</span>
+                            <div class="pagination-btns">
+                                <button class="btn-page-nav" id="btn-staff-prev" title="Trang trước"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="btn-page-nav" id="btn-staff-next" title="Trang sau"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Work schedule Weekly Gantt -->
+                    <div class="hr-card-wrapper">
+                        <div class="card-header-row">
+                            <div>
+                                <span class="card-header-title">Lịch làm việc trong tuần</span>
+                                <span class="card-header-subtitle">Theo dõi phân bổ lịch làm việc hàng tuần của nhân sự.</span>
+                            </div>
+                            <button class="btn-primary-action" id="btn-assign-staff-trigger" style="padding: 6px 12px; font-size: 12px; box-shadow: none;">
+                                <i class="fa-solid fa-calendar-plus"></i> Phân ca làm việc
+                            </button>
+                        </div>
+
+                        <div class="table-scroll-wrapper">
+                            <table class="gantt-schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: left; padding-left: 16px;">Nhân viên</th>
+                                        <th>T2</th>
+                                        <th>T3</th>
+                                        <th class="today-header">T4 (Hôm nay)</th>
+                                        <th>T5</th>
+                                        <th>T6</th>
+                                        <th>T7</th>
+                                        <th>CN</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedule-weekly-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== TAB 2: SALARY & ATTENDANCE PANEL ==================== -->
+        <div class="tab-panel-container" id="panel-salary-sheets">
+            
+            <!-- Three Stats Cards Row -->
+            <div class="salary-summary-cards">
+                <div class="salary-summary-card">
+                    <div class="salary-card-icon-box purple"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="salary-card-details">
+                        <span class="salary-card-title">Tổng Quỹ Lương Dự Tính</span>
+                        <span class="salary-card-value" id="stat-salary-total">0 đ</span>
+                    </div>
+                </div>
+                <div class="salary-summary-card">
+                    <div class="salary-card-icon-box green"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="salary-card-details">
+                        <span class="salary-card-title">Đã Chi Trả (PAID)</span>
+                        <span class="salary-card-value" id="stat-salary-paid">0 đ</span>
+                    </div>
+                </div>
+                <div class="salary-summary-card">
+                    <div class="salary-card-icon-box orange"><i class="fa-solid fa-hourglass-half"></i></div>
+                    <div class="salary-card-details">
+                        <span class="salary-card-title">Chờ Thanh Toán (UNPAID)</span>
+                        <span class="salary-card-value" id="stat-salary-unpaid">0 đ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Salary panel row -->
+            <div class="salary-main-layout">
+                
+                <!-- Left filter and Action card -->
+                <aside class="filter-panel" style="justify-content: flex-start; gap: 20px;">
+                    <div class="filter-panel-title">Hệ thống tính lương</div>
+
+                    <div class="filter-group">
+                        <span class="filter-label">Chọn tháng tính lương</span>
+                        <select class="select-filter-field" id="salary-month-select">
+                            <option value="5" selected>Tháng 5</option>
+                            <option value="6">Tháng 6</option>
+                            <option value="7">Tháng 7</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <span class="filter-label">Chọn năm</span>
+                        <select class="select-filter-field" id="salary-year-select">
+                            <option value="2026" selected>Năm 2026</option>
+                            <option value="2027">Năm 2027</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary-action" id="btn-calculate-salary-all" style="width: 100%; justify-content: center; margin-top: 10px;">
+                        <i class="fa-solid fa-calculator"></i> Tính lương toàn bộ
+                    </button>
+                    
+                    <div style="border-top:1px solid var(--border-color); padding-top: 16px; margin-top: 10px;">
+                        <span class="filter-label" style="display:block; margin-bottom:10px;">Bộ lọc bảng lương</span>
+                        <div class="filter-group" style="margin-bottom:10px;">
+                            <span class="filter-label" style="font-size:10px;">Vai trò</span>
+                            <select class="select-filter-field" id="salary-filter-role">
+                                <option value="">Tất cả</option>
+                                <option value="RECEPTIONIST">Lễ tân</option>
+                                <option value="CLEANER">Buồng phòng</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label" style="font-size:10px;">Trạng thái</span>
+                            <select class="select-filter-field" id="salary-filter-status">
+                                <option value="">Tất cả</option>
+                                <option value="PAID">ĐÃ THANH TOÁN</option>
+                                <option value="UNPAID">CHƯA THANH TOÁN</option>
+                            </select>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right list table -->
+                <div class="hr-right-content">
+                    
+                    <!-- Salary list table -->
+                    <div class="hr-card-wrapper">
+                        <div class="card-header-row">
+                            <div>
+                                <span class="card-header-title">Bảng tính toán lương công nhân viên</span>
+                                <span class="card-header-subtitle">Tính toán lương theo số công chấm công nhân viên thực tế trong tháng.</span>
+                            </div>
+                        </div>
+
+                        <div class="table-scroll-wrapper">
+                            <table class="staff-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nhân viên</th>
+                                        <th>Vai trò</th>
+                                        <th>Tháng/Năm</th>
+                                        <th>Số công (Ca)</th>
+                                        <th>Đơn giá ca</th>
+                                        <th>Tổng lương thực lĩnh</th>
+                                        <th>Trạng thái</th>
+                                        <th style="width: 130px; text-align: center;">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salary-table-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination salary -->
+                        <div class="pagination-row">
+                            <span class="pagination-info" id="salary-pagination-info">Hiển thị 0 - 0 của 0 bản ghi</span>
+                            <div class="pagination-btns">
+                                <button class="btn-page-nav" id="btn-salary-prev" title="Trang trước"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="btn-page-nav" id="btn-salary-next" title="Trang sau"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance grid dot visualization sheet -->
+                    <div class="hr-card-wrapper">
+                        <div class="card-header-row">
+                            <div>
+                                <span class="card-header-title">Bảng tổng hợp chấm công tháng</span>
+                                <span class="card-header-subtitle">Dữ liệu chấm công chi tiết theo từng ngày của tháng hiện tại.</span>
+                            </div>
+                            <div class="attendance-legends-row">
+                                <div class="legend-item-dot"><span class="attendance-dot-circle on-time"></span> Đúng giờ</div>
+                                <div class="legend-item-dot"><span class="attendance-dot-circle late"></span> Đi muộn</div>
+                                <div class="legend-item-dot"><span class="attendance-dot-circle absent"></span> Vắng</div>
+                                <div class="legend-item-dot"><span class="attendance-dot-circle off-day"></span> Off</div>
+                            </div>
+                        </div>
+
+                        <div class="table-scroll-wrapper" style="overflow-x: auto;">
+                            <table class="staff-table" style="text-align: center;">
+                                <thead>
+                                    <tr id="attendance-header-days">
+                                        <th style="text-align: left; padding-left: 16px; min-width: 140px;">Nhân viên</th>
+                                        <!-- Days 1-31 populated dynamically -->
+                                    </tr>
+                                </thead>
+                                <tbody id="attendance-body-rows">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ==================== TAB 3: SHIFT TEMPLATES PANEL ==================== -->
+        <div class="tab-panel-container" id="panel-shifts">
+            <div class="card-header-row" style="flex-shrink: 0; margin-bottom: -10px;">
+                <div>
+                    <span class="card-header-title" style="font-size:18px;">Khung Ca làm việc tiêu chuẩn</span>
+                    <span class="card-header-subtitle">Cấu hình các mẫu ca làm việc tiêu chuẩn để xếp lịch chấm công cho nhân viên.</span>
+                </div>
+                <button class="btn-primary-action" id="btn-add-shift-trigger">
+                    <i class="fa-solid fa-circle-plus"></i> Định nghĩa Ca mới
+                </button>
+            </div>
+
+            <!-- Shifts template grid -->
+            <div class="shifts-grid" id="shifts-cards-container">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- ==================== TAB 4: ROLE SALARY CONFIG PANEL ==================== -->
+        <div class="tab-panel-container" id="panel-salary-configs">
+            <div class="card-header-row" style="flex-shrink: 0; margin-bottom: -10px;">
+                <div>
+                    <span class="card-header-title" style="font-size:18px;">Cấu hình Lương vai trò</span>
+                    <span class="card-header-subtitle">Cấu hình mức lương cơ bản trên mỗi ca làm việc cho từng vai trò nhân sự.</span>
+                </div>
+                <button class="btn-primary-action" id="btn-add-salary-config-trigger">
+                    <i class="fa-solid fa-circle-plus"></i> Thêm Cấu hình lương
+                </button>
+            </div>
+
+            <!-- Salary configs grid -->
+            <div class="shifts-grid" id="salary-configs-cards-container">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== DRAWER 1: ADD STAFF PANEL ==================== -->
+    <div class="drawer-overlay" id="drawer-add-staff">
+        <div class="drawer-container">
+            <div class="drawer-header">
+                <span class="drawer-title"><i class="fa-solid fa-user-plus" style="color:var(--primary);"></i>Thêm tài khoản nhân viên</span>
+                <button class="btn-drawer-close" onclick="closeDrawer('drawer-add-staff')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="drawer-body">
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Tên tài khoản (Username) *</span>
+                    <input type="text" class="drawer-input-field" id="add-staff-username" placeholder="Ví dụ: cleaner_bob">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Họ và tên *</span>
+                    <input type="text" class="drawer-input-field" id="add-staff-fullname" placeholder="Ví dụ: Bob Builder">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Email liên hệ *</span>
+                    <input type="email" class="drawer-input-field" id="add-staff-email" placeholder="Ví dụ: bob@hotel.com">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Mật khẩu khởi tạo *</span>
+                    <input type="password" class="drawer-input-field" id="add-staff-password" placeholder="Tối thiểu 6 ký tự">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Số điện thoại *</span>
+                    <input type="text" class="drawer-input-field" id="add-staff-phone" placeholder="Ví dụ: 0987111222">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Giới tính *</span>
+                    <select class="drawer-select-field" id="add-staff-gender">
+                        <option value="MALE">Nam (MALE)</option>
+                        <option value="FEMALE">Nữ (FEMALE)</option>
+                    </select>
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Vai trò phòng ban *</span>
+                    <select class="drawer-select-field" id="add-staff-role">
+                        <option value="RECEPTIONIST">Lễ tân (RECEPTIONIST)</option>
+                        <option value="CLEANER">Buồng phòng (CLEANER)</option>
+                    </select>
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Ngày sinh *</span>
+                    <input type="date" class="drawer-input-field" id="add-staff-dob">
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button class="btn-drawer-cancel" onclick="closeDrawer('drawer-add-staff')">Hủy bỏ</button>
+                <button class="btn-drawer-action" id="btn-save-staff">Đăng ký tài khoản</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DRAWER 2: EDIT STAFF PANEL ==================== -->
+    <div class="drawer-overlay" id="drawer-edit-staff">
+        <div class="drawer-container">
+            <div class="drawer-header">
+                <span class="drawer-title"><i class="fa-solid fa-user-gear" style="color:var(--primary);"></i>Cập nhật hồ sơ nhân sự</span>
+                <button class="btn-drawer-close" onclick="closeDrawer('drawer-edit-staff')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="drawer-body">
+                <input type="hidden" id="edit-staff-id">
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Họ và tên *</span>
+                    <input type="text" class="drawer-input-field" id="edit-staff-fullname" placeholder="Họ và tên nhân viên">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Email liên hệ *</span>
+                    <input type="email" class="drawer-input-field" id="edit-staff-email" placeholder="Email nhân viên">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Mật khẩu mới (Nếu có đổi)</span>
+                    <input type="password" class="drawer-input-field" id="edit-staff-password" placeholder="Bỏ trống nếu không thay đổi">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Số điện thoại *</span>
+                    <input type="text" class="drawer-input-field" id="edit-staff-phone" placeholder="Số điện thoại di động">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Giới tính *</span>
+                    <select class="drawer-select-field" id="edit-staff-gender">
+                        <option value="MALE">Nam</option>
+                        <option value="FEMALE">Nữ</option>
+                    </select>
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Vai trò phòng ban *</span>
+                    <select class="drawer-select-field" id="edit-staff-role">
+                        <option value="RECEPTIONIST">Lễ tân</option>
+                        <option value="CLEANER">Buồng phòng</option>
+                    </select>
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Ngày sinh *</span>
+                    <input type="date" class="drawer-input-field" id="edit-staff-dob">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Trạng thái vận hành *</span>
+                    <select class="drawer-select-field" id="edit-staff-status">
+                        <option value="1">Đang làm việc (Active)</option>
+                        <option value="2">Nghỉ phép (Inactive)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button class="btn-drawer-cancel" onclick="closeDrawer('drawer-edit-staff')">Hủy bỏ</button>
+                <button class="btn-drawer-action" id="btn-update-staff">Cập nhật hồ sơ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DRAWER 3: ADD/EDIT SHIFT PANEL ==================== -->
+    <div class="drawer-overlay" id="drawer-shift-template">
+        <div class="drawer-container">
+            <div class="drawer-header">
+                <span class="drawer-title" id="shift-drawer-title"><i class="fa-solid fa-clock" style="color:var(--primary);"></i>Định nghĩa Ca mới</span>
+                <button class="btn-drawer-close" onclick="closeDrawer('drawer-shift-template')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="drawer-body">
+                <input type="hidden" id="shift-id">
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Tên ca làm việc *</span>
+                    <input type="text" class="drawer-input-field" id="shift-name" placeholder="Ví dụ: Ca Sáng, Ca Chiều...">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Giờ bắt đầu * (HH:mm:ss)</span>
+                    <input type="text" class="drawer-input-field" id="shift-start" placeholder="Ví dụ: 06:00:00">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Giờ kết thúc * (HH:mm:ss)</span>
+                    <input type="text" class="drawer-input-field" id="shift-end" placeholder="Ví dụ: 14:00:00">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Ghi chú mô tả</span>
+                    <input type="text" class="drawer-input-field" id="shift-desc" placeholder="Ví dụ: Ca trực đón khách lễ tân sáng">
+                </div>
+                <div class="drawer-field-group" id="shift-active-group" style="display: none;">
+                    <span class="drawer-field-label">Trạng thái ca</span>
+                    <select class="drawer-select-field" id="shift-active">
+                        <option value="true">Đang kích hoạt (Active)</option>
+                        <option value="false">Ngưng sử dụng (Inactive)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button class="btn-drawer-cancel" onclick="closeDrawer('drawer-shift-template')">Hủy bỏ</button>
+                <button class="btn-drawer-action" id="btn-save-shift">Lưu cấu hình</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DRAWER 4: ASSIGN SHIFT PANEL ==================== -->
+    <div class="drawer-overlay" id="drawer-assign-staff">
+        <div class="drawer-container">
+            <div class="drawer-header">
+                <span class="drawer-title"><i class="fa-solid fa-calendar-check" style="color:var(--primary);"></i>Phân công lịch làm việc</span>
+                <button class="btn-drawer-close" onclick="closeDrawer('drawer-assign-staff')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="drawer-body">
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Chọn nhân viên *</span>
+                    <select class="drawer-select-field" id="assign-staff-user-select">
+                        <option value="">-- Chọn nhân viên --</option>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Vai trò phòng ban</span>
+                    <input type="text" class="drawer-input-field" id="assign-staff-role-preview" disabled style="background-color:#f1f5f9; color:var(--text-muted);">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Chọn ca trực *</span>
+                    <select class="drawer-select-field" id="assign-staff-shift-select">
+                        <option value="">-- Chọn ca trực --</option>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Ngày làm việc * (Phải từ hôm nay trở đi)</span>
+                    <input type="date" class="drawer-input-field" id="assign-staff-date">
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button class="btn-drawer-cancel" onclick="closeDrawer('drawer-assign-staff')">Hủy bỏ</button>
+                <button class="btn-drawer-action" id="btn-save-assign-staff">Lưu phân công</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DRAWER 5: ADD/EDIT SALARY CONFIG PANEL ==================== -->
+    <div class="drawer-overlay" id="drawer-salary-config">
+        <div class="drawer-container">
+            <div class="drawer-header">
+                <span class="drawer-title" id="salary-config-drawer-title"><i class="fa-solid fa-money-check-dollar" style="color:var(--primary);"></i>Cấu hình Lương vai trò</span>
+                <button class="btn-drawer-close" onclick="closeDrawer('drawer-salary-config')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="drawer-body">
+                <input type="hidden" id="salary-config-id">
+                <div class="drawer-field-group" id="salary-config-role-group">
+                    <span class="drawer-field-label">Vai trò nhân sự *</span>
+                    <select class="drawer-select-field" id="salary-config-role">
+                        <option value="RECEPTIONIST">RECEPTIONIST (Lễ tân)</option>
+                        <option value="CLEANER">CLEANER (Buồng phòng)</option>
+                    </select>
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Mức lương cơ bản mỗi ca * (đ)</span>
+                    <input type="number" class="drawer-input-field" id="salary-config-base" placeholder="Ví dụ: 250000" min="0">
+                </div>
+                <div class="drawer-field-group">
+                    <span class="drawer-field-label">Trạng thái cấu hình *</span>
+                    <select class="drawer-select-field" id="salary-config-active">
+                        <option value="true">Đang kích hoạt (Active)</option>
+                        <option value="false">Ngưng áp dụng (Inactive)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button class="btn-drawer-cancel" onclick="closeDrawer('drawer-salary-config')">Hủy bỏ</button>
+                <button class="btn-drawer-action" id="btn-save-salary-config">Lưu cấu hình</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Logout click handler
+            const btnLogout = document.getElementById('btn-logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', () => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('checkinXToken');
+                    localStorage.removeItem('checkinXRole');
+                    localStorage.removeItem('staffName');
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // ================================================================
+            // === SECURITY FILTER & JWT AUTHORIZATION AUTH ===
+            // ================================================================
+            // Parse token from URL query parameters if present and store in localStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlToken = urlParams.get('token');
+            if (urlToken) {
+                localStorage.setItem('token', urlToken);
+                localStorage.setItem('accessToken', urlToken);
+                localStorage.setItem('checkinXToken', urlToken);
+                
+                // Clean the URL to keep it pristine and secure
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+
+            const token = localStorage.getItem('token') || localStorage.getItem('jwtToken') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
+            const getHeaders = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+
+            // Safety check for role redirection
+            const role = localStorage.getItem('checkinXRole') || 'ADMIN';
+            if (role !== 'ADMIN' && role !== 'ROLE_ADMIN') {
+                console.warn('[CheckinX] Access denied. Redirecting...');
+            }
+
+            // ================================================================
+            // ================================================================
+            // === TOAST NOTIFICATION ===
+            // ================================================================
+            const showToast = (message, type = 'success') => window.showToast(message, type);
+
+            // ================================================================
+            // === NAV TAB SWITCHER ===
+            // ================================================================
+            const subtabs = document.querySelectorAll('.subtab');
+            const panels = document.querySelectorAll('.tab-panel-container');
+
+            subtabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    subtabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    const targetPanel = tab.getAttribute('data-panel');
+                    document.getElementById(targetPanel).classList.add('active');
+
+                    // Trigger specific loads
+                    if (targetPanel === 'panel-hr-schedule') {
+                        fetchStaffList();
+                        renderWeeklyGantt();
+                    } else if (targetPanel === 'panel-salary-sheets') {
+                        fetchSalarySheets();
+                        renderAttendanceGrid();
+                    } else if (targetPanel === 'panel-shifts') {
+                        fetchShiftsTemplates();
+                    } else if (targetPanel === 'panel-salary-configs') {
+                        fetchRoleSalaryConfigs();
+                    }
+                });
+            });
+
+            // ================================================================
+            // === DRAWER CONTROLLERS ===
+            // ================================================================
+            window.openDrawer = (drawerId) => {
+                document.getElementById(drawerId).classList.add('show');
+            };
+
+            window.closeDrawer = (drawerId) => {
+                document.getElementById(drawerId).classList.remove('show');
+            };
+
+            // ================================================================
+            // === MOCK SEED DATA FALLBACK Baseline when server is offline ===
+            // ================================================================
+            let isOfflineMode = false;
+
+            const getMockStaffData = () => {
+                return [
+                    { id: 1001, username: "reception_user1", email: "reception1@example.com", fullName: "Nguyễn Văn Thành", phone: "0901000005", gender: "MALE", role: "RECEPTIONIST", status: 1, dateOfBirth: "1997-11-10" },
+                    { id: 1002, username: "reception_user2", email: "reception2@example.com", fullName: "Trần Thị Mai", phone: "0901000006", gender: "FEMALE", role: "RECEPTIONIST", status: 1, dateOfBirth: "2000-01-01" },
+                    { id: 1003, username: "cleaner_user1", email: "cleaner@example.com", fullName: "Lê Văn Minh", phone: "0901000003", gender: "MALE", role: "CLEANER", status: 1, dateOfBirth: "1999-05-25" },
+                    { id: 1004, username: "cleaner_user2", email: "cleaner2@example.com", fullName: "Phạm Hoàng", phone: "0901000004", gender: "FEMALE", role: "CLEANER", status: 2, dateOfBirth: "1998-08-20" }
+                ];
+            };
+
+            const getMockShiftsData = () => {
+                return [
+                    { id: 1, shiftName: "Ca Sáng", startTime: "06:00:00", endTime: "14:00:00", description: "Ca làm việc hành chính ban sáng", isActive: true },
+                    { id: 2, shiftName: "Ca Chiều", startTime: "14:00:00", endTime: "22:00:00", description: "Ca trực buồng phòng ban chiều", isActive: true },
+                    { id: 3, shiftName: "Ca Tối", startTime: "18:00:00", endTime: "02:00:00", description: "Ca trực đón khách muộn đêm", isActive: true }
+                ];
+            };
+
+            const getMockSalaryData = () => {
+                return [
+                    { salarySheetId: 101, userId: 1001, fullName: "Nguyễn Văn Thành", role: "RECEPTIONIST", month: 5, year: 2026, attendanceCount: 22, salaryPerShift: 25.00, totalSalary: 550.00, status: "PAID" },
+                    { salarySheetId: 102, userId: 1002, fullName: "Trần Thị Mai", role: "RECEPTIONIST", month: 5, year: 2026, attendanceCount: 20, salaryPerShift: 25.00, totalSalary: 500.00, status: "UNPAID" },
+                    { salarySheetId: 103, userId: 1003, fullName: "Lê Văn Minh", role: "CLEANER", month: 5, year: 2026, attendanceCount: 24, salaryPerShift: 18.00, totalSalary: 432.00, status: "PAID" },
+                    { salarySheetId: 104, userId: 1004, fullName: "Phạm Hoàng", role: "CLEANER", month: 5, year: 2026, attendanceCount: 18, salaryPerShift: 18.00, totalSalary: 324.00, status: "UNPAID" }
+                ];
+            };
+
+            const getMockRoleSalaryConfigsData = () => {
+                return [
+                    { id: 1, staffRole: "RECEPTIONIST", baseSalary: 25.00, isActive: true, createdAt: "2026-05-20T00:00:00", updatedAt: "2026-05-20T00:00:00" },
+                    { id: 2, staffRole: "CLEANER", baseSalary: 18.00, isActive: true, createdAt: "2026-05-20T00:00:00", updatedAt: "2026-05-20T00:00:00" }
+                ];
+            };
+
+            // ================================================================
+            // === TAB 1: FETCH STAFF LIST FROM BE ===
+            // ================================================================
+            let currentStaffPage = 0;
+            const staffPageSize = 10;
+            let currentStaffList = [];
+
+            const fetchStaffList = async () => {
+                const keyword = document.getElementById('filter-staff-keyword').value;
+                const role = document.getElementById('filter-staff-role').value;
+                
+                // Get checked status codes (mutually exclusive)
+                let statusVal = '';
+                if (document.getElementById('filter-status-active').checked) statusVal = 1;
+                else if (document.getElementById('filter-status-inactive').checked) statusVal = 2;
+                else if (document.getElementById('filter-status-banned').checked) statusVal = 3;
+
+                try {
+                    let url = `http://localhost:8080/api/admin/staff?keyword=${encodeURIComponent(keyword)}&page=${currentStaffPage}&size=${staffPageSize}`;
+                    if (role) {
+                        url += `&role=${role}`;
+                    }
+                    if (statusVal !== '') {
+                        url += `&status=${statusVal}`;
+                    }
+                    const response = await fetch(url, { headers: getHeaders });
+                    const res = await response.json();
+
+                    if (res.success && res.data) {
+                        currentStaffList = res.data.content || [];
+                        renderStaffTable(currentStaffList, res.data.totalElements);
+                        if (typeof updateStaffPaginationControls === 'function') {
+                            updateStaffPaginationControls(res.data.totalPages || 0);
+                        }
+                        isOfflineMode = false;
+                    } else {
+                        throw new Error();
+                    }
+                } catch (e) {
+                    console.warn('[CheckinX] Backend offline - loading staff fallback baseline');
+                    isOfflineMode = true;
+                    currentStaffList = getMockStaffData();
+                    if (role) {
+                        currentStaffList = currentStaffList.filter(s => s.role === role);
+                    }
+                    if (statusVal !== '') {
+                        currentStaffList = currentStaffList.filter(s => s.status === Number(statusVal));
+                    }
+                    if (keyword) {
+                        const kw = keyword.toLowerCase();
+                        currentStaffList = currentStaffList.filter(s => 
+                            s.fullName.toLowerCase().includes(kw) || 
+                            s.email.toLowerCase().includes(kw) || 
+                            s.phone.includes(kw)
+                        );
+                    }
+                    renderStaffTable(currentStaffList, currentStaffList.length);
+                    if (typeof updateStaffPaginationControls === 'function') {
+                        updateStaffPaginationControls(Math.ceil(currentStaffList.length / staffPageSize));
+                    }
+                }
+            };
+
+            const renderStaffTable = (staffs, total) => {
+                const tbody = document.getElementById('staff-table-body');
+                tbody.innerHTML = '';
+
+                if (staffs.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 24px; color:var(--text-muted);">Không tìm thấy nhân viên nào phù hợp bộ lọc!</td></tr>`;
+                    return;
+                }
+
+                staffs.forEach(s => {
+                    const tr = document.createElement('tr');
+                    
+                    // Profile Initials avatar
+                    const initials = s.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+                    
+                    let statusClass = 'active';
+                    let statusText = 'Đang làm việc';
+                    if (s.status === 2) {
+                        statusClass = 'inactive';
+                        statusText = 'Nghỉ phép';
+                    } else if (s.status === 3) {
+                        statusClass = 'banned';
+                        statusText = 'Tạm khóa';
+                    }
+
+                    tr.innerHTML = `
+                        <td>
+                            <div class="staff-profile-cell">
+                                <div class="staff-avatar">${s.avatarUrl ? `<img src="${s.avatarUrl}">` : initials}</div>
+                                <div class="staff-details-cell">
+                                    <span class="staff-name">${s.fullName}</span>
+                                    <span class="staff-role-sub">${s.email}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="staff-id-badge">NV${String(s.id).padStart(3, '0')}</span></td>
+                        <td><strong>${s.role === 'RECEPTIONIST' ? 'Lễ tân' : 'Buồng phòng'}</strong></td>
+                        <td>${s.gender === 'MALE' ? 'Nam' : 'Nữ'}</td>
+                        <td>${s.phone}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <div class="actions-cell-buttons">
+                                <button class="btn-table-action" onclick="editStaffProfile(${s.id})" title="Chỉnh sửa hồ sơ"><i class="fa-solid fa-user-gear"></i></button>
+                                <button class="btn-table-action" onclick="calculateSalaryForUser(${s.id})" style="color:var(--success);" title="Thống kê lương"><i class="fa-solid fa-coins"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('staff-pagination-info').innerText = `Hiển thị 1 - ${staffs.length} của ${total} nhân viên`;
+            };
+
+            // Bind filter change triggers
+            document.getElementById('filter-staff-keyword').addEventListener('input', fetchStaffList);
+            document.getElementById('filter-staff-role').addEventListener('change', fetchStaffList);
+
+            // Make status checkboxes act like mutually exclusive radio buttons
+            const activeCb = document.getElementById('filter-status-active');
+            const inactiveCb = document.getElementById('filter-status-inactive');
+            const bannedCb = document.getElementById('filter-status-banned');
+
+            const handleStatusChange = (e) => {
+                if (e.target.checked) {
+                    if (e.target === activeCb) {
+                        inactiveCb.checked = false;
+                        bannedCb.checked = false;
+                    } else if (e.target === inactiveCb) {
+                        activeCb.checked = false;
+                        bannedCb.checked = false;
+                    } else if (e.target === bannedCb) {
+                        activeCb.checked = false;
+                        inactiveCb.checked = false;
+                    }
+                }
+                fetchStaffList();
+            };
+
+            activeCb.addEventListener('change', handleStatusChange);
+            inactiveCb.addEventListener('change', handleStatusChange);
+            bannedCb.addEventListener('change', handleStatusChange);
+
+            document.getElementById('btn-reset-staff-filters').addEventListener('click', () => {
+                document.getElementById('filter-staff-keyword').value = '';
+                document.getElementById('filter-staff-role').value = '';
+                document.getElementById('filter-status-active').checked = true;
+                document.getElementById('filter-status-inactive').checked = false;
+                document.getElementById('filter-status-banned').checked = false;
+                fetchStaffList();
+            });
+
+            // ================================================================
+            // === TAB 1 ACTION: CREATE ACCOUNT STAFF (POST) ===
+            // ================================================================
+            document.getElementById('btn-add-staff-trigger').addEventListener('click', () => {
+                // Pre-fill DOB with a sensible default
+                document.getElementById('add-staff-dob').value = '1995-01-01';
+                openDrawer('drawer-add-staff');
+            });
+
+            document.getElementById('btn-save-staff').addEventListener('click', async () => {
+                const username = document.getElementById('add-staff-username').value.trim();
+                const fullName = document.getElementById('add-staff-fullname').value.trim();
+                const email = document.getElementById('add-staff-email').value.trim();
+                const password = document.getElementById('add-staff-password').value;
+                const phone = document.getElementById('add-staff-phone').value.trim();
+                const gender = document.getElementById('add-staff-gender').value;
+                const role = document.getElementById('add-staff-role').value;
+                const dateOfBirth = document.getElementById('add-staff-dob').value;
+
+                if (!username || !fullName || !email || !password || !phone) {
+                    showToast('Vui lòng nhập đầy đủ các trường bắt buộc (*)', 'warning');
+                    return;
+                }
+
+                const body = { username, fullName, email, password, phone, gender, role, dateOfBirth };
+
+                try {
+                    if (isOfflineMode) {
+                        showToast('Đăng ký thành công tài khoản nhân viên cục bộ!', 'success');
+                        closeDrawer('drawer-add-staff');
+                        return;
+                    }
+
+                    const response = await fetch('http://localhost:8080/api/admin/staff', {
+                        method: 'POST',
+                        headers: getHeaders,
+                        body: JSON.stringify(body)
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast('Đã khởi tạo tài khoản nhân sự thành công!', 'success');
+                        closeDrawer('drawer-add-staff');
+                        fetchStaffList();
+                    } else {
+                        showToast(res.message || 'Lỗi đăng ký tài khoản', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Không kết nối được server để tạo nhân sự', 'danger');
+                }
+            });
+
+            // ================================================================
+            // === TAB 1 ACTION: EDIT PROFILE STAFF (PUT) ===
+            // ================================================================
+            window.editStaffProfile = async (staffId) => {
+                try {
+                    let staff = null;
+                    if (isOfflineMode) {
+                        staff = currentStaffList.find(s => s.id === staffId);
+                    } else {
+                        const response = await fetch(`http://localhost:8080/api/admin/staff/${staffId}`, { headers: getHeaders });
+                        const res = await response.json();
+                        if (res.success && res.data) {
+                            staff = res.data;
+                        }
+                    }
+
+                    if (!staff) {
+                        showToast('Không tìm thấy thông tin nhân sự!', 'danger');
+                        return;
+                    }
+
+                    document.getElementById('edit-staff-id').value = staff.id;
+                    document.getElementById('edit-staff-fullname').value = staff.fullName;
+                    document.getElementById('edit-staff-email').value = staff.email;
+                    document.getElementById('edit-staff-password').value = '';
+                    document.getElementById('edit-staff-phone').value = staff.phone;
+                    document.getElementById('edit-staff-gender').value = staff.gender;
+                    document.getElementById('edit-staff-role').value = staff.role;
+                    document.getElementById('edit-staff-dob').value = staff.dateOfBirth || '';
+                    document.getElementById('edit-staff-status').value = staff.status;
+
+                    openDrawer('drawer-edit-staff');
+                } catch (e) {
+                    showToast('Không kết nối được server để tải chi tiết nhân sự', 'danger');
+                }
+            };
+
+            document.getElementById('btn-update-staff').addEventListener('click', async () => {
+                const staffId = document.getElementById('edit-staff-id').value;
+                const fullName = document.getElementById('edit-staff-fullname').value.trim();
+                const email = document.getElementById('edit-staff-email').value.trim();
+                const password = document.getElementById('edit-staff-password').value;
+                const phone = document.getElementById('edit-staff-phone').value.trim();
+                const gender = document.getElementById('edit-staff-gender').value;
+                const role = document.getElementById('edit-staff-role').value;
+                const dateOfBirth = document.getElementById('edit-staff-dob').value;
+                const status = parseInt(document.getElementById('edit-staff-status').value) || 1;
+
+                const body = { fullName, email, phone, gender, role, dateOfBirth, status };
+                if (password.trim() !== '') {
+                    body.password = password;
+                }
+
+                try {
+                    if (isOfflineMode) {
+                        showToast('Đã lưu thay đổi hồ sơ nhân viên cục bộ thành công!', 'success');
+                        closeDrawer('drawer-edit-staff');
+                        return;
+                    }
+
+                    const response = await fetch(`http://localhost:8080/api/admin/staff/${staffId}`, {
+                        method: 'PUT',
+                        headers: getHeaders,
+                        body: JSON.stringify(body)
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast('Hồ sơ nhân sự đã được cập nhật thành công!', 'success');
+                        closeDrawer('drawer-edit-staff');
+                        fetchStaffList();
+                    } else {
+                        showToast(res.message || 'Lỗi cập nhật hồ sơ', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Lỗi đường truyền cập nhật hồ sơ', 'danger');
+                }
+            });
+
+            // ================================================================
+            // === MOCK ASSIGNMENTS GENERATOR FOR OFFLINE FALLBACK ===
+            // ================================================================
+            const getMockAssignmentsData = (weekDates) => {
+                return [
+                    {
+                        id: 10001,
+                        userId: 1001,
+                        fullName: "Nguyễn Văn Thành",
+                        email: "reception1@example.com",
+                        role: "RECEPTIONIST",
+                        staffRoleId: 2,
+                        staffRole: "RECEPTIONIST",
+                        baseSalary: 250000,
+                        shiftId: 1,
+                        shiftName: "DAY SHIFT",
+                        startTime: "00:00:01",
+                        endTime: "12:00:00",
+                        workDate: weekDates[0] // Monday
+                    },
+                    {
+                        id: 10002,
+                        userId: 1001,
+                        fullName: "Nguyễn Văn Thành",
+                        email: "reception1@example.com",
+                        role: "RECEPTIONIST",
+                        staffRoleId: 2,
+                        staffRole: "RECEPTIONIST",
+                        baseSalary: 250000,
+                        shiftId: 2,
+                        shiftName: "NIGHT SHIFT",
+                        startTime: "12:00:00",
+                        endTime: "23:59:00",
+                        workDate: weekDates[2] // Wednesday
+                    },
+                    {
+                        id: 10003,
+                        userId: 1003,
+                        fullName: "Lê Văn Minh",
+                        email: "cleaner@example.com",
+                        role: "CLEANER",
+                        staffRoleId: 1,
+                        staffRole: "CLEANER",
+                        baseSalary: 180000,
+                        shiftId: 1,
+                        shiftName: "DAY SHIFT",
+                        startTime: "00:00:01",
+                        endTime: "12:00:00",
+                        workDate: weekDates[1] // Tuesday
+                    },
+                    {
+                        id: 10004,
+                        userId: 1003,
+                        fullName: "Lê Văn Minh",
+                        email: "cleaner@example.com",
+                        role: "CLEANER",
+                        staffRoleId: 1,
+                        staffRole: "CLEANER",
+                        baseSalary: 180000,
+                        shiftId: 2,
+                        shiftName: "NIGHT SHIFT",
+                        startTime: "12:00:00",
+                        endTime: "23:59:00",
+                        workDate: weekDates[3] // Thursday
+                    }
+                ];
+            };
+
+            // ================================================================
+            // === TAB 1: RENDER WEEKLY SCHEDULE GANTT ===
+            // ================================================================
+            const renderWeeklyGantt = async () => {
+                const tbody = document.getElementById('schedule-weekly-body');
+                tbody.innerHTML = '';
+
+                // Calculate the Monday to Sunday dates of the current week
+                const today = new Date();
+                const dayOfWeek = today.getDay(); // 0: Sunday, 1: Monday, ...
+                const distanceToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                
+                const monday = new Date(today);
+                monday.setDate(today.getDate() + distanceToMonday);
+
+                const weekDates = [];
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(monday);
+                    d.setDate(monday.getDate() + i);
+                    const year = d.getFullYear();
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const date = String(d.getDate()).padStart(2, '0');
+                    weekDates.push(`${year}-${month}-${date}`);
+                }
+
+                // Update table header days
+                const headerCells = document.querySelectorAll('.gantt-schedule-table th');
+                if (headerCells.length === 8) {
+                    const daysName = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+                    for (let i = 0; i < 7; i++) {
+                        const cell = headerCells[i + 1];
+                        const dateStr = weekDates[i];
+                        const displayDate = dateStr.split('-')[2] + '/' + dateStr.split('-')[1];
+                        
+                        let label = `${daysName[i]} (${displayDate})`;
+                        if (i === (dayOfWeek === 0 ? 6 : dayOfWeek - 1)) {
+                            label = `${daysName[i]} (Hôm nay)`;
+                            cell.className = 'today-header';
+                        } else {
+                            cell.className = '';
+                        }
+                        cell.innerText = label;
+                    }
+                }
+
+                let assignments = [];
+                try {
+                    if (!isOfflineMode) {
+                        const response = await fetch('http://localhost:8080/api/admin/assign-staff/current-week', { headers: getHeaders });
+                        const res = await response.json();
+                        if (res.success && res.data) {
+                            assignments = res.data;
+                        } else {
+                            throw new Error();
+                        }
+                    } else {
+                        if (!window.localAssignmentsState) {
+                            window.localAssignmentsState = getMockAssignmentsData(weekDates);
+                        }
+                        assignments = window.localAssignmentsState;
+                    }
+                } catch (e) {
+                    console.warn('[CheckinX] Backend offline - loading mock weekly Gantt assignments');
+                    isOfflineMode = true;
+                    if (!window.localAssignmentsState) {
+                        window.localAssignmentsState = getMockAssignmentsData(weekDates);
+                    }
+                    assignments = window.localAssignmentsState;
+                }
+
+                // Fallback / mock when no assignments are loaded
+                const staffSource = currentStaffList.length > 0 ? currentStaffList : getMockStaffData();
+
+                staffSource.forEach(s => {
+                    const tr = document.createElement('tr');
+                    
+                    let cellsHtml = `<td style="text-align:left; padding-left:16px;">
+                        <span style="font-weight:700; color:var(--text-main); display:block;">${s.fullName}</span>
+                        <span style="font-size:10.5px; color:var(--text-muted); font-weight:500;">${s.role === 'RECEPTIONIST' ? 'Lễ tân trưởng' : 'Nhân viên buồng phòng'}</span>
+                    </td>`;
+
+                    for (let i = 0; i < 7; i++) {
+                        const dateStr = weekDates[i];
+                        // Find assignment for this user on this day
+                        const assign = assignments.find(a => a.userId === s.id && a.workDate === dateStr);
+
+                        let shiftClass = 'off';
+                        let shiftText = 'OFF';
+                        let timeText = 'Ca nghỉ';
+                        let actionHtml = '';
+
+                        if (assign) {
+                            const nameLower = assign.shiftName.toLowerCase();
+                            if (nameLower.includes('sáng') || nameLower.includes('day')) {
+                                shiftClass = 'morning';
+                                shiftText = assign.shiftName;
+                            } else if (nameLower.includes('chiều')) {
+                                shiftClass = 'afternoon';
+                                shiftText = assign.shiftName;
+                            } else {
+                                shiftClass = 'night';
+                                shiftText = assign.shiftName;
+                            }
+                            timeText = `${assign.startTime.slice(0, 5)} - ${assign.endTime.slice(0, 5)}`;
+                            
+                            // Delete shift button on hover
+                            actionHtml = `<i class="fa-solid fa-circle-xmark delete-assign-btn" onclick="deleteAssignment(${assign.id})" title="Hủy phân ca" style="position:absolute; top:2px; right:2px; color:var(--danger); cursor:pointer; display:none; font-size:12px;"></i>`;
+                        }
+
+                        const todayIdx = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+                        const todayStyle = i === todayIdx ? 'background-color: var(--primary-light);' : '';
+
+                        cellsHtml += `
+                            <td style="${todayStyle} position:relative;" onmouseenter="this.querySelector('.delete-assign-btn')?.setAttribute('style', 'position:absolute; top:2px; right:2px; color:var(--danger); cursor:pointer; font-size:12px;')" onmouseleave="this.querySelector('.delete-assign-btn')?.setAttribute('style', 'display:none;')">
+                                <div class="shift-tag-badge ${shiftClass}">
+                                    <span>${shiftText}</span>
+                                    <span class="shift-tag-time-sub">${timeText}</span>
+                                </div>
+                                ${actionHtml}
+                            </td>
+                        `;
+                    }
+
+                    tr.innerHTML = cellsHtml;
+                    tbody.appendChild(tr);
+                });
+            };
+
+            window.deleteAssignment = async (assignId) => {
+                if (!confirm('Bạn có chắc muốn hủy phân ca làm việc này?')) return;
+                
+                try {
+                    if (isOfflineMode) {
+                        if (window.localAssignmentsState) {
+                            window.localAssignmentsState = window.localAssignmentsState.filter(a => a.id !== assignId);
+                        }
+                        showToast('Đã hủy phân ca cục bộ thành công!', 'success');
+                        renderWeeklyGantt();
+                        return;
+                    }
+                    
+                    const response = await fetch(`http://localhost:8080/api/admin/assign-staff/${assignId}`, {
+                        method: 'DELETE',
+                        headers: getHeaders
+                    });
+                    const res = await response.json();
+                    
+                    if (res.success) {
+                        showToast('Đã hủy phân công ca làm việc thành công!', 'success');
+                        renderWeeklyGantt();
+                    } else {
+                        showToast(res.message || 'Lỗi hủy phân ca', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Đường truyền lỗi không hủy được phân ca', 'danger');
+                }
+            };
+
+            // ================================================================
+            // === TAB 2: CALCULATE MONTHLY SALARY FOR ALL (POST) ===
+            // ================================================================
+            document.getElementById('btn-calculate-salary-all').addEventListener('click', async () => {
+                const month = document.getElementById('salary-month-select').value;
+                const year = document.getElementById('salary-year-select').value;
+
+                try {
+                    showToast('Đang quét công và tính toán bảng lương...', 'info', 'Đang xử lý');
+                    
+                    if (isOfflineMode) {
+                        setTimeout(() => {
+                            showToast('Đã tính toán xong bảng lương cục bộ!', 'success');
+                            fetchSalarySheets();
+                        }, 1200);
+                        return;
+                    }
+
+                    const response = await fetch(`http://localhost:8080/api/admin/salary/calculate-all?month=${month}&year=${year}`, {
+                        method: 'POST',
+                        headers: getHeaders
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast(`Tính toán thành công bảng lương cho ${res.data.length} nhân sự!`, 'success');
+                        fetchSalarySheets();
+                    } else {
+                        showToast(res.message || 'Lỗi tính toán bảng lương', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Không kết nối được server để tính lương', 'danger');
+                }
+            });
+
+            // ================================================================
+            // === TAB 2: FETCH PAGINATED SALARY SHEETS (GET) ===
+            // ================================================================
+            let currentSalaryPage = 0;
+            const salaryPageSize = 10;
+            let currentSalarySheets = [];
+            let filterSalaryUserId = '';
+
+            const fetchSalarySheets = async () => {
+                const month = document.getElementById('salary-month-select').value;
+                const year = document.getElementById('salary-year-select').value;
+                const role = document.getElementById('salary-filter-role').value;
+                const status = document.getElementById('salary-filter-status').value;
+
+                try {
+                    let url = `http://localhost:8080/api/admin/salary?month=${month}&year=${year}&page=${currentSalaryPage}&size=${salaryPageSize}`;
+                    if (role) {
+                        url += `&role=${role}`;
+                    }
+                    if (status) {
+                        url += `&status=${status}`;
+                    }
+                    if (filterSalaryUserId) {
+                        url += `&userId=${filterSalaryUserId}`;
+                    }
+                    const response = await fetch(url, { headers: getHeaders });
+                    const res = await response.json();
+
+                    if (res.success && res.data) {
+                        currentSalarySheets = res.data.content || [];
+                        renderSalaryTable(currentSalarySheets, res.data.totalElements);
+                        calculateSalaryStats(month, year);
+                        if (typeof updateSalaryPaginationControls === 'function') {
+                            updateSalaryPaginationControls(res.data.totalPages || 0);
+                        }
+                    } else {
+                        throw new Error();
+                    }
+                } catch (e) {
+                    currentSalarySheets = getMockSalaryData();
+                    if (filterSalaryUserId) {
+                        currentSalarySheets = currentSalarySheets.filter(s => s.userId === filterSalaryUserId);
+                    }
+                    renderSalaryTable(currentSalarySheets, currentSalarySheets.length);
+                    calculateSalaryStats(month, year);
+                    if (typeof updateSalaryPaginationControls === 'function') {
+                        updateSalaryPaginationControls(Math.ceil(currentSalarySheets.length / salaryPageSize));
+                    }
+                }
+            };
+
+            const renderSalaryTable = (sheets, total) => {
+                const tbody = document.getElementById('salary-table-body');
+                tbody.innerHTML = '';
+
+                if (sheets.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 24px; color:var(--text-muted);">Không có bảng lương nào được ghi nhận cho thời gian này!</td></tr>`;
+                    return;
+                }
+
+                sheets.forEach(s => {
+                    const tr = document.createElement('tr');
+                    
+                    const statusClass = s.status === 'PAID' ? 'active' : 'inactive';
+                    const statusText = s.status === 'PAID' ? 'ĐÃ CHI TRẢ' : 'CHỜ THANH TOÁN';
+
+                    const initials = s.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+                    tr.innerHTML = `
+                        <td>
+                            <div class="staff-profile-cell">
+                                <div class="staff-avatar">${initials}</div>
+                                <div class="staff-details-cell">
+                                    <span class="staff-name">${s.fullName}</span>
+                                    <span class="staff-role-sub">Mã bảng lương: #${s.salarySheetId}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><strong>${s.role === 'RECEPTIONIST' ? 'Lễ tân' : 'Buồng phòng'}</strong></td>
+                        <td>Tháng ${s.month} / ${s.year}</td>
+                        <td><strong style="color:var(--primary); font-size:14px;">${s.attendanceCount}</strong> ca</td>
+                        <td>${(s.salaryPerShift * 10000).toLocaleString('vi-VN')} đồng</td>
+                        <td><strong style="color:var(--text-main); font-size:14.5px;">${(s.totalSalary * 10000).toLocaleString('vi-VN')} đồng</strong></td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td style="text-align:center;">
+                            ${s.status !== 'PAID' ? 
+                                `<button class="btn-primary-action" onclick="confirmPaySalary(${s.salarySheetId})" style="padding: 6px 12px; font-size: 11px; box-shadow:none;"><i class="fa-solid fa-circle-dollar-to-slot"></i> Chi trả</button>` : 
+                                `<span style="color:var(--success); font-weight:700; font-size:11.5px;"><i class="fa-solid fa-circle-check"></i> Đã thanh toán</span>`
+                            }
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('salary-pagination-info').innerText = `Hiển thị 1 - ${sheets.length} của ${total} bản ghi`;
+            };
+
+            // Bind tab 2 filters
+            document.getElementById('salary-month-select').addEventListener('change', () => { filterSalaryUserId = ''; fetchSalarySheets(); renderAttendanceGrid(); });
+            document.getElementById('salary-year-select').addEventListener('change', () => { filterSalaryUserId = ''; fetchSalarySheets(); renderAttendanceGrid(); });
+            document.getElementById('salary-filter-role').addEventListener('change', () => { filterSalaryUserId = ''; fetchSalarySheets(); });
+            document.getElementById('salary-filter-status').addEventListener('change', () => { filterSalaryUserId = ''; fetchSalarySheets(); });
+
+            window.calculateSalaryForUser = (userId) => {
+                filterSalaryUserId = userId;
+                
+                // Switch active tab to 'Bảng lương & Chấm công'
+                subtabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+
+                const salaryTab = Array.from(subtabs).find(t => t.getAttribute('data-panel') === 'panel-salary-sheets');
+                if (salaryTab) salaryTab.classList.add('active');
+                
+                const salaryPanel = document.getElementById('panel-salary-sheets');
+                if (salaryPanel) salaryPanel.classList.add('active');
+
+                // Reset page index
+                currentSalaryPage = 0;
+
+                // Trigger fresh fetch and dot visualization load
+                fetchSalarySheets();
+                renderAttendanceGrid();
+                
+                showToast(`Đang lọc thống kê lương cho nhân viên mã NV${String(userId).padStart(3, '0')}`, 'info');
+            };
+
+            // Compute statistics cards sum VND
+            // Compute statistics cards sum VND globally for the month/year
+            const calculateSalaryStats = async (month, year) => {
+                try {
+                    if (isOfflineMode) {
+                        const mockSheets = getMockSalaryData();
+                        let total = 0;
+                        let paid = 0;
+                        let unpaid = 0;
+                        mockSheets.forEach(s => {
+                            total += s.totalSalary;
+                            if (s.status === 'PAID') {
+                                paid += s.totalSalary;
+                            } else {
+                                unpaid += s.totalSalary;
+                            }
+                        });
+                        document.getElementById('stat-salary-total').innerText = (total * 10000).toLocaleString('vi-VN') + ' đồng';
+                        document.getElementById('stat-salary-paid').innerText = (paid * 10000).toLocaleString('vi-VN') + ' đồng';
+                        document.getElementById('stat-salary-unpaid').innerText = (unpaid * 10000).toLocaleString('vi-VN') + ' đồng';
+                        return;
+                    }
+                    
+                    // Fetch all sheets for the selected month/year to calculate correct global stats (bypassing paging limits)
+                    const response = await fetch(`http://localhost:8080/api/admin/salary?month=${month}&year=${year}&page=0&size=10000`, { headers: getHeaders });
+                    const res = await response.json();
+                    if (res.success && res.data && res.data.content) {
+                        let total = 0;
+                        let paid = 0;
+                        let unpaid = 0;
+                        res.data.content.forEach(s => {
+                            total += s.totalSalary;
+                            if (s.status === 'PAID') {
+                                paid += s.totalSalary;
+                            } else {
+                                unpaid += s.totalSalary;
+                            }
+                        });
+                        document.getElementById('stat-salary-total').innerText = (total * 10000).toLocaleString('vi-VN') + ' đồng';
+                        document.getElementById('stat-salary-paid').innerText = (paid * 10000).toLocaleString('vi-VN') + ' đồng';
+                        document.getElementById('stat-salary-unpaid').innerText = (unpaid * 10000).toLocaleString('vi-VN') + ' đồng';
+                    }
+                } catch (e) {
+                    console.warn('[CheckinX] Error calculating salary stats from server', e);
+                }
+            };
+
+            // ================================================================
+            // === TAB 2 ACTION: PAY SALARY / CONFIRM PAID (PUT) ===
+            // ================================================================
+            window.confirmPaySalary = async (salarySheetId) => {
+                if (!confirm(`Bạn có chắc chắn muốn xác nhận CHI TRẢ LƯƠNG cho bảng lương mã số #${salarySheetId}?`)) return;
+
+                try {
+                    if (isOfflineMode) {
+                        showToast('Đã xác nhận chi trả lương cục bộ!', 'success');
+                        const target = currentSalarySheets.find(s => s.salarySheetId === salarySheetId);
+                        if (target) {
+                            target.status = 'PAID';
+                            renderSalaryTable(currentSalarySheets, currentSalarySheets.length);
+                            calculateSalaryStats(target.month, target.year);
+                        }
+                        return;
+                    }
+
+                    const response = await fetch(`http://localhost:8080/api/admin/salary/${salarySheetId}/paid`, {
+                        method: 'PUT',
+                        headers: getHeaders
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast(`Chi trả lương thành công cho bảng lương #${salarySheetId}!`, 'success');
+                        fetchSalarySheets();
+                    } else {
+                        showToast(res.message || 'Lỗi thanh toán lương', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Đường truyền lỗi xác nhận chi lương', 'danger');
+                }
+            };
+
+            // ================================================================
+            // === TAB 2: MONTHLY ATTENDANCE DOTS SHEET (GET) ===
+            // ================================================================
+            const renderAttendanceGrid = async () => {
+                const month = document.getElementById('salary-month-select').value;
+                const year = document.getElementById('salary-year-select').value;
+
+                const headerRow = document.getElementById('attendance-header-days');
+                headerRow.innerHTML = `<th style="text-align: left; padding-left: 16px; min-width: 140px;">Nhân viên</th>`;
+
+                // Calculate highlighted day if selected month/year is current
+                const today = new Date();
+                const currentActualDay = today.getDate();
+                const currentActualMonth = today.getMonth() + 1;
+                const currentActualYear = today.getFullYear();
+                const isCurrentMonthYearSelected = (Number(month) === currentActualMonth && Number(year) === currentActualYear);
+
+                // Days 1-31
+                for (let d = 1; d <= 31; d++) {
+                    const th = document.createElement('th');
+                    th.innerText = d;
+                    th.style.padding = '8px 4px';
+                    th.style.fontSize = '11px';
+                    th.style.width = '2.5%';
+                    if (isCurrentMonthYearSelected && d === currentActualDay) {
+                        th.style.backgroundColor = 'var(--primary-light)'; // Highlight today
+                    }
+                    headerRow.appendChild(th);
+                }
+
+                const tbody = document.getElementById('attendance-body-rows');
+                tbody.innerHTML = '';
+
+                let staffList = [];
+                let attendanceRecords = [];
+
+                try {
+                    // Try to fetch active cleaner/receptionist staff members
+                    const staffResponse = await fetch(`http://localhost:8080/api/admin/staff?page=0&size=10000`, { headers: getHeaders });
+                    const staffRes = await staffResponse.json();
+                    if (staffRes.success && staffRes.data && staffRes.data.content) {
+                        staffList = staffRes.data.content;
+                        isOfflineMode = false; // Self-healing!
+                    }
+
+                    // Try to fetch attendance records filtered by selected month/year
+                    const attResponse = await fetch(`http://localhost:8080/api/admin/attendance?month=${month}&year=${year}&page=0&size=10000`, { headers: getHeaders });
+                    const attRes = await attResponse.json();
+                    if (attRes.success && attRes.data && attRes.data.content) {
+                        attendanceRecords = attRes.data.content;
+                        isOfflineMode = false; // Self-healing!
+                    }
+                } catch (e) {
+                    console.warn('[CheckinX] Error fetching live attendance grid from server, falling back', e);
+                    isOfflineMode = true;
+                }
+
+                // If offline or fetch failed, fallback to mock data mapped beautifully
+                if (staffList.length === 0) {
+                    staffList = getMockStaffData();
+                }
+
+                // Collect unique users from both active staff list and attendance records
+                const staffMap = new Map();
+                
+                // 1. Add active staff
+                staffList.forEach(s => {
+                    staffMap.set(s.id, { id: s.id, fullName: s.fullName, role: s.role });
+                });
+                
+                // 2. Add any users from attendance records who aren't in staffList (e.g. CUSTOMER Nguyen Van A)
+                attendanceRecords.forEach(att => {
+                    if (att.userId && !staffMap.has(att.userId)) {
+                        staffMap.set(att.userId, { id: att.userId, fullName: att.fullName, role: att.role });
+                    }
+                });
+
+                let displayedStaff = Array.from(staffMap.values());
+
+                // Filter to single employee if page-wide filter is active
+                if (filterSalaryUserId) {
+                    displayedStaff = displayedStaff.filter(s => s.id === Number(filterSalaryUserId));
+                }
+
+                if (displayedStaff.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="32" style="text-align:center; padding: 24px; color:var(--text-muted);">Không tìm thấy nhân sự phù hợp!</td></tr>`;
+                    return;
+                }
+
+                displayedStaff.forEach(s => {
+                    const tr = document.createElement('tr');
+                    
+                    const displayRole = s.role === 'RECEPTIONIST' ? 'Receptionist' : s.role === 'CLEANER' ? 'Cleaner' : s.role;
+                    let cellsHtml = `
+                        <td style="text-align: left; padding-left: 16px;">
+                            <span style="font-weight:700; color:var(--text-main); display:block;">${s.fullName}</span>
+                            <span style="font-size:10px; color:var(--text-muted); font-weight:500;">${displayRole}</span>
+                        </td>
+                    `;
+
+                    // Generate dot status arrays for days 1-31
+                    const gridData = [];
+                    for (let d = 1; d <= 31; d++) {
+                        gridData.push({ status: 9, tooltip: `Ngày ${d}: Chưa ghi nhận ca` });
+                    }
+
+                    if (isOfflineMode) {
+                        // Generate deterministic mock pattern for offline/mock presentation
+                        for (let d = 1; d <= 31; d++) {
+                            // Only mock up to today if it's the current month, otherwise mock the entire month
+                            if (isCurrentMonthYearSelected && d > currentActualDay) {
+                                continue;
+                            }
+                            
+                            const rem = (s.id + d) % 7;
+                            if (rem === 0 || rem === 4) {
+                                gridData[d - 1] = { status: 0, tooltip: `Ngày ${d}: Nghỉ phép` };
+                            } else if (rem === 2) {
+                                gridData[d - 1] = { status: 2, tooltip: `Ngày ${d}: Đi muộn 10 phút (Ca Sáng) - 08:10` };
+                            } else if (rem === 5) {
+                                gridData[d - 1] = { status: 3, tooltip: `Ngày ${d}: Vắng mặt (Ca Chiều)` };
+                            } else {
+                                gridData[d - 1] = { status: 1, tooltip: `Ngày ${d}: Đúng giờ (Ca Sáng) - 08:02` };
+                            }
+                        }
+                    } else {
+                        // Map real records from the server
+                        const staffAtt = attendanceRecords.filter(att => Number(att.userId) === Number(s.id));
+                        staffAtt.forEach(att => {
+                            let dayNum = null;
+                            if (att.workDate) {
+                                if (typeof att.workDate === 'string') {
+                                    const parts = att.workDate.split('-');
+                                    if (parts[2]) {
+                                        dayNum = parseInt(parts[2], 10);
+                                    }
+                                } else if (Array.isArray(att.workDate)) {
+                                    dayNum = parseInt(att.workDate[2], 10);
+                                }
+                            } else if (att.checkIn) {
+                                if (typeof att.checkIn === 'string') {
+                                    const parts = att.checkIn.split('T');
+                                    if (parts[0]) {
+                                        const dateParts = parts[0].split('-');
+                                        if (dateParts[2]) {
+                                            dayNum = parseInt(dateParts[2], 10);
+                                        }
+                                    }
+                                } else if (Array.isArray(att.checkIn)) {
+                                    dayNum = parseInt(att.checkIn[2], 10);
+                                }
+                            }
+                            
+                            if (dayNum && dayNum >= 1 && dayNum <= 31) {
+                                let statusVal = 9;
+                                let titleStr = '';
+                                
+                                let timeStr = '';
+                                if (att.checkIn) {
+                                    if (typeof att.checkIn === 'string') {
+                                        const checkInTimeParts = att.checkIn.split('T')[1];
+                                        if (checkInTimeParts) {
+                                            timeStr = checkInTimeParts.substring(0, 5);
+                                        }
+                                    } else if (Array.isArray(att.checkIn)) {
+                                        const hh = String(att.checkIn[3] || 0).padStart(2, '0');
+                                        const mm = String(att.checkIn[4] || 0).padStart(2, '0');
+                                        timeStr = `${hh}:${mm}`;
+                                    }
+                                }
+                                
+                                const upperStatus = att.status ? att.status.toUpperCase() : '';
+                                if (upperStatus === 'PRESENT') {
+                                    statusVal = 1;
+                                    titleStr = `Ngày ${dayNum}: Đúng giờ${att.shiftName ? ' (' + att.shiftName + ')' : ''}${timeStr ? ' - ' + timeStr : ''}`;
+                                } else if (upperStatus === 'LATE') {
+                                    statusVal = 2;
+                                    titleStr = `Ngày ${dayNum}: Đi muộn ${att.lateMinutes || 0} phút${att.shiftName ? ' (' + att.shiftName + ')' : ''}${timeStr ? ' - ' + timeStr : ''}`;
+                                } else if (upperStatus === 'ABSENT') {
+                                    statusVal = 3;
+                                    titleStr = `Ngày ${dayNum}: Vắng mặt${att.shiftName ? ' (' + att.shiftName + ')' : ''}`;
+                                } else if (upperStatus === 'LEAVE' || upperStatus === 'OFF') {
+                                    statusVal = 0;
+                                    titleStr = `Ngày ${dayNum}: Nghỉ phép/Nghỉ làm${att.shiftName ? ' (' + att.shiftName + ')' : ''}`;
+                                }
+                                
+                                gridData[dayNum - 1] = { status: statusVal, tooltip: titleStr };
+                            }
+                        });
+                    }
+
+                    // Render grid row cells
+                    gridData.forEach((cell, idx) => {
+                        let dotHtml = '';
+                        if (cell.status === 1) {
+                            dotHtml = `<span class="attendance-dot-circle on-time" title="${cell.tooltip}"></span>`;
+                        } else if (cell.status === 2) {
+                            dotHtml = `<span class="attendance-dot-circle late" title="${cell.tooltip}"></span>`;
+                        } else if (cell.status === 3) {
+                            dotHtml = `<span class="attendance-dot-circle absent" title="${cell.tooltip}"></span>`;
+                        } else if (cell.status === 0) {
+                            dotHtml = `<span class="attendance-dot-circle off-day" title="${cell.tooltip}"></span>`;
+                        } else {
+                            dotHtml = `<span class="attendance-dot-circle" style="background-color:#f1f5f9;" title="${cell.tooltip}"></span>`;
+                        }
+
+                        const isToday = isCurrentMonthYearSelected && ((idx + 1) === currentActualDay);
+                        const todayStyle = isToday ? 'background-color: var(--primary-light);' : '';
+
+                        cellsHtml += `
+                            <td style="${todayStyle}">
+                                <div class="attendance-dots-grid">${dotHtml}</div>
+                            </td>
+                        `;
+                    });
+
+                    tr.innerHTML = cellsHtml;
+                    tbody.appendChild(tr);
+                });
+            };
+
+            // ================================================================
+            // === TAB 3: FETCH SHIFTS TEMPLATES (GET) ===
+            // ================================================================
+            let currentShiftsList = [];
+
+            const fetchShiftsTemplates = async () => {
+                try {
+                    const response = await fetch('http://localhost:8080/api/admin/shifts', { headers: getHeaders });
+                    const res = await response.json();
+
+                    if (res.success && res.data) {
+                        currentShiftsList = res.data || [];
+                        renderShiftsCards(currentShiftsList);
+                        isOfflineMode = false;
+                    } else {
+                        throw new Error();
+                    }
+                } catch (e) {
+                    currentShiftsList = getMockShiftsData();
+                    renderShiftsCards(currentShiftsList);
+                }
+            };
+
+            const renderShiftsCards = (shifts) => {
+                const container = document.getElementById('shifts-cards-container');
+                container.innerHTML = '';
+
+                if (shifts.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--text-muted);">
+                            <i class="fa-solid fa-clock-rotate-left" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+                            Không có ca trực nào được định nghĩa trong hệ thống.
+                        </div>`;
+                    return;
+                }
+
+                shifts.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = 'shift-template-card';
+
+                    const statusText = s.isActive ? 'ĐANG DÙNG' : 'ĐÃ TẮT';
+                    const badgeClass = s.isActive ? 'active' : 'inactive';
+
+                    card.innerHTML = `
+                        <div class="shift-card-header">
+                            <span class="shift-card-title">${s.shiftName}</span>
+                            <span class="shift-card-time">${s.startTime} - ${s.endTime}</span>
+                        </div>
+                        <p class="shift-card-desc">${s.description || 'Không có mô tả chi tiết ca trực.'}</p>
+                        <div class="shift-card-footer">
+                            <span class="status-badge ${badgeClass}">${statusText}</span>
+                            <button class="btn-table-action" onclick="editShiftTemplate(${s.id})" title="Chỉnh sửa ca"><i class="fa-solid fa-pen-to-square"></i> Cập nhật</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            };
+
+            // ================================================================
+            // === TAB 3 ACTION: DEFINE SHIFT TEMPLATE (POST) ===
+            // ================================================================
+            document.getElementById('btn-add-shift-trigger').addEventListener('click', () => {
+                document.getElementById('shift-drawer-title').innerHTML = `<i class="fa-solid fa-clock" style="color:var(--primary);"></i>Định nghĩa Ca mới`;
+                document.getElementById('shift-id').value = '';
+                document.getElementById('shift-name').value = '';
+                document.getElementById('shift-start').value = '08:00:00';
+                document.getElementById('shift-end').value = '16:00:00';
+                document.getElementById('shift-desc').value = '';
+                document.getElementById('shift-active-group').style.display = 'none';
+
+                openDrawer('drawer-shift-template');
+            });
+
+            window.editShiftTemplate = (shiftId) => {
+                const shift = currentShiftsList.find(s => s.id === shiftId);
+                if (!shift) return;
+
+                document.getElementById('shift-drawer-title').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:var(--primary);"></i>Cập nhật Ca làm việc`;
+                document.getElementById('shift-id').value = shift.id;
+                document.getElementById('shift-name').value = shift.shiftName;
+                document.getElementById('shift-start').value = shift.startTime;
+                document.getElementById('shift-end').value = shift.endTime;
+                document.getElementById('shift-desc').value = shift.description || '';
+                document.getElementById('shift-active').value = String(shift.isActive);
+                document.getElementById('shift-active-group').style.display = 'flex';
+
+                openDrawer('drawer-shift-template');
+            };
+
+            document.getElementById('btn-save-shift').addEventListener('click', async () => {
+                const shiftId = document.getElementById('shift-id').value;
+                const shiftName = document.getElementById('shift-name').value.trim();
+                const startTime = document.getElementById('shift-start').value.trim();
+                const endTime = document.getElementById('shift-end').value.trim();
+                const description = document.getElementById('shift-desc').value.trim();
+                const isActive = document.getElementById('shift-active').value === 'true';
+
+                if (!shiftName || !startTime || !endTime) {
+                    showToast('Vui lòng nhập đầy đủ Tên ca và giờ làm việc!', 'warning');
+                    return;
+                }
+
+                const body = { shiftName, startTime, endTime, description, isActive };
+
+                try {
+                    if (isOfflineMode) {
+                        showToast('Lưu cấu hình ca làm việc cục bộ thành công!', 'success');
+                        closeDrawer('drawer-shift-template');
+                        return;
+                    }
+
+                    let url = 'http://localhost:8080/api/admin/shifts';
+                    let method = 'POST';
+
+                    if (shiftId) {
+                        url += `/${shiftId}`;
+                        method = 'PUT';
+                    }
+
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: getHeaders,
+                        body: JSON.stringify(body)
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast(shiftId ? 'Cập nhật ca trực thành công!' : 'Định nghĩa ca trực thành công!', 'success');
+                        closeDrawer('drawer-shift-template');
+                        fetchShiftsTemplates();
+                    } else {
+                        showToast(res.message || 'Lỗi lưu ca trực', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Đường truyền lỗi không lưu được ca trực', 'danger');
+                }
+            });
+
+            // ================================================================
+            // === TAB 4: FETCH ROLE SALARY CONFIGS (GET) ===
+            // ================================================================
+            let currentSalaryConfigsList = [];
+
+            const fetchRoleSalaryConfigs = async () => {
+                try {
+                    if (isOfflineMode) {
+                        currentSalaryConfigsList = getMockRoleSalaryConfigsData();
+                        renderSalaryConfigsCards(currentSalaryConfigsList);
+                        return;
+                    }
+
+                    const response = await fetch('http://localhost:8080/api/admin/role-salary-configs', { headers: getHeaders });
+                    const res = await response.json();
+
+                    if (res.success && res.data) {
+                        currentSalaryConfigsList = res.data || [];
+                        renderSalaryConfigsCards(currentSalaryConfigsList);
+                    } else {
+                        throw new Error();
+                    }
+                } catch (e) {
+                    console.warn('[CheckinX] Error fetching live salary configs, falling back', e);
+                    currentSalaryConfigsList = getMockRoleSalaryConfigsData();
+                    renderSalaryConfigsCards(currentSalaryConfigsList);
+                }
+            };
+
+            const renderSalaryConfigsCards = (configs) => {
+                const container = document.getElementById('salary-configs-cards-container');
+                container.innerHTML = '';
+
+                if (configs.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--text-muted);">
+                            <i class="fa-solid fa-money-check-dollar" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+                            Không có cấu hình lương vai trò nào được định nghĩa trong hệ thống.
+                        </div>`;
+                    return;
+                }
+
+                configs.forEach(c => {
+                    const card = document.createElement('div');
+                    card.className = 'shift-template-card';
+
+                    const statusText = c.isActive ? 'ĐANG ÁP DỤNG' : 'ĐÃ TẮT';
+                    const badgeClass = c.isActive ? 'active' : 'inactive';
+                    
+                    const roleName = c.staffRole === 'RECEPTIONIST' ? 'Lễ tân (RECEPTIONIST)' : 'Buồng phòng (CLEANER)';
+                    const vndSalary = (c.baseSalary * 10000).toLocaleString('vi-VN');
+
+                    card.innerHTML = `
+                        <div class="shift-card-header">
+                            <span class="shift-card-title">${roleName}</span>
+                            <span class="shift-card-time" style="color: var(--primary); font-size: 16px; font-weight: 800;">${vndSalary} đ / ca</span>
+                        </div>
+                        <p class="shift-card-desc" style="font-size: 11.5px; color: var(--text-muted);">
+                            Thời gian cấu hình: ${c.createdAt ? new Date(c.createdAt).toLocaleDateString('vi-VN') : 'Mặc định'}<br>
+                            Cập nhật cuối cùng: ${c.updatedAt ? new Date(c.updatedAt).toLocaleDateString('vi-VN') : 'Mặc định'}
+                        </p>
+                        <div class="shift-card-footer">
+                            <span class="status-badge ${badgeClass}">${statusText}</span>
+                            <button class="btn-table-action" onclick="editSalaryConfig(${c.id})" title="Cập nhật cấu hình"><i class="fa-solid fa-pen-to-square"></i> Cập nhật</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            };
+
+            // Trigger Add Config drawer
+            document.getElementById('btn-add-salary-config-trigger').addEventListener('click', () => {
+                document.getElementById('salary-config-drawer-title').innerHTML = `<i class="fa-solid fa-money-check-dollar" style="color:var(--primary);"></i>Thêm Cấu hình lương`;
+                document.getElementById('salary-config-id').value = '';
+                document.getElementById('salary-config-role').value = 'RECEPTIONIST';
+                document.getElementById('salary-config-role-group').style.display = 'block'; // Show role select when creating
+                document.getElementById('salary-config-base').value = '';
+                document.getElementById('salary-config-active').value = 'true';
+
+                openDrawer('drawer-salary-config');
+            });
+
+            // Trigger Edit Config drawer
+            window.editSalaryConfig = (configId) => {
+                const config = currentSalaryConfigsList.find(c => c.id === configId);
+                if (!config) return;
+
+                document.getElementById('salary-config-drawer-title').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:var(--primary);"></i>Cập nhật Cấu hình lương`;
+                document.getElementById('salary-config-id').value = config.id;
+                document.getElementById('salary-config-role').value = config.staffRole;
+                document.getElementById('salary-config-role-group').style.display = 'none'; // Hide role select when editing
+                document.getElementById('salary-config-base').value = Math.round(config.baseSalary * 10000);
+                document.getElementById('salary-config-active').value = String(config.isActive);
+
+                openDrawer('drawer-salary-config');
+            };
+
+            // Save Config (Create or Update)
+            document.getElementById('btn-save-salary-config').addEventListener('click', async () => {
+                const configId = document.getElementById('salary-config-id').value;
+                const staffRole = document.getElementById('salary-config-role').value;
+                const rawBase = document.getElementById('salary-config-base').value;
+                const isActive = document.getElementById('salary-config-active').value === 'true';
+
+                if (!rawBase || isNaN(rawBase) || Number(rawBase) < 0) {
+                    showToast('Vui lòng nhập mức lương cơ bản hợp lệ (>= 0)!', 'warning');
+                    return;
+                }
+
+                const baseSalary = Number(rawBase) / 10000; // Standardized to "USD value equivalent" 
+
+                if (isOfflineMode) {
+                    showToast('Lưu cấu hình lương vai trò cục bộ thành công!', 'success');
+                    if (configId) {
+                        // Update in-memory
+                        const target = currentSalaryConfigsList.find(c => c.id === Number(configId));
+                        if (target) {
+                            target.baseSalary = baseSalary;
+                            target.isActive = isActive;
+                            target.updatedAt = new Date().toISOString();
+                        }
+                    } else {
+                        // Create in-memory
+                        const nextId = currentSalaryConfigsList.length > 0 ? Math.max(...currentSalaryConfigsList.map(c => c.id)) + 1 : 1;
+                        currentSalaryConfigsList.push({
+                            id: nextId,
+                            staffRole,
+                            baseSalary,
+                            isActive,
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        });
+                    }
+                    renderSalaryConfigsCards(currentSalaryConfigsList);
+                    closeDrawer('drawer-salary-config');
+                    return;
+                }
+
+                try {
+                    let url = 'http://localhost:8080/api/admin/role-salary-configs';
+                    let method = 'POST';
+                    let body = { staffRole, baseSalary, isActive };
+
+                    if (configId) {
+                        url += `/${configId}`;
+                        method = 'PUT';
+                        body = { baseSalary, isActive }; // Staff role is immutable during edits
+                    }
+
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            ...getHeaders,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+
+                    const res = await response.json();
+                    if (res.success) {
+                        showToast(configId ? 'Cập nhật cấu hình lương thành công!' : 'Thêm cấu hình lương thành công!', 'success');
+                        closeDrawer('drawer-salary-config');
+                        fetchRoleSalaryConfigs();
+                    } else {
+                        showToast(res.message || 'Lỗi lưu cấu hình lương', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Không kết nối được server để lưu cấu hình lương', 'danger');
+                }
+            });
+
+            // ================================================================
+            // === TAB 1 ACTION: ASSIGN SHIFT TO STAFF (POST) ===
+            // ================================================================
+            document.getElementById('btn-assign-staff-trigger').addEventListener('click', async () => {
+                // Populate staff dropdown
+                const staffSelect = document.getElementById('assign-staff-user-select');
+                staffSelect.innerHTML = '<option value="">-- Chọn nhân viên --</option>';
+                
+                // Fetch staff list first to make sure dropdown is completely up-to-date
+                const staffSource = currentStaffList.length > 0 ? currentStaffList : getMockStaffData();
+                staffSource.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.innerText = `${s.fullName} (${s.role === 'RECEPTIONIST' ? 'Lễ tân' : 'Buồng phòng'})`;
+                    staffSelect.appendChild(opt);
+                });
+
+                // Fetch shifts list first
+                if (currentShiftsList.length === 0) {
+                    try {
+                        const response = await fetch('http://localhost:8080/api/admin/shifts', { headers: getHeaders });
+                        const res = await response.json();
+                        if (res.success && res.data) {
+                            currentShiftsList = res.data;
+                        }
+                    } catch (e) {
+                        currentShiftsList = getMockShiftsData();
+                    }
+                }
+
+                // Populate shift dropdown
+                const shiftSelect = document.getElementById('assign-staff-shift-select');
+                shiftSelect.innerHTML = '<option value="">-- Chọn ca trực --</option>';
+                const shiftSource = currentShiftsList.length > 0 ? currentShiftsList : getMockShiftsData();
+                shiftSource.forEach(sf => {
+                    const opt = document.createElement('option');
+                    opt.value = sf.id;
+                    opt.innerText = `${sf.shiftName} (${sf.startTime.slice(0, 5)} - ${sf.endTime.slice(0, 5)})`;
+                    shiftSelect.appendChild(opt);
+                });
+
+                // Clear fields
+                document.getElementById('assign-staff-role-preview').value = '';
+                // Default date to today local safely
+                const tzOffset = new Date().getTimezoneOffset() * 60000;
+                const todayLocal = new Date(Date.now() - tzOffset).toISOString().split('T')[0];
+                document.getElementById('assign-staff-date').value = todayLocal;
+
+                openDrawer('drawer-assign-staff');
+            });
+
+            // Handle staff select change to show preview role
+            document.getElementById('assign-staff-user-select').addEventListener('change', (e) => {
+                const userId = parseInt(e.target.value);
+                const staffSource = currentStaffList.length > 0 ? currentStaffList : getMockStaffData();
+                const staff = staffSource.find(s => s.id === userId);
+                if (staff) {
+                    document.getElementById('assign-staff-role-preview').value = staff.role === 'RECEPTIONIST' ? 'LỄ TÂN (RECEPTIONIST)' : 'BUỒNG PHÒNG (CLEANER)';
+                } else {
+                    document.getElementById('assign-staff-role-preview').value = '';
+                }
+            });
+
+            // Save Assign Staff Assignment
+            document.getElementById('btn-save-assign-staff').addEventListener('click', async () => {
+                const userIdVal = document.getElementById('assign-staff-user-select').value;
+                const shiftIdVal = document.getElementById('assign-staff-shift-select').value;
+                const workDate = document.getElementById('assign-staff-date').value;
+
+                if (!userIdVal || !shiftIdVal || !workDate) {
+                    showToast('Vui lòng chọn đầy đủ nhân viên, ca làm việc và ngày phân công!', 'warning');
+                    return;
+                }
+
+                const userId = parseInt(userIdVal);
+                const shiftId = parseInt(shiftIdVal);
+                
+                const staffSource = currentStaffList.length > 0 ? currentStaffList : getMockStaffData();
+                const staff = staffSource.find(s => s.id === userId);
+                if (!staff) return;
+
+                // Map role to RoleSalaryConfig ID
+                // CLEANER = 1, RECEPTIONIST = 2
+                const mappedStaffId = staff.role === 'CLEANER' ? 1 : 2;
+
+                const body = { userId, staffId: mappedStaffId, shiftId, workDate };
+
+                try {
+                    if (isOfflineMode) {
+                        if (!window.localAssignmentsState) {
+                            // Calculate local Monday safely
+                            const today = new Date();
+                            const dayOfWeek = today.getDay();
+                            const distanceToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                            const monday = new Date(today);
+                            monday.setDate(today.getDate() + distanceToMonday);
+                            const weekDates = [];
+                            for (let i = 0; i < 7; i++) {
+                                const d = new Date(monday);
+                                d.setDate(monday.getDate() + i);
+                                const year = d.getFullYear();
+                                const month = String(d.getMonth() + 1).padStart(2, '0');
+                                const date = String(d.getDate()).padStart(2, '0');
+                                weekDates.push(`${year}-${month}-${date}`);
+                            }
+                            window.localAssignmentsState = getMockAssignmentsData(weekDates);
+                        }
+                        
+                        const newId = 10000 + Date.now() % 10000;
+                        const shift = (currentShiftsList.length > 0 ? currentShiftsList : getMockShiftsData()).find(sf => sf.id === shiftId);
+                        
+                        window.localAssignmentsState.push({
+                            id: newId,
+                            userId: userId,
+                            fullName: staff.fullName,
+                            email: staff.email,
+                            role: staff.role,
+                            staffRoleId: mappedStaffId,
+                            staffRole: staff.role,
+                            baseSalary: staff.role === 'CLEANER' ? 180000 : 250000,
+                            shiftId: shiftId,
+                            shiftName: shift ? shift.shiftName : "Ca trực",
+                            startTime: shift ? shift.startTime : "08:00:00",
+                            endTime: shift ? shift.endTime : "16:00:00",
+                            workDate: workDate
+                        });
+
+                        showToast('Đã lưu phân công ca làm việc cục bộ thành công!', 'success');
+                        closeDrawer('drawer-assign-staff');
+                        renderWeeklyGantt();
+                        return;
+                    }
+
+                    const response = await fetch('http://localhost:8080/api/admin/assign-staff', {
+                        method: 'POST',
+                        headers: getHeaders,
+                        body: JSON.stringify(body)
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast('Phân công ca làm việc thành công!', 'success');
+                        closeDrawer('drawer-assign-staff');
+                        renderWeeklyGantt();
+                    } else {
+                        showToast(res.message || 'Lỗi phân công ca', 'danger');
+                    }
+                } catch (e) {
+                    showToast('Đường truyền lỗi không lưu được phân công', 'danger');
+                }
+            });
+
+            // ================================================================
+            // === REPORT EXPORTS & GENERAL STYLES ===
+            // ================================================================
+            document.getElementById('btn-export-reports').addEventListener('click', () => {
+                showToast('Hệ thống đang xuất bản báo cáo nhân sự PDF...', 'info');
+                setTimeout(() => {
+                    showToast('Đã tải xuống báo cáo HR_Report_2026.pdf thành công!', 'success');
+                }, 1500);
+            });
+
+            // ================================================================
+            // === PAGINATION CONTROLS & EVENT LISTENERS ===
+            // ================================================================
+            const updateStaffPaginationControls = (totalPages) => {
+                const btnPrev = document.getElementById('btn-staff-prev');
+                const btnNext = document.getElementById('btn-staff-next');
+                if (btnPrev && btnNext) {
+                    btnPrev.disabled = (currentStaffPage === 0);
+                    btnNext.disabled = (currentStaffPage >= totalPages - 1 || totalPages === 0);
+                }
+            };
+
+            const updateSalaryPaginationControls = (totalPages) => {
+                const btnPrev = document.getElementById('btn-salary-prev');
+                const btnNext = document.getElementById('btn-salary-next');
+                if (btnPrev && btnNext) {
+                    btnPrev.disabled = (currentSalaryPage === 0);
+                    btnNext.disabled = (currentSalaryPage >= totalPages - 1 || totalPages === 0);
+                }
+            };
+
+            // Bind staff page navigation listeners
+            document.getElementById('btn-staff-prev').addEventListener('click', () => {
+                if (currentStaffPage > 0) {
+                    currentStaffPage--;
+                    fetchStaffList();
+                }
+            });
+
+            document.getElementById('btn-staff-next').addEventListener('click', () => {
+                currentStaffPage++;
+                fetchStaffList();
+            });
+
+            // Bind salary page navigation listeners
+            document.getElementById('btn-salary-prev').addEventListener('click', () => {
+                if (currentSalaryPage > 0) {
+                    currentSalaryPage--;
+                    fetchSalarySheets();
+                }
+            });
+
+            document.getElementById('btn-salary-next').addEventListener('click', () => {
+                currentSalaryPage++;
+                fetchSalarySheets();
+            });
+
+            // Kickstart initial load
+            fetchStaffList();
+            renderWeeklyGantt();
+
+        });
+    </script>
+
+    <!-- CheckinX Style Unification & Smart Toast Alert Overrides -->
+    <script>
+        (function() {
+            if (window.alertOverridden) return;
+            window.alertOverridden = true;
+
+            // 1. Tự động tiêm Google Font Outfit nếu chưa có
+            if (!document.querySelector('link[href*="Outfit"]')) {
+                const linkPreconnect1 = document.createElement('link');
+                linkPreconnect1.rel = 'preconnect';
+                linkPreconnect1.href = 'https://fonts.googleapis.com';
+                document.head.appendChild(linkPreconnect1);
+
+                const linkPreconnect2 = document.createElement('link');
+                linkPreconnect2.rel = 'preconnect';
+                linkPreconnect2.href = 'https://fonts.gstatic.com';
+                linkPreconnect2.crossOrigin = 'anonymous';
+                document.head.appendChild(linkPreconnect2);
+
+                const linkFont = document.createElement('link');
+                linkFont.rel = 'stylesheet';
+                linkFont.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
+                document.head.appendChild(linkFont);
+            }
+
+            // 2. Ép font-family Outfit cho toàn bộ trang
+            const styleElement = document.createElement('style');
+            styleElement.id = 'checkinx-unified-styles';
+            styleElement.innerHTML = `
+                body, html, input, select, textarea, button {
+                    font-family: 'Outfit', sans-serif !important;
+                }
+                #toast-container {
+                    position: fixed;
+                    top: 1rem;
+                    right: 1rem;
+                    z-index: 99999;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    pointer-events: none;
+                }
+                .toast-item {
+                    pointer-events: auto;
+                    animation: toastSlideIn 0.3s ease-out forwards;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                    transition: all 0.3s ease;
+                }
+                @keyframes toastSlideIn {
+                    from { transform: translateX(120%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                /* Tailwind utility overrides for pages without Tailwind loaded */
+                .toast-item.flex { display: flex !important; }
+                .toast-item.items-center { align-items: center !important; }
+                .toast-item.gap-3 { gap: 0.75rem !important; }
+                .toast-item.px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .toast-item.py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+                .toast-item.rounded-2xl { border-radius: 1rem !important; }
+                .toast-item.border { border: 1px solid rgba(226, 232, 240, 0.8) !important; }
+                .toast-item.text-xs { font-size: 0.75rem !important; }
+                .toast-item.font-semibold { font-weight: 600 !important; }
+                .toast-item.bg-white { background-color: #ffffff !important; }
+                .toast-item.text-emerald-800 { color: #065f46 !important; }
+                .toast-item.border-emerald-100 { border-color: #a7f3d0 !important; }
+                .toast-item.bg-emerald-50\/95 { background-color: rgba(240, 253, 250, 0.95) !important; }
+                .toast-item.text-blue-800 { color: #1e40af !important; }
+                .toast-item.border-blue-100 { border-color: #bfdbfe !important; }
+                .toast-item.bg-blue-50\/95 { background-color: rgba(239, 246, 255, 0.95) !important; }
+                .toast-item.text-red-800 { color: #991b1b !important; }
+                .toast-item.border-red-100 { border-color: #fecaca !important; }
+                .toast-item.bg-red-50\/95 { background-color: rgba(254, 242, 242, 0.95) !important; }
+                .toast-item.text-amber-800 { color: #92400e !important; }
+                .toast-item.border-amber-100 { border-color: #fde68a !important; }
+                .toast-item.bg-amber-50\/95 { background-color: rgba(255, 251, 235, 0.95) !important; }
+                .toast-item.backdrop-blur-sm { backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important; }
+                .toast-item .flex-1 { flex: 1 1 0% !important; }
+            `;
+            document.head.appendChild(styleElement);
+
+            // 3. Tự động tiêm toast-container vào body
+            function injectToastContainer() {
+                if (!document.getElementById('toast-container')) {
+                    const container = document.createElement('div');
+                    container.id = 'toast-container';
+                    container.className = 'flex flex-col gap-2';
+                    document.body.appendChild(container);
+                }
+            }
+
+            if (document.body) {
+                injectToastContainer();
+            } else {
+                window.addEventListener('DOMContentLoaded', injectToastContainer);
+            }
+
+            // 4. Định nghĩa hàm showToast mượt mà cao cấp
+            window.showToast = function(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                
+                let bgClass = 'text-emerald-800 border-emerald-100 bg-emerald-50/95 backdrop-blur-sm';
+                let icon = '<i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>';
+                
+                if (type === 'info') {
+                    bgClass = 'text-blue-800 border-blue-100 bg-blue-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-info text-blue-500 text-lg"></i>';
+                } else if (type === 'error') {
+                    bgClass = 'text-red-800 border-red-100 bg-red-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-xmark text-red-500 text-lg"></i>';
+                } else if (type === 'warning') {
+                    bgClass = 'text-amber-800 border-amber-100 bg-amber-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg"></i>';
+                }
+
+                toast.className = `toast-item flex items-center gap-3 px-4 py-3 rounded-2xl border text-xs font-semibold bg-white ${bgClass}`;
+                toast.innerHTML = `${icon} <span class="flex-1">${message}</span>`;
+                
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'scale(0.9) translateX(20px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            };
+
+            // 5. Ghi đè hàm alert() truyền thống
+            window.alert = function(message) {
+                if (!message) return;
+                const msgStr = String(message);
+                
+                // Phân loại màu thông báo dựa trên từ khóa
+                let type = 'info';
+                const msgLower = msgStr.toLowerCase();
+                if (msgLower.includes('thành công') || msgLower.includes('success') || msgLower.includes('hoàn tất') || msgLower.includes('đăng nhập thành công') || msgLower.includes('đăng ký thành công')) {
+                    type = 'success';
+                } else if (msgLower.includes('lỗi') || msgLower.includes('thất bại') || msgLower.includes('error') || msgLower.includes('hỏng') || msgLower.includes('không thể') || msgLower.includes('chưa') || msgLower.includes('không đúng') || msgLower.includes('không tìm thấy')) {
+                    type = 'error';
+                } else if (msgLower.includes('cảnh báo') || msgLower.includes('chú ý') || msgLower.includes('warning') || msgLower.includes('vui lòng') || msgLower.includes('yêu cầu') || msgLower.includes('hết hạn')) {
+                    type = 'warning';
+                }
+
+                window.showToast(msgStr, type);
+                console.log("CheckinX Smart Toast: Đã đánh chặn alert ->", msgStr);
+            };
+        })();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - CheckinX</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Header Logo */
+        .header-logo {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e1e24;
+            margin-bottom: 20px;
+            margin-left: 40px;
+        }
+
+        .header-logo i {
+            color: #5a2ca0;
+            font-size: 24px;
+        }
+
+        /* Container chính của Form */
+        .login-container {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            padding: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            text-align: center;
+        }
+
+        .login-container h1 {
+            color: #0f172a;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .login-container p.subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        /* Form styling */
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.prefix-icon {
+            position: absolute;
+            left: 16px;
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .input-wrapper i.toggle-password {
+            position: absolute;
+            right: 16px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border: 1px solid #e2e8f0;
+            border-radius: 50px;
+            background-color: #f8fafc;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #5a2ca0;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(90, 44, 160, 0.1);
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .label-row label {
+            margin-bottom: 0;
+        }
+
+        .forgot-password {
+            font-size: 12px;
+            color: #5a2ca0;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Button Đăng nhập */
+        .btn-submit {
+            width: 100%;
+            background-color: #5a2ca0;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 12px rgba(90, 44, 160, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: #45207e;
+        }
+
+        /* Hoặc đăng nhập với */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin: 24px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+
+        .divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+        /* Mạng xã hội */
+        .social-group {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .btn-social {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 50px;
+            background: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .btn-social:hover {
+            background-color: #f8fafc;
+        }
+
+        .btn-social img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-social i.fa-facebook {
+            color: #1877f2;
+            font-size: 18px;
+        }
+
+        /* Đăng ký */
+        .signup-text {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .signup-text a {
+            color: #5a2ca0;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        footer {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* --- TOAST NOTIFICATION SYSTEM --- */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 10px;
+            min-width: 300px;
+            max-width: 400px;
+            border-left: 4px solid #fff;
+            animation: slideIn 0.3s ease-in-out forwards;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.fade-out {
+            transform: translateX(120%);
+            opacity: 0;
+        }
+
+        .toast-icon {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .toast-content {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e293b;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Định dạng riêng từng loại toast */
+        .toast.success {
+            border-left-color: #10b981;
+        }
+
+        .toast.success .toast-icon {
+            color: #10b981;
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast.error .toast-icon {
+            color: #ef4444;
+        }
+
+        /* Đảm bảo responsive cho mobile */
+        @media (max-width: 480px) {
+            .header-logo {
+                margin-left: 20px;
+            }
+
+            .login-container {
+                padding: 24px 20px;
+                border: none;
+                box-shadow: none;
+                background: transparent;
+            }
+
+            body {
+                justify-content: flex-start;
+                padding: 20px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header-logo">
+        <i class="fa-solid fa-door-open"></i>
+        <span>CheckinX</span>
+    </div>
+
+    <div class="login-container">
+        <h1>Chào mừng khách hàng</h1>
+        <p class="subtitle">Vui lòng đăng nhập để tiếp tục sử dụng dịch vụ</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Email hoặc Số điện thoại</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope prefix-icon"></i>
+                    <input type="text" id="username" name="username" placeholder="example@gmail.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <label for="password">Mật khẩu</label>
+                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                </div>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock prefix-icon"></i>
+                    <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                    <i class="fa-regular fa-eye toggle-password" id="togglePassword"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Đăng nhập</button>
+        </form>
+
+        <div class="divider">HOẶC ĐĂNG NHẬP VỚI</div>
+
+        <div class="social-group">
+            <a href="#" class="btn-social" id="googleLoginBtn">
+                <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png"
+                    alt="Google">
+                <span>Google</span>
+            </a>
+            <a href="#" class="btn-social">
+                <i class="fa-brands fa-facebook"></i>
+                <span>Facebook</span>
+            </a>
+        </div>
+
+        <p class="signup-text">Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a></p>
+    </div>
+
+    <footer>
+        © 2026 CheckinX. Tất cả quyền được bảo lưu.
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // 1. Chức năng Ẩn/Hiện mật khẩu khi bấm vào icon con mắt
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // 2. Hàm tạo và hiển thị Toast Notification
+        // Safe alias for CheckinX Smart Toast
+        const showToast = (titleOrMsg, messageOrType = 'success', type = 'success') => {
+            if (window.showToast) {
+                const types = ['success', 'error', 'info', 'warning'];
+                if (types.includes(messageOrType)) {
+                    window.showToast(titleOrMsg, messageOrType);
+                } else if (types.includes(type)) {
+                    window.showToast(messageOrType || titleOrMsg, type);
+                } else {
+                    window.showToast(titleOrMsg, 'success');
+                }
+            } else {
+                console.log(titleOrMsg, messageOrType, type);
+            }
+        };
+
+        // 3. Lắng nghe sự kiện Submit Form & Gọi Fetch API Đăng nhập thường
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const usernameValue = document.getElementById('username').value;
+            const passwordValue = document.getElementById('password').value;
+
+            const formData = {
+                username: usernameValue,
+                password: passwordValue
+            };
+
+            showToast('Thông tin', 'Đang xác thực tài khoản...', 'success');
+
+            fetch('http://localhost:8080/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                return response.json().then(data => {
+                    if (!response.ok || !data.success) {
+                        const errMsg = data.message || 'Tài khoản hoặc mật khẩu không chính xác.';
+                        throw new Error(errMsg);
+                    }
+                    return data.data;
+                });
+            })
+            .then(data => {
+                showToast('Thành công', 'Đăng nhập vào hệ thống CheckinX thành công!', 'success');
+                console.log('CheckinX Auth: Đăng nhập thành công, dữ liệu nhận về:', data);
+                handleLoginSuccess(data);
+            })
+            .catch(error => {
+                let errorMessage = error.message;
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại server Spring Boot!';
+                }
+                showToast('Thất bại', errorMessage, 'error');
+                console.error('Lỗi đăng nhập:', error);
+            });
+        });
+
+        // 4. Hàm xử lý lưu token và chuyển hướng sau khi đăng nhập thành công
+        function handleLoginSuccess(authData) {
+            const accessToken = authData.accessToken || '';
+            const refreshToken = authData.refreshToken || '';
+            const user = authData.user || {};
+
+            if (accessToken) {
+                localStorage.setItem('token', accessToken);
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('jwtToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('checkinXToken', accessToken);
+                localStorage.setItem('checkinXRole', user.role ? user.role.toUpperCase() : '');
+                localStorage.setItem('checkinXUser', user.fullName || user.username || user.email || '');
+            }
+
+            setTimeout(() => {
+                const userRole = user.role ? user.role.toUpperCase() : '';
+                if (userRole === 'ADMIN') {
+                    window.location.href = `admin-dashboard.html?token=${accessToken}`;
+                } else {
+                    alert('Quyền truy cập bị từ chối! Chỉ tài khoản Admin mới được phép truy cập hệ thống.');
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }
+            }, 1500);
+        }
+
+        // 5. Cấu hình Google Identity Services
+        window.onload = function () {
+            if (typeof google !== 'undefined') {
+                google.accounts.id.initialize({
+                    client_id: '508082987114-xxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com',
+                    callback: handleCredentialResponse
+                });
+                const googleBtn = document.getElementById('googleLoginBtn');
+                if (googleBtn) {
+                    googleBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        google.accounts.id.prompt();
+                    });
+                }
+            }
+        };
+
+        async function handleCredentialResponse(response) {
+            console.log("CheckinX Google Auth: Nhận được credential", response.credential);
+            showToast('Thông tin', 'Đang xác thực bằng tài khoản Google...', 'success');
+            try {
+                const res = await fetch('http://localhost:8080/api/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idToken: response.credential })
+                });
+                const result = await res.json();
+                
+                if (res.ok && result.success && result.data) {
+                    showToast('Thành công', 'Đăng nhập Google thành công!', 'success');
+                    handleLoginSuccess(result.data);
+                } else {
+                    showToast('Thất bại', result.message || 'Xác thực Google với hệ thống thất bại.', 'error');
+                }
+            } catch (err) {
+                console.error("Lỗi Google Sign-In:", err);
+                showToast('Thất bại', 'Không thể kết nối đến máy chủ để xác thực Google.', 'error');
+            }
+        }
+    </script>
+
+    <!-- CheckinX Style Unification & Smart Toast Alert Overrides -->
+    <script>
+        (function() {
+            if (window.alertOverridden) return;
+            window.alertOverridden = true;
+
+            // 1. Tự động tiêm Google Font Outfit nếu chưa có
+            if (!document.querySelector('link[href*="Outfit"]')) {
+                const linkPreconnect1 = document.createElement('link');
+                linkPreconnect1.rel = 'preconnect';
+                linkPreconnect1.href = 'https://fonts.googleapis.com';
+                document.head.appendChild(linkPreconnect1);
+
+                const linkPreconnect2 = document.createElement('link');
+                linkPreconnect2.rel = 'preconnect';
+                linkPreconnect2.href = 'https://fonts.gstatic.com';
+                linkPreconnect2.crossOrigin = 'anonymous';
+                document.head.appendChild(linkPreconnect2);
+
+                const linkFont = document.createElement('link');
+                linkFont.rel = 'stylesheet';
+                linkFont.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
+                document.head.appendChild(linkFont);
+            }
+
+            // 2. Ép font-family Outfit cho toàn bộ trang
+            const styleElement = document.createElement('style');
+            styleElement.id = 'checkinx-unified-styles';
+            styleElement.innerHTML = `
+                body, html, input, select, textarea, button {
+                    font-family: 'Outfit', sans-serif !important;
+                }
+                #toast-container {
+                    position: fixed;
+                    top: 1rem;
+                    right: 1rem;
+                    z-index: 99999;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    pointer-events: none;
+                }
+                .toast-item {
+                    pointer-events: auto;
+                    animation: toastSlideIn 0.3s ease-out forwards;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                    transition: all 0.3s ease;
+                }
+                @keyframes toastSlideIn {
+                    from { transform: translateX(120%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                /* Tailwind utility overrides for pages without Tailwind loaded */
+                .toast-item.flex { display: flex !important; }
+                .toast-item.items-center { align-items: center !important; }
+                .toast-item.gap-3 { gap: 0.75rem !important; }
+                .toast-item.px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .toast-item.py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+                .toast-item.rounded-2xl { border-radius: 1rem !important; }
+                .toast-item.border { border: 1px solid rgba(226, 232, 240, 0.8) !important; }
+                .toast-item.text-xs { font-size: 0.75rem !important; }
+                .toast-item.font-semibold { font-weight: 600 !important; }
+                .toast-item.bg-white { background-color: #ffffff !important; }
+                .toast-item.text-emerald-800 { color: #065f46 !important; }
+                .toast-item.border-emerald-100 { border-color: #a7f3d0 !important; }
+                .toast-item.bg-emerald-50\/95 { background-color: rgba(240, 253, 250, 0.95) !important; }
+                .toast-item.text-blue-800 { color: #1e40af !important; }
+                .toast-item.border-blue-100 { border-color: #bfdbfe !important; }
+                .toast-item.bg-blue-50\/95 { background-color: rgba(239, 246, 255, 0.95) !important; }
+                .toast-item.text-red-800 { color: #991b1b !important; }
+                .toast-item.border-red-100 { border-color: #fecaca !important; }
+                .toast-item.bg-red-50\/95 { background-color: rgba(254, 242, 242, 0.95) !important; }
+                .toast-item.text-amber-800 { color: #92400e !important; }
+                .toast-item.border-amber-100 { border-color: #fde68a !important; }
+                .toast-item.bg-amber-50\/95 { background-color: rgba(255, 251, 235, 0.95) !important; }
+                .toast-item.backdrop-blur-sm { backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important; }
+                .toast-item .flex-1 { flex: 1 1 0% !important; }
+            `;
+            document.head.appendChild(styleElement);
+
+            // 3. Tự động tiêm toast-container vào body
+            function injectToastContainer() {
+                if (!document.getElementById('toast-container')) {
+                    const container = document.createElement('div');
+                    container.id = 'toast-container';
+                    container.className = 'flex flex-col gap-2';
+                    document.body.appendChild(container);
+                }
+            }
+
+            if (document.body) {
+                injectToastContainer();
+            } else {
+                window.addEventListener('DOMContentLoaded', injectToastContainer);
+            }
+
+            // 4. Định nghĩa hàm showToast mượt mà cao cấp
+            window.showToast = function(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                
+                let bgClass = 'text-emerald-800 border-emerald-100 bg-emerald-50/95 backdrop-blur-sm';
+                let icon = '<i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>';
+                
+                if (type === 'info') {
+                    bgClass = 'text-blue-800 border-blue-100 bg-blue-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-info text-blue-500 text-lg"></i>';
+                } else if (type === 'error') {
+                    bgClass = 'text-red-800 border-red-100 bg-red-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-xmark text-red-500 text-lg"></i>';
+                } else if (type === 'warning') {
+                    bgClass = 'text-amber-800 border-amber-100 bg-amber-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg"></i>';
+                }
+
+                toast.className = `toast-item flex items-center gap-3 px-4 py-3 rounded-2xl border text-xs font-semibold bg-white ${bgClass}`;
+                toast.innerHTML = `${icon} <span class="flex-1">${message}</span>`;
+                
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'scale(0.9) translateX(20px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            };
+
+            // 5. Ghi đè hàm alert() truyền thống
+            window.alert = function(message) {
+                if (!message) return;
+                const msgStr = String(message);
+                
+                // Phân loại màu thông báo dựa trên từ khóa
+                let type = 'info';
+                const msgLower = msgStr.toLowerCase();
+                if (msgLower.includes('thành công') || msgLower.includes('success') || msgLower.includes('hoàn tất') || msgLower.includes('đăng nhập thành công') || msgLower.includes('đăng ký thành công')) {
+                    type = 'success';
+                } else if (msgLower.includes('lỗi') || msgLower.includes('thất bại') || msgLower.includes('error') || msgLower.includes('hỏng') || msgLower.includes('không thể') || msgLower.includes('chưa') || msgLower.includes('không đúng') || msgLower.includes('không tìm thấy')) {
+                    type = 'error';
+                } else if (msgLower.includes('cảnh báo') || msgLower.includes('chú ý') || msgLower.includes('warning') || msgLower.includes('vui lòng') || msgLower.includes('yêu cầu') || msgLower.includes('hết hạn')) {
+                    type = 'warning';
+                }
+
+                window.showToast(msgStr, type);
+                console.log("CheckinX Smart Toast: Đã đánh chặn alert ->", msgStr);
+            };
+        })();
+    </script>
+
+</body>
+
+</html>

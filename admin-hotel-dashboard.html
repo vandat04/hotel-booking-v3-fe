@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cấu hình Khách sạn | CheckinX Admin</title>
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #4f3cc9;
+            --primary-light: #f5f3ff;
+            --primary-hover: #3b28b3;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --body-bg: #f8fafc;
+            --white: #ffffff;
+            --header-bg: linear-gradient(135deg, #4f3cc9, #3b28b3);
+            --header-shadow: 0 4px 20px rgba(79, 60, 201, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ---- Header Design ---- */
+        header {
+            background: var(--header-bg);
+            padding: 0 32px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            box-shadow: var(--header-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--white);
+            cursor: pointer;
+            letter-spacing: -0.5px;
+            user-select: none;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-le-tan {
+            background-color: var(--white);
+            color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-le-tan:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .header-icon {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .header-icon:hover {
+            color: var(--white);
+        }
+
+        .header-icon.active {
+            color: #a78bfa;
+            filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.6));
+        }
+
+        .user-profile {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .user-profile:hover {
+            border-color: var(--white);
+        }
+
+        /* ---- Workspace / Layout Grid ---- */
+        .workspace {
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px 32px 40px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex: 1;
+        }
+
+        /* Title block */
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .title-block h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .title-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-action-outline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1.5px solid var(--border-color);
+            background: #ffffff;
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-action-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .btn-action-primary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            background: var(--primary);
+            color: #ffffff;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 60, 201, 0.2);
+        }
+
+        .btn-action-primary:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 6px 15px rgba(79, 60, 201, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* 2 Column Layout */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 1100px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- Card Panels ---- */
+        .card-panel {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .card-title-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title-text i {
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .card-header-btn {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .card-header-btn:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        /* ---- Left Column Components ---- */
+
+        /* 1. Hotel Info Fields */
+        .info-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 20px;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            right: 14px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-main);
+            background-color: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 60, 201, 0.1);
+        }
+
+        .input-field.input-with-icon {
+            padding-right: 40px;
+        }
+
+        textarea.input-field {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        /* 2. Amenities Grid Styles */
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .amenity-card {
+            background: #ffffff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .amenity-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(79, 60, 201, 0.08);
+        }
+
+        .amenity-icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.25s;
+        }
+
+        .amenity-card:hover .amenity-icon-circle {
+            background-color: var(--primary);
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+
+        .amenity-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .amenity-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .amenity-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            min-height: 36px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            align-self: flex-start;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.active {
+            background-color: var(--success-bg);
+            color: var(--success);
+        }
+
+        .status-badge.inactive {
+            background-color: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        /* Hover actions overlay */
+        .card-actions-hover {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .amenity-card:hover .card-actions-hover {
+            opacity: 1;
+        }
+
+        .action-icon-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .action-icon-btn.btn-edit:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .action-icon-btn.btn-delete:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+
+        /* Dash border add button card */
+        .amenity-card-add {
+            border: 2px dashed var(--border-color);
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-height: 154px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .amenity-card-add:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .amenity-card-add i {
+            font-size: 24px;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .amenity-card-add:hover i {
+            color: var(--primary);
+        }
+
+        .amenity-card-add span {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .amenity-card-add:hover span {
+            color: var(--primary);
+        }
+
+
+        /* ---- Right Column Components ---- */
+
+        /* Stacked Photos List */
+        .photos-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .photo-card {
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.25s;
+        }
+
+        .photo-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        }
+
+        .photo-image-container {
+            width: 100%;
+            height: 180px;
+            position: relative;
+            background-color: #f1f5f9;
+        }
+
+        .photo-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-badge {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .photo-badge.primary-badge {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Overlay action circles */
+        .photo-actions-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .photo-action-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .photo-action-circle.btn-edit-img:hover {
+            color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .photo-action-circle.btn-delete-img:hover {
+            color: var(--danger);
+            transform: scale(1.05);
+        }
+
+        .photo-meta {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .photo-caption {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .photo-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Dotted dropzone uploader */
+        .dropzone-uploader {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .dropzone-uploader:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .dropzone-icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(79, 60, 201, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+
+        .dropzone-uploader:hover .dropzone-icon-circle {
+            transform: scale(1.08);
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .dropzone-uploader span.dropzone-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .dropzone-uploader span.dropzone-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+
+        /* ---- Modals Overlay & Transitions ---- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            border-radius: 16px;
+            width: 480px;
+            max-width: 90vw;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.18);
+            transform: scale(0.92) translateY(12px);
+            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.show .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16.5px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .btn-modal-close {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .btn-modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background-color: #f8fafc;
+        }
+
+        .btn-cancel {
+            padding: 10px 18px;
+            border: 1.5px solid var(--border-color);
+            background: #ffffff;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+
+        /* Toggle switch component style */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background-color: #f8fafc;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .toggle-switch-wrapper {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-checkbox {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        .toggle-checkbox:checked + .toggle-slider {
+            background-color: var(--success);
+        }
+
+        .toggle-checkbox:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* ---- Custom Confirm Dialog ---- */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .confirm-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .confirm-dialog {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+            transform: scale(0.92) translateY(10px);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .confirm-overlay.show .confirm-dialog {
+            transform: scale(1) translateY(0);
+        }
+        .confirm-icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--danger-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: var(--danger);
+        }
+        .confirm-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .confirm-message {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .confirm-btn-cancel {
+            flex: 1;
+            padding: 11px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-btn-cancel:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+        .confirm-btn-ok {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            background: var(--danger);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+        }
+        .confirm-btn-ok:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Brand Bar -->
+    <header>
+        <div class="header-left">
+            <div class="logo" id="logo-redirect">
+                Checkin<span>X</span>
+            </div>
+            <nav>
+                <a href="admin-dashboard.html" class="nav-link">Tổng quan</a>
+                <a href="receptionist-room-dashboard.html" class="nav-link">Sơ đồ phòng</a>
+                <a href="receptionist-book-dashboard.html" class="nav-link">Đặt phòng</a>
+                <a href="admin-schedule-dashborad.html" class="nav-link">Timeline</a>
+                <a href="admin-ota-booking.html" class="nav-link">Kênh bán</a>
+                <a href="admin-payment-dashboard.html" class="nav-link">Giao dịch</a>
+                <a href="receptionist-damage-dashboard.html" class="nav-link">Đền bù</a>
+                <a href="admin-room-dashboard.html" class="nav-link">Phòng</a>
+                <a href="admin-room-type-dashboard.html" class="nav-link">Loại Phòng</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="btn-le-tan" id="btn-switch-receptionist" style="display: none;">
+                <i class="fa-solid fa-hotel"></i> Lễ tân
+            </button>
+            <div class="header-icon">
+                <i class="fa-regular fa-bell"></i>
+            </div>
+            <div class="header-icon active" id="btn-settings" onclick="window.location.href='admin-hotel-dashboard.html'">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+            <div class="user-profile" id="btn-profile">
+                AD
+            </div>
+            <div class="header-icon" id="btn-logout" title="Đăng xuất" style="color: var(--danger, #ef4444); margin-left: 8px;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="workspace">
+        
+        <!-- Header Page Title Row -->
+        <div class="title-row">
+            <div class="title-block">
+                <h1>Cấu hình Khách sạn</h1>
+            </div>
+            <div class="title-buttons">
+                <button class="btn-action-outline" id="btn-view-guest">
+                    <i class="fa-solid fa-eye"></i> Xem trang khách
+                </button>
+                <button class="btn-action-primary" id="btn-save-all">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu tất cả thay đổi
+                </button>
+            </div>
+        </div>
+
+        <!-- Layout Grid Area -->
+        <div class="layout-grid">
+            
+            <!-- LEFT COLUMN: HOTEL GENERAL & AMENITIES -->
+            <div class="left-col">
+                
+                <!-- Card 1: General Info Form -->
+                <div class="card-panel">
+                    <div class="card-header-row">
+                        <div class="card-title-text">
+                            <i class="fa-solid fa-hotel"></i>
+                            Thông tin Khách sạn
+                        </div>
+                        <button class="card-header-btn" id="btn-toggle-edit">
+                            <i class="fa-solid fa-pen"></i> Chỉnh sửa chi tiết
+                        </button>
+                    </div>
+
+                    <!-- Fields Wrapper -->
+                    <div class="info-form-grid">
+                        <div class="field-group form-group-full">
+                            <span class="field-label">Tên khách sạn</span>
+                            <input type="text" class="input-field" id="hotel-name" value="" disabled>
+                        </div>
+                        
+                        <div class="field-group">
+                            <span class="field-label">Email liên hệ</span>
+                            <input type="email" class="input-field" id="hotel-email" value="" disabled>
+                        </div>
+                        <div class="field-group">
+                            <span class="field-label">Sđt liên hệ</span>
+                            <input type="text" class="input-field" id="hotel-phone" value="" disabled>
+                        </div>
+
+                        <div class="field-group">
+                            <span class="field-label">Hạng sao</span>
+                            <input type="number" step="0.1" min="1" max="5" class="input-field" id="hotel-rating" value="" disabled>
+                        </div>
+                        <div class="field-group">
+                            <span class="field-label">Đường dẫn bản đồ (Google Maps URL)</span>
+                            <div class="input-wrapper">
+                                <input type="text" class="input-field input-with-icon" id="hotel-mapurl" value="" disabled>
+                                <i class="fa-solid fa-map"></i>
+                            </div>
+                        </div>
+
+                        <div class="field-group form-group-full">
+                            <span class="field-label">Địa chỉ</span>
+                            <div class="input-wrapper">
+                                <input type="text" class="input-field input-with-icon" id="hotel-address" value="" disabled>
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="field-group form-group-full">
+                            <span class="field-label">Mô tả tổng quan</span>
+                            <textarea class="input-field" id="hotel-description" disabled></textarea>
+                        </div>
+
+                        <div class="field-group">
+                            <span class="field-label">Ngày tạo hệ thống</span>
+                            <div class="input-wrapper">
+                                <input type="text" class="input-field input-with-icon" id="hotel-createdat" value="" disabled style="background-color: #f1f5f9; color: var(--text-muted);">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <span class="field-label">Cập nhật gần nhất</span>
+                            <div class="input-wrapper">
+                                <input type="text" class="input-field input-with-icon" id="hotel-updatedat" value="" disabled style="background-color: #f1f5f9; color: var(--text-muted);">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Amenities Management -->
+                <div class="card-panel">
+                    <div class="card-header-row">
+                        <div class="card-title-text">
+                            <i class="fa-solid fa-concierge-bell"></i>
+                            Tiện nghi & Dịch vụ
+                        </div>
+                        <button class="btn-action-outline" style="padding: 6px 14px; font-size:12px; border-radius:6px;" id="btn-add-amenity-top">
+                            <i class="fa-solid fa-plus"></i> Thêm tiện nghi
+                        </button>
+                    </div>
+
+                    <!-- Amenities Grid container -->
+                    <div class="amenities-grid" id="amenities-container">
+                        <!-- Loaded dynamically -->
+                        <div style="text-align: center; grid-column: 1/-1; padding: 24px 0; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 20px; margin-bottom: 8px; color: var(--primary);"></i>
+                            <p style="font-size: 13px;">Đang tải danh sách tiện nghi...</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: PHOTO ALBUM -->
+            <div class="right-col">
+                
+                <!-- Card 3: Album Image Stack -->
+                <div class="card-panel" style="margin-bottom:0;">
+                    <div class="card-header-row">
+                        <div class="card-title-text">
+                            <i class="fa-solid fa-images"></i>
+                            Album Hình ảnh
+                        </div>
+                        <button class="btn-action-primary" style="padding: 6px 14px; font-size:12px; border-radius:6px;" id="btn-upload-top">
+                            <i class="fa-solid fa-upload"></i> Tải ảnh lên
+                        </button>
+                    </div>
+
+                    <!-- Stack container -->
+                    <div class="photos-stack" id="photos-container">
+                        <!-- Loaded dynamically -->
+                        <div style="text-align: center; padding: 24px 0; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 20px; margin-bottom: 8px; color: var(--primary);"></i>
+                            <p style="font-size: 13px;">Đang tải album ảnh...</p>
+                        </div>
+                    </div>
+
+                    <!-- File input helper -->
+                    <input type="file" id="image-file-input" multiple accept="image/*" style="display:none;">
+
+                    <!-- Uploader zone -->
+                    <div class="dropzone-uploader" id="dropzone-area" style="margin-top:20px;">
+                        <div class="dropzone-icon-circle">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <span class="dropzone-title">Thêm nhiều ảnh cùng lúc</span>
+                        <span class="dropzone-subtitle">Kéo thả file hoặc click để chọn (Max 20MB)</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL 1: ADD/EDIT AMENITY -->
+    <div class="modal-overlay" id="amenity-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span class="modal-title" id="amenity-modal-title">Thêm Tiện nghi & Dịch vụ</span>
+                <button class="btn-modal-close" onclick="closeModal('amenity-modal')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modal-amenity-id">
+                <div class="field-group">
+                    <span class="field-label">Tên tiện nghi *</span>
+                    <input type="text" class="input-field" id="modal-amenity-name" placeholder="Ví dụ: Hồ bơi vô cực, Phòng Gym, v.v.">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Mô tả chi tiết</span>
+                    <textarea class="input-field" id="modal-amenity-desc" style="min-height:80px;" placeholder="Ví dụ: Hồ bơi nước ấm trên sân thượng, v.v."></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('amenity-modal')">Hủy bỏ</button>
+                <button class="btn-action-primary" id="btn-save-amenity">Lưu lại</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: EDIT IMAGE INFO -->
+    <div class="modal-overlay" id="image-edit-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span class="modal-title">Cập nhật thông tin hình ảnh</span>
+                <button class="btn-modal-close" onclick="closeModal('image-edit-modal')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modal-image-id">
+                <div style="width:100%; height:160px; border-radius:8px; overflow:hidden; background:#f1f5f9; margin-bottom:4px;">
+                    <img id="modal-image-preview" src="" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Chú thích hình ảnh</span>
+                    <input type="text" class="input-field" id="modal-image-caption" placeholder="Ví dụ: Sảnh đón khách, Phòng ngủ Suite hướng biển, v.v.">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Hình ảnh đại diện chính</span>
+                    <div class="toggle-row" id="toggle-primary-image-row">
+                        <span style="font-size:13.5px; font-weight:600; color:var(--text-main);">Đặt làm ảnh đại diện chính</span>
+                        <div class="toggle-switch-wrapper">
+                            <input type="checkbox" class="toggle-checkbox" id="modal-image-primary">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('image-edit-modal')">Hủy bỏ</button>
+                <button class="btn-action-primary" id="btn-save-image-info">Lưu lại</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM DIALOG -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-icon-circle">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <div class="confirm-title" id="confirm-title">Xác nhận xóa</div>
+            <div class="confirm-message" id="confirm-message">Bạn có chắc chắn muốn thực hiện hành động này?</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn-cancel" id="confirm-btn-cancel">Hủy bỏ</button>
+                <button class="confirm-btn-ok" id="confirm-btn-ok">Xác nhận xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Logout click handler
+            const btnLogout = document.getElementById('btn-logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', () => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('checkinXToken');
+                    localStorage.removeItem('checkinXRole');
+                    localStorage.removeItem('staffName');
+                    window.location.href = 'login.html';
+                });
+            }
+            
+            // Custom Confirm Dialog
+            const showConfirm = (title, message, onOk) => {
+                const overlay = document.getElementById('confirm-overlay');
+                const titleEl = document.getElementById('confirm-title');
+                const msgEl = document.getElementById('confirm-message');
+                const btnOk = document.getElementById('confirm-btn-ok');
+                const btnCancel = document.getElementById('confirm-btn-cancel');
+
+                if (!overlay) return;
+
+                titleEl.innerText = title;
+                msgEl.innerText = message;
+
+                overlay.classList.add('show');
+
+                const cleanup = () => {
+                    overlay.classList.remove('show');
+                    btnOk.replaceWith(btnOk.cloneNode(true));
+                    btnCancel.replaceWith(btnCancel.cloneNode(true));
+                };
+
+                document.getElementById('confirm-btn-ok').addEventListener('click', () => {
+                    onOk();
+                    cleanup();
+                });
+
+                document.getElementById('confirm-btn-cancel').addEventListener('click', cleanup);
+            };
+
+            // Bind Global Dialogs
+            window.showConfirm = showConfirm;
+            };
+
+            // Authentication Checking
+            const jwtToken = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken');
+            if (!jwtToken) {
+                showToast("Vui lòng đăng nhập hệ thống admin!", "warning", "Yêu cầu đăng nhập");
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1200);
+                return;
+            }
+
+            // Navigation Redirect bindings
+            document.getElementById('btn-switch-receptionist').addEventListener('click', () => {
+                window.location.href = 'receptionist-dashboard.html';
+            });
+            document.getElementById('logo-redirect').addEventListener('click', () => {
+                window.location.href = 'admin-dashboard.html';
+            });
+
+            // Set user profile avatar initials
+            const staffName = localStorage.getItem('staffName');
+            if (staffName) {
+                const parts = staffName.split(' ');
+                const initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]) : parts[0].substring(0, 2);
+                document.getElementById('btn-profile').innerText = initials.toUpperCase();
+            }
+
+            // State variables
+            let hotelData = null;
+            let isEditMode = false;
+
+            // Load DOM Element handles
+            const hotelNameInput = document.getElementById('hotel-name');
+            const hotelEmailInput = document.getElementById('hotel-email');
+            const hotelPhoneInput = document.getElementById('hotel-phone');
+            const hotelAddressInput = document.getElementById('hotel-address');
+            const hotelDescInput = document.getElementById('hotel-description');
+            const hotelRatingInput = document.getElementById('hotel-rating');
+            const hotelMapUrlInput = document.getElementById('hotel-mapurl');
+            const hotelCreatedAtInput = document.getElementById('hotel-createdat');
+            const hotelUpdatedAtInput = document.getElementById('hotel-updatedat');
+            
+            const btnToggleEdit = document.getElementById('btn-toggle-edit');
+            const btnSaveAll = document.getElementById('btn-save-all');
+            const btnViewGuest = document.getElementById('btn-view-guest');
+
+            const amenitiesContainer = document.getElementById('amenities-container');
+            const photosContainer = document.getElementById('photos-container');
+
+            const imageFileInput = document.getElementById('image-file-input');
+            const dropzoneArea = document.getElementById('dropzone-area');
+
+            // --- Toggle Hotel Form Edit mode ---
+            btnToggleEdit.addEventListener('click', () => {
+                isEditMode = !isEditMode;
+                const fields = [hotelNameInput, hotelEmailInput, hotelPhoneInput, hotelAddressInput, hotelDescInput, hotelRatingInput, hotelMapUrlInput];
+                
+                fields.forEach(field => {
+                    field.disabled = !isEditMode;
+                    if (isEditMode) {
+                        field.style.backgroundColor = '#ffffff';
+                    } else {
+                        field.style.backgroundColor = '#f8fafc';
+                    }
+                });
+
+                if (isEditMode) {
+                    btnToggleEdit.innerHTML = `<i class="fa-solid fa-lock"></i> Khóa chỉnh sửa`;
+                    btnToggleEdit.style.color = 'var(--danger)';
+                    showToast("Chế độ chỉnh sửa thông tin đã bật!", "info", "Chỉnh sửa");
+                    hotelNameInput.focus();
+                } else {
+                    btnToggleEdit.innerHTML = `<i class="fa-solid fa-pen"></i> Chỉnh sửa chi tiết`;
+                    btnToggleEdit.style.color = 'var(--primary)';
+                    showToast("Chế độ chỉnh sửa đã được khóa.", "info");
+                }
+            });
+
+            // View Guest Redirect helper
+            btnViewGuest.addEventListener('click', () => {
+                if (hotelData && hotelData.mapUrl) {
+                    window.open(hotelData.mapUrl, '_blank');
+                } else {
+                    window.open('https://maps.google.com', '_blank');
+                }
+            });
+
+            // --- FETCH HOTEL DATA (GET /admin/hotel) ---
+            const fetchHotelData = async () => {
+                try {
+                    const headers = { 'Authorization': 'Bearer ' + jwtToken };
+                    const res = await fetch('http://localhost:8080/api/admin/hotel', { headers }).then(r => r.json());
+                    if (res.success && res.data) {
+                        hotelData = res.data;
+                    }
+                } catch (error) {
+                    console.warn("Spring Boot Hotel API offline. Launching CheckinX Premium Mock Data!");
+                }
+
+                if (!hotelData) {
+                    // Populate high-fidelity CheckinX Resort mock data
+                    hotelData = {
+                        id: 1,
+                        name: "Grand Antigravity Resort",
+                        description: "Premium luxury resort with smart amenities",
+                        starRating: 5.0,
+                        address: "123 Galaxy Boulevard, Da Nang",
+                        phoneNumber: "02363555999",
+                        email: "info@antigravityhotel.com",
+                        mapUrl: "https://maps.google.com/...",
+                        createdAt: "2026-05-01T00:00:00",
+                        updatedAt: "2026-05-20T10:00:00",
+                        images: [
+                            {
+                                id: 101,
+                                imageUrl: "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=80",
+                                isPrimary: true,
+                                caption: "Phòng Suite Hướng Biển",
+                                description: "Căn hộ cao cấp với cửa kính tràn viền và ban công riêng biệt nhìn thẳng ra biển Mỹ Khê"
+                            },
+                            {
+                                id: 102,
+                                imageUrl: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=1200&q=80",
+                                isPrimary: false,
+                                caption: "Hồ bơi Skyview",
+                                description: "Hồ bơi vô cực lớn nhất khu vực với hệ thống lọc nước ion hiện đại nhất."
+                            },
+                            {
+                                id: 103,
+                                imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
+                                isPrimary: false,
+                                caption: "Sảnh chờ Lobby (Cũ)",
+                                description: "Hình ảnh thiết kế trước khi cải tạo năm nay."
+                            }
+                        ],
+                        amenities: [
+                            {
+                                id: 501,
+                                name: "Hồ bơi vô cực",
+                                description: "Tầng 25, view toàn cảnh biển",
+                                status: "ACTIVE"
+                            },
+                            {
+                                id: 502,
+                                name: "Phòng Gym 24/7",
+                                description: "Máy móc Technogym hiện đại",
+                                status: "ACTIVE"
+                            },
+                            {
+                                id: 503,
+                                name: "Luxury Spa",
+                                description: "Liệu trình thảo mộc bản địa",
+                                status: "ACTIVE"
+                            },
+                            {
+                                id: 504,
+                                name: "Nhà hàng Âu- Á",
+                                description: "Buffet sáng sang trọng miễn phí",
+                                status: "INACTIVE"
+                            }
+                        ]
+                    };
+                }
+
+                renderHotelProfile();
+                renderAmenities();
+                renderImages();
+            };
+
+            // --- RENDER PROFILE DETAILS ---
+            const renderHotelProfile = () => {
+                hotelNameInput.value = hotelData.name || '';
+                hotelEmailInput.value = hotelData.email || '';
+                hotelPhoneInput.value = hotelData.phoneNumber || '';
+                hotelAddressInput.value = hotelData.address || '';
+                hotelDescInput.value = hotelData.description || '';
+                hotelRatingInput.value = hotelData.starRating || '';
+                hotelMapUrlInput.value = hotelData.mapUrl || '';
+                
+                const formatTime = (ts) => {
+                    if (!ts) return 'Chưa ghi nhận';
+                    return ts.replace('T', ' ');
+                };
+                
+                hotelCreatedAtInput.value = formatTime(hotelData.createdAt);
+                hotelUpdatedAtInput.value = formatTime(hotelData.updatedAt);
+            };
+
+            // --- SAVE ALL CHANGES (PUT /admin/hotel) ---
+            const saveHotelInfo = async () => {
+                const name = hotelNameInput.value.trim();
+                const email = hotelEmailInput.value.trim();
+                const phoneNumber = hotelPhoneInput.value.trim();
+                const address = hotelAddressInput.value.trim();
+                const description = hotelDescInput.value.trim();
+                const starRating = parseFloat(hotelRatingInput.value.trim()) || 5.0;
+                const mapUrl = hotelMapUrlInput.value.trim();
+
+                if (!name || !email || !phoneNumber || !address) {
+                    showToast("Vui lòng điền đầy đủ các thông tin bắt buộc!", "warning", "Thiếu thông tin");
+                    return;
+                }
+
+                const payload = {
+                    name,
+                    description,
+                    starRating,
+                    address,
+                    phoneNumber,
+                    email,
+                    mapUrl
+                };
+
+                try {
+                    const headers = { 
+                        'Authorization': 'Bearer ' + jwtToken,
+                        'Content-Type': 'application/json'
+                    };
+                    const res = await fetch('http://localhost:8080/api/admin/hotel', {
+                        method: 'PUT',
+                        headers,
+                        body: JSON.stringify(payload)
+                    }).then(r => r.json());
+
+                    if (res.success && res.data) {
+                        hotelData = { ...hotelData, ...res.data };
+                        showToast("Đã lưu cập nhật thông tin khách sạn thành công!", "success");
+                        // Lock edit mode
+                        if (isEditMode) btnToggleEdit.click();
+                        renderHotelProfile();
+                    } else {
+                        alert(res.message || "Cập nhật thất bại!");
+                    }
+                } catch (error) {
+                    console.warn("Spring Boot offline. Updating local state!");
+                    hotelData = { ...hotelData, ...payload };
+                    showToast("Đang offline: Cập nhật thông tin khách sạn thành công!", "info");
+                    if (isEditMode) btnToggleEdit.click();
+                    renderHotelProfile();
+                }
+            };
+
+            btnSaveAll.addEventListener('click', saveHotelInfo);
+
+
+            // ===========================================
+            // ========== AMENITIES SECTION CRUD ==========
+            // ===========================================
+
+            // Render Amenities Grid
+            const renderAmenities = () => {
+                amenitiesContainer.innerHTML = '';
+                
+                if (hotelData.amenities.length === 0) {
+                    amenitiesContainer.innerHTML = `
+                        <div style="text-align: center; grid-column: 1/-1; padding: 32px 0; color: var(--text-muted);">
+                            <i class="fa-solid fa-circle-info" style="font-size: 24px; margin-bottom: 8px;"></i>
+                            <p style="font-size: 13px;">Khách sạn chưa cấu hình tiện nghi nào.</p>
+                        </div>
+                    `;
+                } else {
+                    hotelData.amenities.forEach(amenity => {
+                        const card = document.createElement('div');
+                        card.className = 'amenity-card';
+                        
+                        // Select nice matching icon based on name
+                        let iconClass = 'fa-solid fa-bell-concierge';
+                        const nameLower = amenity.name.toLowerCase();
+                        if (nameLower.includes('bơi') || nameLower.includes('pool') || nameLower.includes('nước')) {
+                            iconClass = 'fa-solid fa-water';
+                        } else if (nameLower.includes('gym') || nameLower.includes('thể hình') || nameLower.includes('phòng tập') || nameLower.includes('fitness')) {
+                            iconClass = 'fa-solid fa-dumbbell';
+                        } else if (nameLower.includes('spa') || nameLower.includes('massage') || nameLower.includes('sauna') || nameLower.includes('trị liệu')) {
+                            iconClass = 'fa-solid fa-spa';
+                        } else if (nameLower.includes('hàng') || nameLower.includes('ăn') || nameLower.includes('uống') || nameLower.includes('restaurant') || nameLower.includes('bar')) {
+                            iconClass = 'fa-solid fa-utensils';
+                        } else if (nameLower.includes('wifi') || nameLower.includes('mạng') || nameLower.includes('internet')) {
+                            iconClass = 'fa-solid fa-wifi';
+                        } else if (nameLower.includes('đỗ') || nameLower.includes('xe') || nameLower.includes('bãi') || nameLower.includes('parking')) {
+                            iconClass = 'fa-solid fa-square-parking';
+                        }
+
+                        card.innerHTML = `
+                            <div class="amenity-icon-circle">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div class="amenity-info">
+                                <span class="amenity-name">${amenity.name}</span>
+                                <span class="amenity-desc" title="${amenity.description || ''}">${amenity.description || 'Chưa cung cấp mô tả chi tiết.'}</span>
+                            </div>
+                            <div class="card-actions-hover">
+                                <button class="action-icon-btn btn-edit" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-icon-btn btn-delete" title="Xóa tiện nghi"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        `;
+
+                        // Add action listeners
+                        card.querySelector('.btn-edit').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openAmenityModal(amenity);
+                        });
+                        card.querySelector('.btn-delete').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            deleteAmenityHandler(amenity.id, amenity.name);
+                        });
+                        card.addEventListener('click', () => {
+                            openAmenityModal(amenity);
+                        });
+
+                        amenitiesContainer.appendChild(card);
+                    });
+                }
+
+                // Append Dash Add Card at the bottom of Grid
+                const addCard = document.createElement('div');
+                addCard.className = 'amenity-card amenity-card-add';
+                addCard.innerHTML = `
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <span>Thêm mới</span>
+                `;
+                addCard.addEventListener('click', () => openAmenityModal());
+                amenitiesContainer.appendChild(addCard);
+            };
+
+
+
+            // Open Amenity Add/Edit modal popup
+            const openAmenityModal = (amenity = null) => {
+                const overlay = document.getElementById('amenity-modal');
+                const titleEl = document.getElementById('amenity-modal-title');
+                
+                const idInput = document.getElementById('modal-amenity-id');
+                const nameInput = document.getElementById('modal-amenity-name');
+                const descInput = document.getElementById('modal-amenity-desc');
+
+                if (amenity) {
+                    titleEl.innerText = "Cập nhật Tiện nghi & Dịch vụ";
+                    idInput.value = amenity.id;
+                    nameInput.value = amenity.name;
+                    descInput.value = amenity.description || '';
+                } else {
+                    titleEl.innerText = "Thêm Tiện nghi & Dịch vụ";
+                    idInput.value = '';
+                    nameInput.value = '';
+                    descInput.value = '';
+                }
+
+                overlay.classList.add('show');
+                nameInput.focus();
+            };
+
+            window.closeModal = (modalId) => {
+                const overlay = document.getElementById(modalId);
+                if (overlay) overlay.classList.remove('show');
+            };
+
+            // --- CREATE / UPDATE AMENITY (POST / PUT APIs) ---
+            document.getElementById('btn-save-amenity').addEventListener('click', async () => {
+                const id = document.getElementById('modal-amenity-id').value;
+                const name = document.getElementById('modal-amenity-name').value.trim();
+                const description = document.getElementById('modal-amenity-desc').value.trim();
+                const status = 'ACTIVE';
+
+                if (!name) {
+                    showToast("Tên tiện nghi bắt buộc phải nhập!", "warning", "Thiếu tên tiện nghi");
+                    return;
+                }
+
+                const headers = { 
+                    'Authorization': 'Bearer ' + jwtToken,
+                    'Content-Type': 'application/json'
+                };
+
+                if (id) {
+                    // Update Operation (PUT /admin/hotel/amenities/{id})
+                    try {
+                        const url = `http://localhost:8080/api/admin/hotel/amenities/${id}?name=${encodeURIComponent(name)}&description=${encodeURIComponent(description)}`;
+                        const res = await fetch(url, {
+                            method: 'PUT',
+                            headers
+                        }).then(r => r.json());
+
+                        if (res.success && res.data) {
+                            hotelData = res.data;
+                            showToast("Cập nhật tiện nghi dịch vụ thành công!", "success");
+                            closeModal('amenity-modal');
+                            renderAmenities();
+                        } else {
+                            alert(res.message || "Cập nhật tiện nghi thất bại!");
+                        }
+                    } catch (error) {
+                        console.warn("Spring Boot offline. Update local amenity state!");
+                        const idx = hotelData.amenities.findIndex(a => a.id == id);
+                        if (idx !== -1) {
+                            hotelData.amenities[idx] = { id: parseInt(id), name, description, status };
+                        }
+                        showToast("Đang offline: Cập nhật tiện nghi cục bộ thành công!", "info");
+                        closeModal('amenity-modal');
+                        renderAmenities();
+                    }
+                } else {
+                    // Create Operation (POST /admin/hotel/amenities)
+                    const payload = [{ name, description }];
+                    try {
+                        const res = await fetch('http://localhost:8080/api/admin/hotel/amenities', {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify(payload)
+                        }).then(r => r.json());
+
+                        if (res.success && res.data) {
+                            hotelData = res.data;
+                            showToast("Thêm tiện nghi dịch vụ mới thành công!", "success");
+                            closeModal('amenity-modal');
+                            renderAmenities();
+                        } else {
+                            alert(res.message || "Thêm tiện nghi thất bại!");
+                        }
+                    } catch (error) {
+                        console.warn("Spring Boot offline. Creating locally!");
+                        const newId = Date.now();
+                        hotelData.amenities.push({ id: newId, name, description, status });
+                        showToast("Đang offline: Thêm tiện nghi cục bộ thành công!", "info");
+                        closeModal('amenity-modal');
+                        renderAmenities();
+                    }
+                }
+            });
+
+            // --- DELETE AMENITY (DELETE /admin/hotel/amenities/{amenityId}) ---
+            const deleteAmenityHandler = (amenityId, amenityName) => {
+                showConfirm(
+                    "Xác nhận xóa tiện nghi",
+                    `Bạn có chắc chắn muốn xóa tiện nghi "${amenityName}" khỏi khách sạn? Hành động này sẽ loại bỏ nó khỏi trang thông tin.`,
+                    async () => {
+                        try {
+                            const headers = { 'Authorization': 'Bearer ' + jwtToken };
+                            const res = await fetch(`http://localhost:8080/api/admin/hotel/amenities/${amenityId}`, {
+                                method: 'DELETE',
+                                headers
+                            }).then(r => r.json());
+
+                            if (res.success && res.data) {
+                                hotelData = res.data;
+                                showToast("Xóa tiện nghi thành công!", "success");
+                                renderAmenities();
+                            } else {
+                                alert(res.message || "Không thể xóa tiện nghi!");
+                            }
+                        } catch (error) {
+                            console.warn("Spring Boot offline. Deleting locally!");
+                            hotelData.amenities = hotelData.amenities.filter(a => a.id !== amenityId);
+                            showToast("Đang offline: Đã gỡ bỏ tiện nghi cục bộ!", "info");
+                            renderAmenities();
+                        }
+                    }
+                );
+            };
+
+            // Bind amenity add top button
+            document.getElementById('btn-add-amenity-top').addEventListener('click', () => openAmenityModal());
+
+
+            // ===========================================
+            // ========== IMAGES SECTION CRUD ============
+            // ===========================================
+
+            // Render Photos Stack
+            const renderImages = () => {
+                photosContainer.innerHTML = '';
+
+                if (hotelData.images.length === 0) {
+                    photosContainer.innerHTML = `
+                        <div style="text-align: center; padding: 32px 0; color: var(--text-muted);">
+                            <i class="fa-solid fa-images" style="font-size: 24px; margin-bottom: 8px;"></i>
+                            <p style="font-size: 13px;">Khách sạn chưa có hình ảnh nào trong album.</p>
+                        </div>
+                    `;
+                } else {
+                    // Display primary image first, then others
+                    const sortedImages = [...hotelData.images].sort((a, b) => b.isPrimary - a.isPrimary);
+
+                    sortedImages.forEach(img => {
+                        const card = document.createElement('div');
+                        card.className = 'photo-card';
+
+                        const badgeText = img.isPrimary ? 'Chính' : 'Ẩn';
+                        const badgeClass = img.isPrimary ? 'primary-badge' : '';
+
+                        card.innerHTML = `
+                            <div class="photo-image-container">
+                                <img src="${img.imageUrl}" alt="${img.caption || ''}" onerror="this.src='https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=600&q=80'">
+                                <span class="photo-badge ${badgeClass}">${badgeText}</span>
+                                <div class="photo-actions-overlay">
+                                    <button class="photo-action-circle btn-edit-img" title="Cập nhật"><i class="fa-solid fa-pencil"></i></button>
+                                    <button class="photo-action-circle btn-delete-img" title="Xóa hình ảnh"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                            <div class="photo-meta">
+                                <span class="photo-caption">${img.caption || 'Hình ảnh chưa đặt tên'}</span>
+                                <span class="photo-desc">${img.description || 'Chưa cung cấp mô tả chi tiết cho ảnh.'}</span>
+                            </div>
+                        `;
+
+                        // Photo click triggers edit modal
+                        card.querySelector('.btn-edit-img').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openImageEditModal(img);
+                        });
+
+                        card.querySelector('.btn-delete-img').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            deleteImageHandler(img.id);
+                        });
+
+                        card.addEventListener('click', () => {
+                            openImageEditModal(img);
+                        });
+
+                        photosContainer.appendChild(card);
+                    });
+                }
+            };
+
+            // Open Image Edit Modal
+            const openImageEditModal = (img) => {
+                const overlay = document.getElementById('image-edit-modal');
+                const idInput = document.getElementById('modal-image-id');
+                const previewImg = document.getElementById('modal-image-preview');
+                const captionInput = document.getElementById('modal-image-caption');
+                const primaryCheckbox = document.getElementById('modal-image-primary');
+
+                idInput.value = img.id;
+                previewImg.src = img.imageUrl;
+                captionInput.value = img.caption || '';
+                primaryCheckbox.checked = img.isPrimary || false;
+
+                overlay.classList.add('show');
+                captionInput.focus();
+            };
+
+            // --- SAVE IMAGE INFO (PUT /admin/hotel/images/{imageId}) ---
+            document.getElementById('btn-save-image-info').addEventListener('click', async () => {
+                const id = document.getElementById('modal-image-id').value;
+                const caption = document.getElementById('modal-image-caption').value.trim();
+                const isPrimary = document.getElementById('modal-image-primary').checked;
+
+                if (!caption) {
+                    showToast("Vui lòng nhập chú thích cho hình ảnh!", "warning", "Thiếu chú thích");
+                    return;
+                }
+
+                try {
+                    const headers = { 'Authorization': 'Bearer ' + jwtToken };
+                    const url = `http://localhost:8080/api/admin/hotel/images/${id}?isPrimary=${isPrimary}&caption=${encodeURIComponent(caption)}`;
+                    const res = await fetch(url, {
+                        method: 'PUT',
+                        headers
+                    }).then(r => r.json());
+
+                    if (res.success && res.data) {
+                        hotelData = res.data;
+                        showToast("Đã cập nhật chi tiết hình ảnh thành công!", "success");
+                        closeModal('image-edit-modal');
+                        renderImages();
+                    } else {
+                        alert(res.message || "Cập nhật hình ảnh thất bại!");
+                    }
+                } catch (error) {
+                    console.warn("Spring Boot offline. Updating local image state!");
+                    const idx = hotelData.images.findIndex(img => img.id == id);
+                    if (idx !== -1) {
+                        // Reset other primaries if this is primary
+                        if (isPrimary) {
+                            hotelData.images.forEach(i => i.isPrimary = false);
+                        }
+                        hotelData.images[idx] = { 
+                            ...hotelData.images[idx], 
+                            caption, 
+                            description: caption, // mirror caption to description
+                            isPrimary 
+                        };
+                    }
+                    showToast("Đang offline: Cập nhật chi tiết ảnh thành công!", "info");
+                    closeModal('image-edit-modal');
+                    renderImages();
+                }
+            });
+
+            // --- DELETE IMAGE (DELETE /admin/hotel/images/{imageId}) ---
+            const deleteImageHandler = (imageId) => {
+                showConfirm(
+                    "Xác nhận xóa hình ảnh",
+                    "Bạn có chắc chắn muốn gỡ bỏ hình ảnh này khỏi album Resort? Hành động này sẽ xóa file vĩnh viễn.",
+                    async () => {
+                        try {
+                            const headers = { 'Authorization': 'Bearer ' + jwtToken };
+                            const res = await fetch(`http://localhost:8080/api/admin/hotel/images/${imageId}`, {
+                                method: 'DELETE',
+                                headers
+                            }).then(r => r.json());
+
+                            if (res.success && res.data) {
+                                hotelData = res.data;
+                                showToast("Xóa hình ảnh thành công!", "success");
+                                renderImages();
+                            } else {
+                                alert(res.message || "Không thể xóa hình ảnh!");
+                            }
+                        } catch (error) {
+                            console.warn("Spring Boot offline. Deleting locally!");
+                            hotelData.images = hotelData.images.filter(img => img.id !== imageId);
+                            showToast("Đang offline: Đã gỡ bỏ hình ảnh khỏi album!", "info");
+                            renderImages();
+                        }
+                    }
+                );
+            };
+
+            // --- FILE UPLOADS (POST /admin/hotel/images) ---
+            const handleFilesUpload = async (files) => {
+                if (files.length === 0) return;
+
+                // Validate images
+                for (let file of files) {
+                    if (!file.type.startsWith('image/')) {
+                        showToast("Vui lòng chỉ tải lên định dạng file ảnh!", "warning", "File không hợp lệ");
+                        return;
+                    }
+                }
+
+                showToast(`Đang xử lý tải lên ${files.length} ảnh...`, "info", "Uploader");
+
+                // Check offline or online
+                let isOffline = false;
+                try {
+                    await fetch('http://localhost:8080/api/admin/hotel', { method: 'HEAD' });
+                } catch (e) {
+                    isOffline = true;
+                }
+
+                if (isOffline) {
+                    console.warn("Backend offline. Simulating premium multipart/form-data upload preview!");
+                    for (let file of files) {
+                        const localUrl = URL.createObjectURL(file);
+                        const mockId = Date.now() + Math.floor(Math.random() * 1000);
+                        hotelData.images.push({
+                            id: mockId,
+                            imageUrl: localUrl,
+                            isPrimary: hotelData.images.length === 0,
+                            caption: file.name.substring(0, file.name.lastIndexOf('.')) || 'Ảnh tải lên',
+                            description: 'Được thêm thông qua upload file cục bộ ở chế độ ngoại tuyến.'
+                        });
+                    }
+                    setTimeout(() => {
+                        showToast(`Hoàn tất tải lên ${files.length} hình ảnh cục bộ!`, "success", "Tải ảnh thành công");
+                        renderImages();
+                    }, 800);
+                } else {
+                    const formData = new FormData();
+                    for (let file of files) {
+                        formData.append('files', file);
+                    }
+
+                    try {
+                        const res = await fetch('http://localhost:8080/api/admin/hotel/images', {
+                            method: 'POST',
+                            headers: { 'Authorization': 'Bearer ' + jwtToken },
+                            body: formData
+                        }).then(r => r.json());
+
+                        if (res.success && res.data) {
+                            hotelData = res.data;
+                            showToast(`Đã tải lên thành công ${files.length} hình ảnh lên hệ thống!`, "success");
+                            renderImages();
+                        } else {
+                            alert(res.message || "Tải ảnh thất bại!");
+                        }
+                    } catch (error) {
+                        alert("Gửi hình ảnh thất bại. Vui lòng kiểm tra dung lượng!");
+                    }
+                }
+            };
+
+            // Bind top upload button and dropzone area clicks
+            document.getElementById('btn-upload-top').addEventListener('click', () => imageFileInput.click());
+            dropzoneArea.addEventListener('click', () => imageFileInput.click());
+
+            imageFileInput.addEventListener('change', (e) => {
+                handleFilesUpload(e.target.files);
+                imageFileInput.value = ''; // Reset uploader value
+            });
+
+            // Drag & Drop bindings
+            dropzoneArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzoneArea.style.borderColor = 'var(--primary)';
+                dropzoneArea.style.backgroundColor = 'var(--primary-light)';
+            });
+
+            dropzoneArea.addEventListener('dragleave', () => {
+                dropzoneArea.style.borderColor = 'var(--border-color)';
+                dropzoneArea.style.backgroundColor = '#f8fafc';
+            });
+
+            dropzoneArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzoneArea.style.borderColor = 'var(--border-color)';
+                dropzoneArea.style.backgroundColor = '#f8fafc';
+                handleFilesUpload(e.dataTransfer.files);
+            });
+
+
+            // --- INITIALIZE DASHBOARD ---
+            const init = async () => {
+                await fetchHotelData();
+            };
+
+            init();
+        });
+    </script>
+
+    <!-- CheckinX Style Unification & Smart Toast Alert Overrides -->
+    <script>
+        (function() {
+            if (window.alertOverridden) return;
+            window.alertOverridden = true;
+
+            // 1. Tự động tiêm Google Font Outfit nếu chưa có
+            if (!document.querySelector('link[href*="Outfit"]')) {
+                const linkPreconnect1 = document.createElement('link');
+                linkPreconnect1.rel = 'preconnect';
+                linkPreconnect1.href = 'https://fonts.googleapis.com';
+                document.head.appendChild(linkPreconnect1);
+
+                const linkPreconnect2 = document.createElement('link');
+                linkPreconnect2.rel = 'preconnect';
+                linkPreconnect2.href = 'https://fonts.gstatic.com';
+                linkPreconnect2.crossOrigin = 'anonymous';
+                document.head.appendChild(linkPreconnect2);
+
+                const linkFont = document.createElement('link');
+                linkFont.rel = 'stylesheet';
+                linkFont.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
+                document.head.appendChild(linkFont);
+            }
+
+            // 2. Ép font-family Outfit cho toàn bộ trang
+            const styleElement = document.createElement('style');
+            styleElement.id = 'checkinx-unified-styles';
+            styleElement.innerHTML = `
+                body, html, input, select, textarea, button {
+                    font-family: 'Outfit', sans-serif !important;
+                }
+                #toast-container {
+                    position: fixed;
+                    top: 1rem;
+                    right: 1rem;
+                    z-index: 99999;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    pointer-events: none;
+                }
+                .toast-item {
+                    pointer-events: auto;
+                    animation: toastSlideIn 0.3s ease-out forwards;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                    transition: all 0.3s ease;
+                }
+                @keyframes toastSlideIn {
+                    from { transform: translateX(120%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                /* Tailwind utility overrides for pages without Tailwind loaded */
+                .toast-item.flex { display: flex !important; }
+                .toast-item.items-center { align-items: center !important; }
+                .toast-item.gap-3 { gap: 0.75rem !important; }
+                .toast-item.px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .toast-item.py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+                .toast-item.rounded-2xl { border-radius: 1rem !important; }
+                .toast-item.border { border: 1px solid rgba(226, 232, 240, 0.8) !important; }
+                .toast-item.text-xs { font-size: 0.75rem !important; }
+                .toast-item.font-semibold { font-weight: 600 !important; }
+                .toast-item.bg-white { background-color: #ffffff !important; }
+                .toast-item.text-emerald-800 { color: #065f46 !important; }
+                .toast-item.border-emerald-100 { border-color: #a7f3d0 !important; }
+                .toast-item.bg-emerald-50\/95 { background-color: rgba(240, 253, 250, 0.95) !important; }
+                .toast-item.text-blue-800 { color: #1e40af !important; }
+                .toast-item.border-blue-100 { border-color: #bfdbfe !important; }
+                .toast-item.bg-blue-50\/95 { background-color: rgba(239, 246, 255, 0.95) !important; }
+                .toast-item.text-red-800 { color: #991b1b !important; }
+                .toast-item.border-red-100 { border-color: #fecaca !important; }
+                .toast-item.bg-red-50\/95 { background-color: rgba(254, 242, 242, 0.95) !important; }
+                .toast-item.text-amber-800 { color: #92400e !important; }
+                .toast-item.border-amber-100 { border-color: #fde68a !important; }
+                .toast-item.bg-amber-50\/95 { background-color: rgba(255, 251, 235, 0.95) !important; }
+                .toast-item.backdrop-blur-sm { backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important; }
+                .toast-item .flex-1 { flex: 1 1 0% !important; }
+            `;
+            document.head.appendChild(styleElement);
+
+            // 3. Tự động tiêm toast-container vào body
+            function injectToastContainer() {
+                if (!document.getElementById('toast-container')) {
+                    const container = document.createElement('div');
+                    container.id = 'toast-container';
+                    container.className = 'flex flex-col gap-2';
+                    document.body.appendChild(container);
+                }
+            }
+
+            if (document.body) {
+                injectToastContainer();
+            } else {
+                window.addEventListener('DOMContentLoaded', injectToastContainer);
+            }
+
+            // 4. Định nghĩa hàm showToast mượt mà cao cấp
+            window.showToast = function(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                
+                let bgClass = 'text-emerald-800 border-emerald-100 bg-emerald-50/95 backdrop-blur-sm';
+                let icon = '<i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>';
+                
+                if (type === 'info') {
+                    bgClass = 'text-blue-800 border-blue-100 bg-blue-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-info text-blue-500 text-lg"></i>';
+                } else if (type === 'error') {
+                    bgClass = 'text-red-800 border-red-100 bg-red-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-circle-xmark text-red-500 text-lg"></i>';
+                } else if (type === 'warning') {
+                    bgClass = 'text-amber-800 border-amber-100 bg-amber-50/95 backdrop-blur-sm';
+                    icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg"></i>';
+                }
+
+                toast.className = `toast-item flex items-center gap-3 px-4 py-3 rounded-2xl border text-xs font-semibold bg-white ${bgClass}`;
+                toast.innerHTML = `${icon} <span class="flex-1">${message}</span>`;
+                
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'scale(0.9) translateX(20px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            };
+
+            // 5. Ghi đè hàm alert() truyền thống
+            window.alert = function(message) {
+                if (!message) return;
+                const msgStr = String(message);
+                
+                // Phân loại màu thông báo dựa trên từ khóa
+                let type = 'info';
+                const msgLower = msgStr.toLowerCase();
+                if (msgLower.includes('thành công') || msgLower.includes('success') || msgLower.includes('hoàn tất') || msgLower.includes('đăng nhập thành công') || msgLower.includes('đăng ký thành công')) {
+                    type = 'success';
+                } else if (msgLower.includes('lỗi') || msgLower.includes('thất bại') || msgLower.includes('error') || msgLower.includes('hỏng') || msgLower.includes('không thể') || msgLower.includes('chưa') || msgLower.includes('không đúng') || msgLower.includes('không tìm thấy')) {
+                    type = 'error';
+                } else if (msgLower.includes('cảnh báo') || msgLower.includes('chú ý') || msgLower.includes('warning') || msgLower.includes('vui lòng') || msgLower.includes('yêu cầu') || msgLower.includes('hết hạn')) {
+                    type = 'warning';
+                }
+
+                window.showToast(msgStr, type);
+                console.log("CheckinX Smart Toast: Đã đánh chặn alert ->", msgStr);
+            };
+        })();
+    </script>
+
+</body>
+</html>
