@@ -10,21 +10,27 @@
     
     <style>
         :root {
-            --primary: #5c3b9e;
-            --primary-light: #f3effb;
-            --primary-dark: #472b7d;
+            --primary: #4f3cc9;
+            --primary-dark: #3b2bb0;
+            --primary-light: #eef2ff;
+            --primary-gradient: linear-gradient(135deg, #4f3cc9 0%, #7c3aed 100%);
+            --bg-color: #f4f5f8;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
             --white: #ffffff;
-            --gray-bg: #f8f9fa;
-            --border-color: #eef0f2;
-            --text-main: #2d3748;
-            --text-muted: #718096;
             --success: #10b981;
             --success-bg: #ecfdf5;
             --danger: #ef4444;
             --danger-bg: #fef2f2;
             --warning: #f59e0b;
             --warning-bg: #fffbeb;
-            --sidebar-width: 260px;
+            --purple-badge-bg: #ede9fe;
+            --purple-badge-text: #6d28d9;
+            --header-bg: #4f3cc9;
+            --gray-bg: #f8f9fa;
         }
 
         * {
@@ -35,233 +41,169 @@
         }
 
         body {
-            background-color: var(--gray-bg);
+            background-color: var(--bg-color);
             color: var(--text-main);
-            display: flex;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
         }
 
-        /* Sidebar Styles */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--white);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-        }
-
-        .brand {
-            padding: 24px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .brand h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-            letter-spacing: -0.5px;
-        }
-
-        .brand p {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .create-btn-container {
-            padding: 20px 24px 10px;
-        }
-
-        .btn-create {
-            width: 100%;
-            background-color: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-create:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .nav-menu {
-            padding: 10px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--text-main);
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .nav-item:hover {
-            background-color: var(--primary-light);
-            color: var(--primary);
-        }
-
-        .nav-item.active {
-            background-color: var(--primary-light);
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .nav-item i {
-            font-size: 16px;
-            width: 20px;
-        }
-
-        /* Sidebar Footer & Logout Button styling */
-        .sidebar-footer {
-            padding: 16px;
-            border-top: 1px solid var(--border-color);
-            margin-top: auto;
-        }
-
-        #btn-logout {
-            width: 100%;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--danger) !important;
-            font-weight: 500;
-            font-size: 14px;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-
-        #btn-logout:hover {
-            background-color: var(--danger-bg) !important;
-            color: var(--danger) !important;
-        }
-
-        #btn-logout i {
-            color: var(--danger) !important;
-            font-size: 16px;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Main Wrapper */
-        .main-wrapper {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        /* Header */
-        .header {
-            height: 70px;
-            background-color: var(--white);
-            border-bottom: 1px solid var(--border-color);
+        /* --- Header Styles --- */
+        header {
+            background-color: var(--header-bg);
+            background: linear-gradient(90deg, #3b2bb0 0%, #4f3cc9 100%);
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 32px;
+            padding: 0 24px;
+            color: var(--white);
             position: sticky;
             top: 0;
-            z-index: 99;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .search-bar {
+        .header-left {
             display: flex;
             align-items: center;
-            background-color: var(--gray-bg);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 8px;
-            width: 320px;
-            gap: 10px;
+            gap: 32px;
         }
 
-        .search-bar i {
-            color: var(--text-muted);
-        }
-
-        .search-bar input {
-            border: none;
-            background: transparent;
-            outline: none;
-            font-size: 14px;
-            width: 100%;
-            color: var(--text-main);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
             color: var(--white);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             cursor: pointer;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 64px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            position: relative;
             transition: all 0.2s;
         }
 
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
+        .nav-link:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.08);
         }
 
-        .header-icons {
+        .nav-link.active {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 4px;
+            background-color: #10b981;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .header-right {
             display: flex;
             align-items: center;
-            gap: 16px;
-            font-size: 18px;
-            color: var(--text-muted);
+            gap: 20px;
         }
 
-        .header-icons i {
+        .btn-le-tan {
+            background-color: var(--white);
+            color: var(--primary);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn-le-tan:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .header-icon {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
             cursor: pointer;
             transition: color 0.2s;
+            position: relative;
         }
 
-        .header-icons i:hover {
-            color: var(--primary);
+        .header-icon:hover {
+            color: var(--white);
         }
 
-        .user-avatar {
+        .header-icon .badge-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger);
+            border-radius: 50%;
+            border: 1.5px solid var(--header-bg);
+        }
+
+        .user-profile {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: border 0.2s;
+        }
+
+        .user-profile:hover {
+            border-color: var(--white);
+        }
+
+        /* Main Content Wrapper */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 64px);
+        }
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -701,57 +643,48 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="brand">
-            <h1>CheckinX</h1>
-            <p>Hotel Management System</p>
+    <!-- Hidden placeholders to satisfy legacy JS selectors -->
+    <button id="btn-admin-dashboard" style="display:none;"></button>
+    <button id="btn-switch-receptionist" style="display:none;"></button>
+
+    <!-- Header Brand Bar -->
+    <header>
+        <div class="header-left">
+            <div class="logo" id="logo-redirect" onclick="window.location.href='admin-dashboard.html'">
+                Checkin<span>X</span>
+            </div>
+            <nav>
+                <a href="admin-dashboard.html" class="nav-link">Tổng quan</a>
+                <a href="admin-room-grid-dashboard.html" class="nav-link">Sơ đồ phòng</a>
+                <a href="admin-book-dashboard.html" class="nav-link">Đặt phòng</a>
+                <a href="admin-room-timeline.html" class="nav-link">Timeline</a>
+                <a href="admin-schedule-dashboard.html" class="nav-link">Tối ưu AI</a>
+                <a href="admin-ota-booking.html" class="nav-link">Kênh bán</a>
+                <a href="admin-payment-dashboard.html" class="nav-link">Giao dịch</a>
+                <a href="admin-damage-dashboard.html" class="nav-link active">Đền bù</a>
+                <a href="admin-room-dashboard.html" class="nav-link">Phòng</a>
+                <a href="admin-room-type-dashboard.html" class="nav-link">Loại Phòng</a>
+            </nav>
         </div>
-        <div class="create-btn-container">
-            <button id="btn-create-new" class="btn-create"><i class="fa-solid fa-plus"></i> Tạo mới</button>
+        <div class="header-right">
+            <div class="header-icon">
+                <i class="fa-regular fa-bell"></i>
+                <div class="badge-dot"></div>
+            </div>
+            <div class="header-icon" id="btn-settings" onclick="window.location.href='admin-hotel-dashboard.html'">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+            <div class="user-profile" id="btn-profile">
+                AD
+            </div>
+            <div class="header-icon" id="btn-logout" title="Đăng xuất" style="color: var(--danger, #ef4444); margin-left: 8px;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
         </div>
-        <div class="nav-menu">
-            <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-border-all"></i> Tổng quan</a>
-            <a href="receptionist-room-dashboard.html" class="nav-item"><i class="fa-solid fa-table-cells-large"></i> Sơ đồ phòng</a>
-            <a href="receptionist-book-dashboard.html" class="nav-item"><i class="fa-regular fa-calendar-check"></i> Đặt phòng</a>
-            <a href="admin-schedule-dashborad.html" class="nav-item"><i class="fa-regular fa-clock"></i> Timeline</a>
-            <a href="admin-ota-booking.html" class="nav-item"><i class="fa-solid fa-globe"></i> Kênh bán</a>
-            <a href="admin-payment-dashboard.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Giao dịch</a>
-            <a href="receptionist-damage-dashboard.html" class="nav-item active"><i class="fa-solid fa-triangle-exclamation"></i> Đền bù</a>
-            <a href="admin-room-dashboard.html" class="nav-item"><i class="fa-solid fa-hotel"></i> Phòng</a>
-            <a href="admin-room-type-dashboard.html" class="nav-item"><i class="fa-solid fa-layer-group"></i> Loại Phòng</a>
-            <a href="admin-hotel-dashboard.html" class="nav-item"><i class="fa-solid fa-gear"></i> Cài đặt</a>
-        </div>
-        <div class="sidebar-footer">
-            <button id="btn-logout">
-                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-            </button>
-        </div>
-    </div>
+    </header>
 
     <!-- Main Wrapper -->
     <div class="main-wrapper">
-        <!-- Header -->
-        <div class="header">
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="panel-search-input" placeholder="Tìm tên khách, số phòng...">
-            </div>
-            <div class="header-actions">
-                
-                <button id="btn-admin-dashboard" class="btn-admin-switch" style="display: none; background: var(--primary-light); border: 1.5px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; align-items: center; gap: 8px; margin-right: 12px;" onclick="window.location.href='admin-dashboard.html'">
-                    <i class="fa-solid fa-arrow-left"></i> Về Admin Dashboard
-                </button>
-                <button id="btn-quick-checkin" class="btn-primary">Quick Check-in</button>
-                <div class="header-icons">
-                    <i class="fa-regular fa-bell"></i>
-                    <i class="fa-solid fa-location-dot"></i>
-                    <a href="staff-profile.html" class="user-avatar" style="text-decoration: none; color: inherit;">
-                        <i class="fa-regular fa-user"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
 
         <!-- Content -->
         <div class="content">
@@ -764,10 +697,19 @@
             <div class="split-layout">
                 <!-- Left panel list of CHECKED_DAMAGE_ROOM bookings -->
                 <div class="panel-card">
-                    <div class="panel-title">
+                    <div class="panel-title" style="margin-bottom: 12px;">
                         <i class="fa-solid fa-hourglass-half"></i>
                         <span>Danh sách chờ đền bù</span>
                     </div>
+                    
+                    <!-- Search input preserved and moved here -->
+                    <div style="margin-bottom: 16px;">
+                        <div class="search-bar" style="display: flex; align-items: center; background-color: var(--gray-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; width: 100%; height: 38px;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted); margin-right: 8px;"></i>
+                            <input type="text" id="panel-search-input" placeholder="Tìm tên khách, số phòng..." style="border: none; outline: none; width: 100%; font-size: 13px; background: transparent; color: var(--text-main);">
+                        </div>
+                    </div>
+
                     <div class="booking-list-container" id="bookings-waiting-list">
                         <!-- Bookings will be loaded here dynamically -->
                         <div style="text-align: center; padding: 40px; color: var(--text-muted);">

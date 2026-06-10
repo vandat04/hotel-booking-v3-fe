@@ -8,22 +8,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #5e35b1;
-            --primary-dark: #4527a0;
-            --primary-light: #ede7f6;
-            --bg-color: #f8f9fa;
+            --primary: #4f3cc9;
+            --primary-dark: #3b2bb0;
+            --primary-light: #eef2ff;
+            --primary-gradient: linear-gradient(135deg, #4f3cc9 0%, #7c3aed 100%);
+            --bg-color: #f4f5f8;
             --sidebar-bg: #ffffff;
-            --text-main: #212121;
-            --text-muted: #757575;
-            --border-color: #e0e0e0;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
             --white: #ffffff;
-            --danger: #d32f2f;
-            --danger-bg: #ffebee;
-            --success: #2e7d32;
-            --success-bg: #e8f5e9;
-            --warning: #424242;
-            --warning-bg: #f5f5f5;
-            --gray-bg: #f5f5f5;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --purple-badge-bg: #ede9fe;
+            --purple-badge-text: #6d28d9;
+            --header-bg: #4f3cc9;
+            --gray-bg: #f8f9fa;
         }
 
         * {
@@ -36,135 +41,158 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
+            overflow-x: hidden;
         }
 
-        .brand {
-            padding: 24px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .brand h1 {
-            font-size: 24px;
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .brand p {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .create-btn-container {
-            padding: 24px 20px 16px 20px;
-        }
-
-        .btn-create {
-            width: 100%;
-            background-color: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
+        /* --- Header Styles --- */
+        header {
+            background-color: var(--header-bg);
+            background: linear-gradient(90deg, #3b2bb0 0%, #4f3cc9 100%);
+            height: 64px;
             display: flex;
-            justify-content: center;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
-            transition: background 0.3s;
+            cursor: pointer;
         }
 
-        .btn-create:hover {
-            background-color: var(--primary-dark);
+        .logo span {
+            color: #a78bfa;
         }
 
-        .nav-menu {
-            padding: 0 12px 12px 12px;
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .nav-item {
+        nav {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--text-muted);
+            gap: 4px;
+            height: 64px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
-            border-radius: 8px;
+            font-size: 13.5px;
             font-weight: 500;
-            font-size: 14px;
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            position: relative;
             transition: all 0.2s;
         }
 
-        .nav-item:hover {
-            background-color: var(--gray-bg);
-            color: var(--text-main);
+        .nav-link:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.08);
         }
 
-        .nav-item.active {
-            background-color: var(--primary);
+        .nav-link.active {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 4px;
+            background-color: #10b981;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-le-tan {
+            background-color: var(--white);
+            color: var(--primary);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn-le-tan:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .header-icon {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .header-icon:hover {
             color: var(--white);
         }
 
-        .nav-item i {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
+        .header-icon .badge-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger);
+            border-radius: 50%;
+            border: 1.5px solid var(--header-bg);
         }
 
-        /* Sidebar Footer & Logout Button styling */
-        .sidebar-footer {
-            padding: 16px;
-            border-top: 1px solid var(--border-color);
-            margin-top: auto;
-        }
-
-        #btn-logout {
-            width: 100%;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            text-align: left;
+        .user-profile {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--danger) !important;
-            font-weight: 500;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
             font-size: 14px;
-            border-radius: 8px;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: border 0.2s;
         }
 
-        #btn-logout:hover {
-            background-color: var(--danger-bg) !important;
-            color: var(--danger) !important;
-        }
-
-        #btn-logout i {
-            color: var(--danger) !important;
-            font-size: 16px;
-            width: 20px;
-            text-align: center;
+        .user-profile:hover {
+            border-color: var(--white);
         }
 
         /* Main Content */
@@ -172,19 +200,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Header */
-        .header {
-            height: 72px;
-            background-color: var(--white);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-            flex-shrink: 0;
+            min-height: calc(100vh - 64px);
         }
 
         .search-bar {
@@ -769,72 +785,66 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="brand">
-            <h1>CheckinX</h1>
-            <p>Hotel Management System</p>
+    <!-- Hidden placeholders to satisfy legacy JS selectors -->
+    <button id="btn-admin-dashboard" style="display:none;"></button>
+    <button id="btn-switch-receptionist" style="display:none;"></button>
+
+    <!-- Header Brand Bar -->
+    <header>
+        <div class="header-left">
+            <div class="logo" id="logo-redirect" onclick="window.location.href='admin-dashboard.html'">
+                Checkin<span>X</span>
+            </div>
+            <nav>
+                <a href="admin-dashboard.html" class="nav-link">Tổng quan</a>
+                <a href="admin-room-grid-dashboard.html" class="nav-link active">Sơ đồ phòng</a>
+                <a href="admin-book-dashboard.html" class="nav-link">Đặt phòng</a>
+                <a href="admin-room-timeline.html" class="nav-link">Timeline</a>
+                <a href="admin-schedule-dashboard.html" class="nav-link">Tối ưu AI</a>
+                <a href="admin-ota-booking.html" class="nav-link">Kênh bán</a>
+                <a href="admin-payment-dashboard.html" class="nav-link">Giao dịch</a>
+                <a href="admin-damage-dashboard.html" class="nav-link">Đền bù</a>
+                <a href="admin-room-dashboard.html" class="nav-link">Phòng</a>
+                <a href="admin-room-type-dashboard.html" class="nav-link">Loại Phòng</a>
+            </nav>
         </div>
-        <div class="create-btn-container">
-            <button id="btn-create-new" class="btn-create"><i class="fa-solid fa-plus"></i> Tạo mới</button>
+        <div class="header-right">
+            <div class="header-icon">
+                <i class="fa-regular fa-bell"></i>
+                <div class="badge-dot"></div>
+            </div>
+            <div class="header-icon" id="btn-settings" onclick="window.location.href='admin-hotel-dashboard.html'">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+            <div class="user-profile" id="btn-profile">
+                AD
+            </div>
+            <div class="header-icon" id="btn-logout" title="Đăng xuất" style="color: var(--danger, #ef4444); margin-left: 8px;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
         </div>
-        <div class="nav-menu">
-            <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-border-all"></i> Tổng quan</a>
-            <a href="receptionist-room-dashboard.html" class="nav-item active"><i class="fa-solid fa-table-cells-large"></i> Sơ đồ phòng</a>
-            <a href="receptionist-book-dashboard.html" class="nav-item"><i class="fa-regular fa-calendar-check"></i> Đặt phòng</a>
-            <a href="admin-schedule-dashborad.html" class="nav-item"><i class="fa-regular fa-clock"></i> Timeline</a>
-            <a href="admin-ota-booking.html" class="nav-item"><i class="fa-solid fa-globe"></i> Kênh bán</a>
-            <a href="admin-payment-dashboard.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Giao dịch</a>
-            <a href="receptionist-damage-dashboard.html" class="nav-item"><i class="fa-solid fa-triangle-exclamation"></i> Đền bù</a>
-            <a href="admin-room-dashboard.html" class="nav-item"><i class="fa-solid fa-hotel"></i> Phòng</a>
-            <a href="admin-room-type-dashboard.html" class="nav-item"><i class="fa-solid fa-layer-group"></i> Loại Phòng</a>
-            <a href="admin-hotel-dashboard.html" class="nav-item"><i class="fa-solid fa-gear"></i> Cài đặt</a>
-        </div>
-        <div class="sidebar-footer">
-            <button id="btn-logout">
-                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-            </button>
-        </div>
-    </div>
+    </header>
 
     <!-- Main Wrapper -->
     <div class="main-wrapper">
-        <!-- Header -->
-        <div class="header">
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Tìm kiếm phòng, khách...">
-            </div>
-            <div class="header-actions">
-                
-                <button id="btn-admin-dashboard" class="btn-admin-switch" style="display: none; background: var(--primary-light); border: 1.5px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; align-items: center; gap: 8px; margin-right: 12px;" onclick="window.location.href='admin-dashboard.html'">
-                    <i class="fa-solid fa-arrow-left"></i> Về Admin Dashboard
-                </button>
-                <button id="btn-quick-checkin" class="btn-primary">Quick Check-in</button>
-                <div class="header-icons">
-                    <i class="fa-regular fa-bell"></i>
-                    <i class="fa-solid fa-location-dot"></i>
-                    <a href="staff-profile.html" class="user-avatar" style="text-decoration: none; color: inherit;">
-                        <i class="fa-regular fa-user"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
 
         <!-- Content -->
-        
         <div class="content">
-            <div class="page-title" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="page-title" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                 <div>
-                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold; color: #333;">Sơ đồ phòng</h2>
-                    <p style="margin: 5px 0 0; color: #777;" id="room-summary">0 phòng trống · 0 đang có khách</p>
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold; color: var(--text-main);">Sơ đồ phòng</h2>
+                    <p style="margin: 5px 0 0; color: var(--text-muted);" id="room-summary">0 phòng trống · 0 đang có khách</p>
                 </div>
-                <div style="display:flex; gap: 10px;">
-                    <button class="btn-outline" style="background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Tất cả các tầng</button>
-                    <button class="btn-outline" style="background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Loại phòng</button>
-                    <div style="display: flex; background: white; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
-                        <button style="padding: 8px 15px; border:none; background: #eee; cursor: pointer; font-weight: 500;">Grid</button>
-                        <button style="padding: 8px 15px; border:none; background: transparent; cursor: pointer; font-weight: 500;">List</button>
+                <div style="display:flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <div class="search-bar" style="display: flex; align-items: center; background-color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 14px; width: 260px; height: 38px;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted); margin-right: 8px;"></i>
+                        <input type="text" placeholder="Tìm kiếm phòng, khách..." style="border: none; outline: none; width: 100%; font-size: 13.5px;">
+                    </div>
+                    <button id="btn-quick-checkin" class="btn-primary" style="background-color: var(--primary); color: white; border: none; padding: 0 16px; height: 38px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-bolt"></i> Quick Check-in</button>
+                    <button id="btn-create-new" class="btn-primary" style="background-color: #10b981; color: white; border: none; padding: 0 16px; height: 38px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="fa-solid fa-plus"></i> Tạo mới</button>
+                    <div style="display:flex; gap: 8px;">
+                        <button class="btn-outline" style="background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px;">Tất cả các tầng</button>
+                        <button class="btn-outline" style="background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px;">Loại phòng</button>
                     </div>
                 </div>
             </div>
