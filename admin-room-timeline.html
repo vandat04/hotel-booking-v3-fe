@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1120,7 +1120,7 @@
             const date = document.getElementById('input-timeline-date').value;
             const container = document.getElementById('timeline-container');
 
-            let url = `http://localhost:8080/api/receptionist/rooms/timeline?date=${date}`;
+            let url = `https://hotel-booking-v3.onrender.com/api/receptionist/rooms/timeline?date=${date}`;
             if (selectedFloor && selectedFloor !== 'all') {
                 url += `&floor=${selectedFloor}`;
             }
@@ -1414,7 +1414,7 @@
             );
             if (!confirmCheckIn) return;
             try {
-                const response = await fetch(`http://localhost:8080/api/receptionist/bookings/${bookingId}/check-in`, {
+                const response = await fetch(`https://hotel-booking-v3.onrender.com/api/receptionist/bookings/${bookingId}/check-in`, {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer ' + jwtToken,

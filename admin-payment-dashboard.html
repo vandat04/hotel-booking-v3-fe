@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1615,7 +1615,7 @@
                     if (filterMinAmount) params.set('minAmount',      filterMinAmount);
                     if (filterMaxAmount) params.set('maxAmount',      filterMaxAmount);
 
-                    const url      = `http://localhost:8080/api/admin/payments?${params.toString()}`;
+                    const url      = `https://hotel-booking-v3.onrender.com/api/admin/payments?${params.toString()}`;
                     const response = await fetch(url, { headers: getHeaders });
                     const res      = await response.json();
 
@@ -1683,9 +1683,9 @@
                 try {
                     const h = getHeaders;
                     const [successR, failedR, refundedR] = await Promise.all([
-                        fetch('http://localhost:8080/api/admin/payments?status=SUCCESS&page=0&size=1',  { headers: h }).then(r => r.json()),
-                        fetch('http://localhost:8080/api/admin/payments?status=FAILED&page=0&size=1',   { headers: h }).then(r => r.json()),
-                        fetch('http://localhost:8080/api/admin/payments?status=REFUNDED&page=0&size=1', { headers: h }).then(r => r.json()),
+                        fetch('https://hotel-booking-v3.onrender.com/api/admin/payments?status=SUCCESS&page=0&size=1',  { headers: h }).then(r => r.json()),
+                        fetch('https://hotel-booking-v3.onrender.com/api/admin/payments?status=FAILED&page=0&size=1',   { headers: h }).then(r => r.json()),
+                        fetch('https://hotel-booking-v3.onrender.com/api/admin/payments?status=REFUNDED&page=0&size=1', { headers: h }).then(r => r.json()),
                     ]);
                     const successCount  = successR.success  && successR.data  ? successR.data.totalElements  : 0;
                     const failedCount   = failedR.success   && failedR.data   ? failedR.data.totalElements   : 0;
@@ -1810,7 +1810,7 @@
             const selectPayment = async (paymentId) => {
                 showToast('Đang tải hồ sơ giao dịch...', 'info', 'Chi tiết');
                 try {
-                    const response = await fetch(`http://localhost:8080/api/admin/payments/${paymentId}`, { headers: getHeaders });
+                    const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/payments/${paymentId}`, { headers: getHeaders });
                     const res      = await response.json();
                     if (res.success && res.data) {
                         selectedPayment = res.data;
@@ -2048,7 +2048,7 @@
                 }
 
                 try {
-                    const res = await fetch(`http://localhost:8080/api/admin/payments/${id}/status`, {
+                    const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/payments/${id}/status`, {
                         method: 'PUT',
                         headers: authHeaders,
                         body: JSON.stringify({ status, notes })
@@ -2106,7 +2106,7 @@
 
                 showToast('Đang tạo hóa đơn điện tử...', 'info', 'Hóa đơn');
                 try {
-                    const res = await fetch('http://localhost:8080/api/admin/invoices', {
+                    const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/invoices', {
                         method: 'POST',
                         headers: authHeaders,
                         body: JSON.stringify({ bookingId, paymentId, invoiceDescription })
@@ -2145,7 +2145,7 @@
                 let inv = currentInvoiceData;
                 if (!inv || inv.id !== selectedPayment.invoiceId) {
                     try {
-                        const res = await fetch(`http://localhost:8080/api/admin/invoices/${selectedPayment.invoiceId}`, { headers: getHeaders }).then(r => r.json());
+                        const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/invoices/${selectedPayment.invoiceId}`, { headers: getHeaders }).then(r => r.json());
                         if (res.success && res.data) { inv = res.data; currentInvoiceData = inv; }
                     } catch (e) { console.warn('Invoice detail offline'); }
                 }
@@ -2202,7 +2202,7 @@
                 if (!invoiceId) { showToast('Không có hóa đơn để tải!', 'warning', 'Tải PDF'); return; }
                 showToast('Đang tải PDF...', 'info', 'Tải PDF');
                 try {
-                    const response = await fetch(`http://localhost:8080/api/admin/invoices/${invoiceId}/download`, { headers: getHeaders });
+                    const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/invoices/${invoiceId}/download`, { headers: getHeaders });
                     if (!response.ok) throw new Error('HTTP ' + response.status);
                     const blob = await response.blob();
                     const url  = URL.createObjectURL(blob);
@@ -2225,7 +2225,7 @@
                 if (!invoiceId) { showToast('Không có hóa đơn để gửi!', 'warning', 'Gửi Email'); return; }
                 showToast('Đang gửi email...', 'info', 'Gửi Email');
                 try {
-                    const res = await fetch(`http://localhost:8080/api/admin/invoices/${invoiceId}/send-email`, {
+                    const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/invoices/${invoiceId}/send-email`, {
                         method: 'POST', headers: authHeaders
                     }).then(r => r.json());
                     if (res.success) {

@@ -1,4 +1,4 @@
-// Inject header styles immediately when script is loaded to fix layout shift (CLS)
+﻿// Inject header styles immediately when script is loaded to fix layout shift (CLS)
 (function() {
     const style = document.createElement('style');
     style.id = 'global-loader-styles';
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // --- PROFILE MODAL LOGIC ---
             const token = localStorage.getItem('token') || localStorage.getItem('jwtToken') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
-            const BASE_URL = 'http://localhost:8080/api';
+            const BASE_URL = 'https://hotel-booking-v3.onrender.com/api';
 
             // Function to show toast
             function showProfileToast(message, type = 'success') {

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1287,7 +1287,7 @@
             const fetchRoomTypes = async () => {
                 try {
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const res = await fetch('http://localhost:8080/api/admin/room-types?page=0&size=50', { headers }).then(r => r.json());
+                    const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/room-types?page=0&size=50', { headers }).then(r => r.json());
                     if (res.success && res.data && res.data.content) {
                         roomTypes = res.data.content;
                     }
@@ -1334,7 +1334,7 @@
                 showSkeletonLoading();
                 try {
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const res = await fetch('http://localhost:8080/api/admin/rooms?page=0&size=200&filterActive=all', { headers }).then(r => r.json());
+                    const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/rooms?page=0&size=200&filterActive=all', { headers }).then(r => r.json());
                     if (res.success && res.data && res.data.content) {
                         allRooms = res.data.content;
                         showToast(`Đã tải ${allRooms.length} phòng từ hệ thống`, 'success', 'Tải dữ liệu');
@@ -1658,7 +1658,7 @@
                     // ================= POST CREATE =================
                     const payload = { roomTypeId, roomNumber, floor, allocatedFor };
                     try {
-                        const res = await fetch('http://localhost:8080/api/admin/rooms', {
+                        const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/rooms', {
                             method: 'POST',
                             headers,
                             body: JSON.stringify(payload)
@@ -1697,7 +1697,7 @@
 
                     const payload = { roomTypeId, roomNumber, floor, allocatedFor, status, isActive };
                     try {
-                        const res = await fetch(`http://localhost:8080/api/admin/rooms/${activeRoom.id}`, {
+                        const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/rooms/${activeRoom.id}`, {
                             method: 'PUT',
                             headers,
                             body: JSON.stringify(payload)
@@ -1744,7 +1744,7 @@
                     async () => {
                         const headers = { 'Authorization': 'Bearer ' + jwtToken };
                         try {
-                            const res = await fetch(`http://localhost:8080/api/admin/rooms/${activeRoom.id}`, {
+                            const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/rooms/${activeRoom.id}`, {
                                 method: 'DELETE',
                                 headers
                             }).then(r => r.json());

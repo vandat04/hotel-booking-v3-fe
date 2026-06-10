@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1461,7 +1461,7 @@
                 try {
                     // Try to fetch live Spring Boot dynamic metrics endpoint
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const dynamicRes = await fetch('http://localhost:8080/api/admin/dashboard/dynamic-metrics', { headers }).then(r => r.json());
+                    const dynamicRes = await fetch('https://hotel-booking-v3.onrender.com/api/admin/dashboard/dynamic-metrics', { headers }).then(r => r.json());
                     if (dynamicRes.success && dynamicRes.data) {
                         dynamicData = dynamicRes.data;
                     }

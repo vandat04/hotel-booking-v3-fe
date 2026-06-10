@@ -1,4 +1,4 @@
-<!-- Duplicated copy to prevent 404 redirection errors on corrected spelling -->
+﻿<!-- Duplicated copy to prevent 404 redirection errors on corrected spelling -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -1937,7 +1937,7 @@
                 try {
                     const timelineDateInput = document.getElementById('input-timeline-date');
                     const selectedDate = (timelineDateInput && timelineDateInput.value) || new Date().toISOString().split('T')[0];
-                    const response = await fetch(`http://localhost:8080/api/admin/dashboard/allocation-metrics?date=${selectedDate}`, {
+                    const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/dashboard/allocation-metrics?date=${selectedDate}`, {
                         headers: getHeaders
                     });
                     const res = await response.json();
@@ -2000,7 +2000,7 @@
                 try {
                     const timelineDateInput = document.getElementById('input-timeline-date');
                     const selectedDate = (timelineDateInput && timelineDateInput.value) || new Date().toISOString().split('T')[0];
-                    const url = `http://localhost:8080/api/receptionist/rooms/timeline?date=${selectedDate}`;
+                    const url = `https://hotel-booking-v3.onrender.com/api/receptionist/rooms/timeline?date=${selectedDate}`;
                     
                     const response = await fetch(url, { headers: getHeaders });
                     const res = await response.json();

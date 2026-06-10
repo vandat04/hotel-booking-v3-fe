@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1135,7 +1135,7 @@
                         btnSubmitCheckin.innerText = 'Đang xử lý...';
                         btnSubmitCheckin.disabled = true;
                         
-                        const response = await fetch(`http://localhost:8080/api/receptionist/bookings/${bookingId}/check-in`, {
+                        const response = await fetch(`https://hotel-booking-v3.onrender.com/api/receptionist/bookings/${bookingId}/check-in`, {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + jwtToken,
@@ -1200,7 +1200,7 @@
                 if (!isRoomTypesLoaded) {
                     try {
                         const tokenVal = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
-                        const response = await fetch('http://localhost:8080/api/admin/room-types?page=0&size=100', {
+                        const response = await fetch('https://hotel-booking-v3.onrender.com/api/admin/room-types?page=0&size=100', {
                             headers: {
                                 'Authorization': 'Bearer ' + tokenVal
                             }
@@ -1279,7 +1279,7 @@
                     btnCheckAvailability.innerText = 'Đang kiểm tra...';
                     btnCheckAvailability.disabled = true;
                     
-                    const response = await fetch('http://localhost:8080/api/receptionist/bookings/check', {
+                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/receptionist/bookings/check', {
                         method: 'POST',
                         headers: {
                             'Authorization': 'Bearer ' + jwtToken,
@@ -1350,7 +1350,7 @@
                     btnSubmitBooking.innerText = 'Đang xử lý...';
                     btnSubmitBooking.disabled = true;
                     
-                    const response = await fetch('http://localhost:8080/api/receptionist/bookings/walk-in', {
+                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/receptionist/bookings/walk-in', {
                         method: 'POST',
                         headers: {
                             'Authorization': 'Bearer ' + jwtToken,
@@ -1406,14 +1406,14 @@
                 tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Đang tải...</td></tr>';
                 
                 try {
-                    let url = `http://localhost:8080/api/receptionist/bookings?page=${page}&size=${pageSize}`;
+                    let url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings?page=${page}&size=${pageSize}`;
                     
                     if (currentFilter === 'UPCOMING_IN') {
-                        url = `http://localhost:8080/api/receptionist/bookings/upcoming-checkin?page=${page}&size=${pageSize}`;
+                        url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/upcoming-checkin?page=${page}&size=${pageSize}`;
                     } else if (currentFilter === 'UPCOMING_OUT') {
-                        url = `http://localhost:8080/api/receptionist/bookings/upcoming-checkout?page=${page}&size=${pageSize}`;
+                        url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/upcoming-checkout?page=${page}&size=${pageSize}`;
                     } else if (keyword) {
-                        url = `http://localhost:8080/api/receptionist/bookings/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`;
+                        url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`;
                     }
                     
                     const response = await fetch(url, {
@@ -1616,7 +1616,7 @@
                 content.innerHTML = 'Đang tải chi tiết...';
                 
                 try {
-                    const response = await fetch(`http://localhost:8080/api/receptionist/bookings/${id}`, {
+                    const response = await fetch(`https://hotel-booking-v3.onrender.com/api/receptionist/bookings/${id}`, {
                         headers: { 'Authorization': 'Bearer ' + jwtToken }
                     });
                     const result = await response.json();
@@ -1773,7 +1773,7 @@
                 let url = '', method = 'POST', payload = null;
                 
                 if (type === 'PAY') {
-                    url = `http://localhost:8080/api/receptionist/bookings/pay`;
+                    url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/pay`;
                     payload = {
                         bookingId: parseInt(id),
                         paymentMethod: document.getElementById('action-payment-method').value,
@@ -1786,15 +1786,15 @@
                         statusMsg.innerText = 'Vui lòng nhập lý do hủy!';
                         return;
                     }
-                    url = `http://localhost:8080/api/receptionist/bookings/${id}/cancel`;
+                    url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/${id}/cancel`;
                     method = 'PUT';
                     payload = { reason: reason };
                 } else if (type === 'CHECKIN') {
-                    url = `http://localhost:8080/api/receptionist/bookings/${id}/check-in`;
+                    url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/${id}/check-in`;
                 } else if (type === 'CHECKOUT') {
-                    url = `http://localhost:8080/api/receptionist/bookings/${id}/check-out`;
+                    url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/${id}/check-out`;
                 } else if (type === 'REFUND') {
-                    url = `http://localhost:8080/api/receptionist/bookings/${id}/refund`;
+                    url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/${id}/refund`;
                     method = 'PUT';
                 }
                 
@@ -1838,7 +1838,7 @@
 
 // Fetch Notifications
                 const fetchNotifications = () => {
-                    fetch('http://localhost:8080/api/receptionist/dashboard/customer-notification?page=0&size=20', {
+                    fetch('https://hotel-booking-v3.onrender.com/api/receptionist/dashboard/customer-notification?page=0&size=20', {
                         method: 'GET',
                         headers: {
                             'Authorization': 'Bearer ' + jwtToken,

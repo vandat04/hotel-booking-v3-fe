@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1246,7 +1246,7 @@
             const fetchBaseItems = async () => {
                 try {
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const res = await fetch('http://localhost:8080/api/admin/room-types/base-items?page=0&size=100', { headers }).then(r => r.json());
+                    const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/room-types/base-items?page=0&size=100', { headers }).then(r => r.json());
                     if (res.success && res.data && res.data.content) {
                         allBaseItems = res.data.content;
                     }
@@ -1270,7 +1270,7 @@
             const fetchRoomTypes = async () => {
                 try {
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const res = await fetch('http://localhost:8080/api/admin/room-types?page=0&size=20', { headers }).then(r => r.json());
+                    const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/room-types?page=0&size=20', { headers }).then(r => r.json());
                     if (res.success && res.data && res.data.content) {
                         allRoomTypes = res.data.content;
                         // Format attributes
@@ -1429,7 +1429,7 @@
             const fetchRoomTypeSubresources = async (roomTypeId) => {
                 try {
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const imgRes = await fetch(`http://localhost:8080/api/admin/room-types/${roomTypeId}/images`, { headers }).then(r => r.json());
+                    const imgRes = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${roomTypeId}/images`, { headers }).then(r => r.json());
                     if (imgRes.success && imgRes.data) {
                         activeRoomType.images = imgRes.data;
                     }
@@ -1439,7 +1439,7 @@
 
                 try {
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const itemRes = await fetch(`http://localhost:8080/api/admin/room-types/${roomTypeId}/items`, { headers }).then(r => r.json());
+                    const itemRes = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${roomTypeId}/items`, { headers }).then(r => r.json());
                     if (itemRes.success && itemRes.data && itemRes.data.content) {
                         activeRoomType.items = itemRes.data.content;
                     }
@@ -1737,7 +1737,7 @@
                     if (confirmDelete) {
                         try {
                             const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                            const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}`, {
+                            const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${activeRoomType.id}`, {
                                 method: 'DELETE',
                                 headers
                             }).then(r => r.json());
@@ -1797,7 +1797,7 @@
                                 'Content-Type': 'application/json'
                             };
                             const body = [{ itemId, quantity }];
-                            const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}/items`, {
+                            const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${activeRoomType.id}/items`, {
                                 method: 'POST',
                                 headers,
                                 body: JSON.stringify(body)
@@ -1906,13 +1906,13 @@
                         
                         let res;
                         if (isNew) {
-                            res = await fetch(`http://localhost:8080/api/admin/room-types`, {
+                            res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types`, {
                                 method: 'POST',
                                 headers,
                                 body: JSON.stringify(reqBody)
                             }).then(r => r.json());
                         } else {
-                            res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}`, {
+                            res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${activeRoomType.id}`, {
                                 method: 'PUT',
                                 headers,
                                 body: JSON.stringify(reqBody)
@@ -1956,7 +1956,7 @@
                 if (confirmRemove) {
                     try {
                         const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                        const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}/items/${itemId}`, {
+                        const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${activeRoomType.id}/items/${itemId}`, {
                             method: 'DELETE',
                             headers
                         }).then(r => r.json());
@@ -1996,7 +1996,7 @@
                     const headers = { 
                         'Authorization': 'Bearer ' + jwtToken
                     };
-                    const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}/images`, {
+                    const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${activeRoomType.id}/images`, {
                         method: 'POST',
                         headers,
                         body: formData
@@ -2036,7 +2036,7 @@
                         isPrimary: true,
                         caption: "Primary Image"
                     };
-                    const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}/images/${imageId}`, {
+                    const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${activeRoomType.id}/images/${imageId}`, {
                         method: 'PUT',
                         headers,
                         body: JSON.stringify(body)
@@ -2077,7 +2077,7 @@
                         isPrimary,
                         caption
                     };
-                    const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}/images/${imageId}`, {
+                    const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${activeRoomType.id}/images/${imageId}`, {
                         method: 'PUT',
                         headers,
                         body: JSON.stringify(body)
@@ -2133,7 +2133,7 @@
                 if (confirmDelete) {
                     try {
                         const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                        const res = await fetch(`http://localhost:8080/api/admin/room-types/${activeRoomType.id}/images/${imageId}`, {
+                        const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/room-types/${activeRoomType.id}/images/${imageId}`, {
                             method: 'DELETE',
                             headers
                         }).then(r => r.json());

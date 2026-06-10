@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1087,7 +1087,7 @@
                         btnSubmitCheckin.innerText = 'Đang xử lý...';
                         btnSubmitCheckin.disabled = true;
                         
-                        const response = await fetch(`http://localhost:8080/api/receptionist/bookings/${bookingId}/check-in`, {
+                        const response = await fetch(`https://hotel-booking-v3.onrender.com/api/receptionist/bookings/${bookingId}/check-in`, {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + jwtToken,
@@ -1151,7 +1151,7 @@
                 
                 if (!isRoomTypesLoaded) {
                     try {
-                        const response = await fetch('http://localhost:8080/api/hotel/room-types?page=0&size=100');
+                        const response = await fetch('https://hotel-booking-v3.onrender.com/api/hotel/room-types?page=0&size=100');
                         const result = await response.json();
                         if (result.success && result.data && result.data.content) {
                             const selectEl = document.getElementById('bk-roomTypeId');
@@ -1226,7 +1226,7 @@
                     btnCheckAvailability.innerText = 'Đang kiểm tra...';
                     btnCheckAvailability.disabled = true;
                     
-                    const response = await fetch('http://localhost:8080/api/receptionist/bookings/check', {
+                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/receptionist/bookings/check', {
                         method: 'POST',
                         headers: {
                             'Authorization': 'Bearer ' + jwtToken,
@@ -1297,7 +1297,7 @@
                     btnSubmitBooking.innerText = 'Đang xử lý...';
                     btnSubmitBooking.disabled = true;
                     
-                    const response = await fetch('http://localhost:8080/api/receptionist/bookings/walk-in', {
+                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/receptionist/bookings/walk-in', {
                         method: 'POST',
                         headers: {
                             'Authorization': 'Bearer ' + jwtToken,
@@ -1516,7 +1516,7 @@
             // Fetch Room Map Data
             const jwtToken = localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('checkinXToken');
             if (jwtToken) {
-                fetch('http://localhost:8080/api/receptionist/rooms/today', {
+                fetch('https://hotel-booking-v3.onrender.com/api/receptionist/rooms/today', {
                     method: 'GET',
                     headers: {
                         'Authorization': 'Bearer ' + jwtToken,
@@ -1558,7 +1558,7 @@
 
                 // Fetch Notifications
                 const fetchNotifications = () => {
-                    fetch('http://localhost:8080/api/receptionist/dashboard/customer-notification?page=0&size=20', {
+                    fetch('https://hotel-booking-v3.onrender.com/api/receptionist/dashboard/customer-notification?page=0&size=20', {
                         method: 'GET',
                         headers: {
                             'Authorization': 'Bearer ' + jwtToken,
@@ -1637,7 +1637,7 @@
                     btn.disabled = true;
                     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang dọn...';
                     
-                    const response = await fetch(`http://localhost:8080/api/receptionist/bookings/rooms/${roomId}/request-clean`, {
+                    const response = await fetch(`https://hotel-booking-v3.onrender.com/api/receptionist/bookings/rooms/${roomId}/request-clean`, {
                         method: 'POST',
                         headers: {
                             'Authorization': 'Bearer ' + (localStorage.getItem('jwtToken') || ''),

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1332,7 +1332,7 @@
             // ================================================================
             const fetchDashboardStats = async () => {
                 try {
-                    const url = 'http://localhost:8080/api/admin/dashboard/ota-statistic';
+                    const url = 'https://hotel-booking-v3.onrender.com/api/admin/dashboard/ota-statistic';
                     const response = await fetch(url, { headers: getHeaders });
                     const res = await response.json();
 
@@ -1377,7 +1377,7 @@
                     if (filterStatus === 'active') params.set('isActive', true);
                     else if (filterStatus === 'inactive') params.set('isActive', false);
 
-                    const url = `http://localhost:8080/api/admin/ota-channels?${params.toString()}`;
+                    const url = `https://hotel-booking-v3.onrender.com/api/admin/ota-channels?${params.toString()}`;
                     const response = await fetch(url, { headers: getHeaders });
                     const res = await response.json();
 
@@ -1584,7 +1584,7 @@
                         return;
                     }
 
-                    const response = await fetch('http://localhost:8080/api/admin/ota-channels', {
+                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/admin/ota-channels', {
                         method: 'POST',
                         headers: authHeaders,
                         body: JSON.stringify(requestBody)
@@ -1645,7 +1645,7 @@
                         return;
                     }
 
-                    const response = await fetch(`http://localhost:8080/api/admin/ota-channels/${id}`, {
+                    const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/ota-channels/${id}`, {
                         method: 'PUT',
                         headers: authHeaders,
                         body: JSON.stringify(requestBody)
@@ -1741,7 +1741,7 @@
                         return;
                     }
 
-                    const response = await fetch('http://localhost:8080/api/admin/ota-channels/booking', {
+                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/admin/ota-channels/booking', {
                         method: 'POST',
                         headers: authHeaders,
                         body: JSON.stringify(agodaWebhookPayload)

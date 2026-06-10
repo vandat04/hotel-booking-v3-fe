@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1359,7 +1359,7 @@
             const fetchHotelData = async () => {
                 try {
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const res = await fetch('http://localhost:8080/api/admin/hotel', { headers }).then(r => r.json());
+                    const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/hotel', { headers }).then(r => r.json());
                     if (res.success && res.data) {
                         hotelData = res.data;
                     }
@@ -1486,7 +1486,7 @@
                         'Authorization': 'Bearer ' + jwtToken,
                         'Content-Type': 'application/json'
                     };
-                    const res = await fetch('http://localhost:8080/api/admin/hotel', {
+                    const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/hotel', {
                         method: 'PUT',
                         headers,
                         body: JSON.stringify(payload)
@@ -1644,7 +1644,7 @@
                 if (id) {
                     // Update Operation (PUT /admin/hotel/amenities/{id})
                     try {
-                        const url = `http://localhost:8080/api/admin/hotel/amenities/${id}?name=${encodeURIComponent(name)}&description=${encodeURIComponent(description)}`;
+                        const url = `https://hotel-booking-v3.onrender.com/api/admin/hotel/amenities/${id}?name=${encodeURIComponent(name)}&description=${encodeURIComponent(description)}`;
                         const res = await fetch(url, {
                             method: 'PUT',
                             headers
@@ -1672,7 +1672,7 @@
                     // Create Operation (POST /admin/hotel/amenities)
                     const payload = [{ name, description }];
                     try {
-                        const res = await fetch('http://localhost:8080/api/admin/hotel/amenities', {
+                        const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/hotel/amenities', {
                             method: 'POST',
                             headers,
                             body: JSON.stringify(payload)
@@ -1705,7 +1705,7 @@
                     async () => {
                         try {
                             const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                            const res = await fetch(`http://localhost:8080/api/admin/hotel/amenities/${amenityId}`, {
+                            const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/hotel/amenities/${amenityId}`, {
                                 method: 'DELETE',
                                 headers
                             }).then(r => r.json());
@@ -1822,7 +1822,7 @@
 
                 try {
                     const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                    const url = `http://localhost:8080/api/admin/hotel/images/${id}?isPrimary=${isPrimary}&caption=${encodeURIComponent(caption)}`;
+                    const url = `https://hotel-booking-v3.onrender.com/api/admin/hotel/images/${id}?isPrimary=${isPrimary}&caption=${encodeURIComponent(caption)}`;
                     const res = await fetch(url, {
                         method: 'PUT',
                         headers
@@ -1865,7 +1865,7 @@
                     async () => {
                         try {
                             const headers = { 'Authorization': 'Bearer ' + jwtToken };
-                            const res = await fetch(`http://localhost:8080/api/admin/hotel/images/${imageId}`, {
+                            const res = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/hotel/images/${imageId}`, {
                                 method: 'DELETE',
                                 headers
                             }).then(r => r.json());
@@ -1904,7 +1904,7 @@
                 // Check offline or online
                 let isOffline = false;
                 try {
-                    await fetch('http://localhost:8080/api/admin/hotel', { method: 'HEAD' });
+                    await fetch('https://hotel-booking-v3.onrender.com/api/admin/hotel', { method: 'HEAD' });
                 } catch (e) {
                     isOffline = true;
                 }
@@ -1933,7 +1933,7 @@
                     }
 
                     try {
-                        const res = await fetch('http://localhost:8080/api/admin/hotel/images', {
+                        const res = await fetch('https://hotel-booking-v3.onrender.com/api/admin/hotel/images', {
                             method: 'POST',
                             headers: { 'Authorization': 'Bearer ' + jwtToken },
                             body: formData
