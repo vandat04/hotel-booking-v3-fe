@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -940,7 +940,20 @@
                 <button class="btn-action-primary" id="btn-add-ota">
                     <i class="fa-solid fa-link"></i> Thêm kết nối OTAs
                 </button>
+                <button class="btn-action-primary" id="btn-add-ical" style="display: none;">
+                    <i class="fa-solid fa-calendar-plus"></i> Thêm liên kết iCal
+                </button>
             </div>
+        </div>
+
+        <!-- Tabbed Interface Selector -->
+        <div class="tab-container" style="padding: 0 24px; display: flex; gap: 16px; margin-bottom: 16px; flex-shrink: 0; border-bottom: 1px solid var(--border-color);">
+            <button class="tab-btn active" id="tab-btn-api" style="background: none; border: none; padding: 12px 16px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: var(--primary); border-bottom: 3px solid var(--primary); cursor: pointer; transition: all 0.2s;">
+                <i class="fa-solid fa-plug" style="margin-right: 8px;"></i>Kênh API & Webhook
+            </button>
+            <button class="tab-btn" id="tab-btn-ical" style="background: none; border: none; padding: 12px 16px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-muted); border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.2s;">
+                <i class="fa-regular fa-calendar-days" style="margin-right: 8px;"></i>Đồng bộ iCal (Airbnb/Booking)
+            </button>
         </div>
 
         <!-- Circular stats summary row -->
@@ -974,8 +987,8 @@
             </div>
         </div>
 
-        <!-- Split Grid Section -->
-        <div class="dashboard-split-grid">
+        <!-- Split Grid Section (API Channels) -->
+        <div class="dashboard-split-grid" id="api-channels-grid">
             
             <!-- COLUMN 1: SIDEBAR FILTER -->
             <aside class="sidebar-filter">
@@ -1050,6 +1063,54 @@
                 </div>
             </section>
 
+        </div>
+
+        <!-- Split Grid Section (iCal Sync) -->
+        <div class="dashboard-split-grid" id="ical-sync-grid" style="display: none;">
+            
+            <!-- COLUMN 1: SIDEBAR FILTER FOR ICAL -->
+            <aside class="sidebar-filter">
+                <div class="filter-section">
+                    <span class="filter-section-title">Tìm kiếm liên kết</span>
+                    <input type="text" class="filter-input" id="ical-search-keyword" placeholder="Nhập tên loại phòng, kênh...">
+                </div>
+
+                <div style="margin-top:auto; background:var(--primary-light); border-radius:10px; padding:14px; font-size:12px; line-height:1.5; color:var(--primary);">
+                    <i class="fa-solid fa-circle-info" style="margin-bottom:6px; display:block; font-size:14px;"></i>
+                    iCal Sync hoạt động theo nguyên lý định kỳ tải lịch từ Airbnb/Booking và đồng thời xuất lịch CheckinX để các sàn cập nhật phòng trống chéo.
+                </div>
+            </aside>
+
+            <!-- COLUMN 2: DATAGRID ICAL MAPPINGS LIST -->
+            <section class="list-panel">
+                <div class="list-header">
+                    <span class="list-title">Danh sách liên kết iCal</span>
+                </div>
+
+                <!-- Scroll table container -->
+                <div class="table-scroll-container">
+                    <table class="datagrid-table">
+                        <thead>
+                            <tr>
+                                <th>Loại phòng PMS</th>
+                                <th>Kênh OTA</th>
+                                <th>Link iCal Nhập (Import)</th>
+                                <th>Link iCal Xuất (Export)</th>
+                                <th>Lần đồng bộ cuối</th>
+                                <th style="text-align: right;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ical-mappings-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+                                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 20px; margin-bottom: 8px; color: var(--primary);"></i>
+                                    <p>Đang tải danh sách liên kết iCal...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     </div>
 
@@ -1185,6 +1246,47 @@
                 <button class="btn-cancel" onclick="closeModal('webhook-simulator-modal')">Đóng</button>
                 <button class="btn-action-primary" id="btn-fire-simulated-webhook">
                     <i class="fa-solid fa-paper-plane"></i> Gửi Mô Phỏng Webhook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: ADD ICAL CONNECTION -->
+    <div class="modal-overlay" id="add-ical-modal">
+        <div class="modal-container" style="width: 580px;">
+            <div class="modal-header">
+                <span class="modal-title"><i class="fa-solid fa-calendar-plus" style="color:var(--primary); margin-right:8px;"></i>Thêm liên kết đồng bộ iCal</span>
+                <button class="btn-modal-close" onclick="closeModal('add-ical-modal')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="field-group">
+                    <span class="field-label">Loại phòng PMS *</span>
+                    <select class="filter-select" id="add-ical-roomtype-select">
+                        <option value="">-- Chọn loại phòng --</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Kênh OTA *</span>
+                    <select class="filter-select" id="add-ical-ota-select">
+                        <option value="Airbnb">Airbnb</option>
+                        <option value="Booking.com">Booking.com</option>
+                        <option value="Other">Khác</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Link iCal Nhập (Import URL từ OTA) *</span>
+                    <input type="text" class="filter-input" id="add-ical-import-url" placeholder="Dán link .ics lấy từ cài đặt lịch của Airbnb hoặc Booking.com">
+                    <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px;">
+                        Ví dụ: https://www.airbnb.com/calendar/ical/12345678.ics?s=abcdef
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('add-ical-modal')">Hủy bỏ</button>
+                <button class="btn-action-primary" id="btn-save-new-ical">
+                    <i class="fa-solid fa-check"></i> Lưu liên kết
                 </button>
             </div>
         </div>
@@ -1391,7 +1493,8 @@
                         throw new Error(res.message || 'Lỗi server');
                     }
                 } catch (error) {
-                    console.warn('[CheckinX] Backend offline - Loading mock OTA data');
+                    console.warn('[CheckinX] Backend offline - Loading mock OTA data', error);
+                    showToast('Lỗi tải kênh OTA: ' + error.message, 'danger');
                     isOfflineMode = true;
                     offlineBanner.classList.add('show');
                     
@@ -1828,6 +1931,332 @@
                     timeout = setTimeout(later, wait);
                 };
             }
+
+            // ================================================================
+            // === TAB SWITCHING LOGIC ===
+            // ================================================================
+            const tabBtnApi = document.getElementById('tab-btn-api');
+            const tabBtnIcal = document.getElementById('tab-btn-ical');
+            const gridApi = document.getElementById('api-channels-grid');
+            const gridIcal = document.getElementById('ical-sync-grid');
+            const btnOpenSim = document.getElementById('btn-open-webhook-simulator');
+            const btnAddOta = document.getElementById('btn-add-ota');
+            const btnAddIcal = document.getElementById('btn-add-ical');
+
+            let activeTab = 'api-channels';
+
+            const switchTab = (tabName) => {
+                activeTab = tabName;
+                if (tabName === 'api-channels') {
+                    tabBtnApi.classList.add('active');
+                    tabBtnApi.style.color = 'var(--primary)';
+                    tabBtnApi.style.borderBottom = '3px solid var(--primary)';
+                    
+                    tabBtnIcal.classList.remove('active');
+                    tabBtnIcal.style.color = 'var(--text-muted)';
+                    tabBtnIcal.style.borderBottom = '3px solid transparent';
+
+                    gridApi.style.display = 'grid';
+                    gridIcal.style.display = 'none';
+
+                    btnOpenSim.style.display = 'flex';
+                    btnAddOta.style.display = 'flex';
+                    btnAddIcal.style.display = 'none';
+
+                    fetchOTAChannels();
+                } else {
+                    tabBtnIcal.classList.add('active');
+                    tabBtnIcal.style.color = 'var(--primary)';
+                    tabBtnIcal.style.borderBottom = '3px solid var(--primary)';
+                    
+                    tabBtnApi.classList.remove('active');
+                    tabBtnApi.style.color = 'var(--text-muted)';
+                    tabBtnApi.style.borderBottom = '3px solid transparent';
+
+                    gridIcal.style.display = 'grid';
+                    gridApi.style.display = 'none';
+
+                    btnOpenSim.style.display = 'none';
+                    btnAddOta.style.display = 'none';
+                    btnAddIcal.style.display = 'flex';
+
+                    fetchIcalMappings();
+                }
+            };
+
+            tabBtnApi.addEventListener('click', () => switchTab('api-channels'));
+            tabBtnIcal.addEventListener('click', () => switchTab('ical-sync'));
+
+            // ================================================================
+            // === ICAL SYNC STATE & LOGIC ===
+            // ================================================================
+            let icalMappings = [];
+            let filteredIcalMappings = [];
+            let icalSearchKeyword = '';
+            
+            const icalMappingsTbody = document.getElementById('ical-mappings-tbody');
+            const icalSearchInput = document.getElementById('ical-search-keyword');
+
+            const fetchIcalMappings = async () => {
+                icalMappingsTbody.innerHTML = `
+                    <tr><td colspan="6" style="text-align:center;padding:48px 0;color:var(--text-muted);">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size:22px;color:var(--primary);display:block;margin-bottom:10px;"></i>
+                        Đang tải danh sách liên kết iCal...
+                    </td></tr>`;
+
+                try {
+                    const url = 'https://hotel-booking-v3.onrender.com/api/admin/ota-mappings';
+                    const response = await fetch(url, { headers: getHeaders });
+                    const res = await response.json();
+
+                    if (res.success && res.data) {
+                        icalMappings = res.data || [];
+                    } else {
+                        throw new Error(res.message || 'Lỗi server');
+                    }
+                } catch (error) {
+                    console.warn('[CheckinX] Failed to fetch iCal mappings from API. Loading mock.', error);
+                    showToast('Lỗi tải liên kết iCal: ' + error.message, 'danger');
+                    icalMappings = [
+                        {
+                            id: 1,
+                            roomType: { id: 1, name: 'Deluxe Room' },
+                            otaName: 'AIRBNB',
+                            importIcalUrl: 'https://www.airbnb.com/calendar/ical/123456.ics',
+                            lastSyncedAt: new Date().toISOString()
+                        },
+                        {
+                            id: 2,
+                            roomType: { id: 2, name: 'Suite Family' },
+                            otaName: 'BOOKING.COM',
+                            importIcalUrl: 'https://admin.booking.com/hotel/ical/987654.ics',
+                            lastSyncedAt: null
+                        }
+                    ];
+                }
+
+                filterAndRenderIcalMappings();
+            };
+
+            const filterAndRenderIcalMappings = () => {
+                const kw = icalSearchKeyword.toLowerCase();
+                filteredIcalMappings = icalMappings.filter(m => 
+                    (m.roomType?.name || '').toLowerCase().includes(kw) ||
+                    (m.otaName || '').toLowerCase().includes(kw)
+                );
+
+                renderIcalMappings();
+            };
+
+            const renderIcalMappings = () => {
+                if (filteredIcalMappings.length === 0) {
+                    icalMappingsTbody.innerHTML = `
+                        <tr><td colspan="6" style="text-align:center;padding:48px 0;color:var(--text-muted);">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size:24px;margin-bottom:8px;color:#cbd5e1;"></i>
+                            <p>Không tìm thấy liên kết iCal nào phù hợp.</p>
+                        </td></tr>`;
+                    return;
+                }
+
+                const baseOrigin = 'https://hotel-booking-v3.onrender.com/api'.replace('/api', '');
+
+                icalMappingsTbody.innerHTML = '';
+                filteredIcalMappings.forEach(mapping => {
+                    const tr = document.createElement('tr');
+                    
+                    const lastSyncStr = mapping.lastSyncedAt 
+                        ? new Date(mapping.lastSyncedAt).toLocaleString('vi-VN') 
+                        : 'Chưa đồng bộ';
+
+                    const exportUrl = `${baseOrigin}/ical/room-type/${mapping.roomType.id}.ics`;
+
+                    tr.innerHTML = `
+                        <td>
+                            <div style="font-weight:600; color:var(--text-main);">${escapeHTML(mapping.roomType?.name || 'Chưa phân loại')}</div>
+                            <span style="font-size:11px; color:var(--text-muted);">Mã: RT-${mapping.roomType?.id}</span>
+                        </td>
+                        <td>
+                            <span class="status-pill active" style="background-color: var(--primary-light); color: var(--primary);">
+                                <i class="fa-solid fa-cloud-arrow-down" style="font-size:10px; margin-right:4px;"></i>
+                                ${escapeHTML(mapping.otaName)}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size:12px;" title="${escapeHTML(mapping.importIcalUrl)}">
+                                <a href="${escapeHTML(mapping.importIcalUrl)}" target="_blank" style="color:var(--primary); text-decoration:none;">
+                                    ${escapeHTML(mapping.importIcalUrl)}
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size:12px; display:flex; align-items:center; gap:8px;">
+                                <a href="${escapeHTML(exportUrl)}" target="_blank" style="color:var(--success); text-decoration:none;" title="${escapeHTML(exportUrl)}">
+                                    ${escapeHTML(exportUrl)}
+                                </a>
+                                <button class="btn-link-action btn-copy-url" style="padding: 2px 6px; font-size:10px;">
+                                    <i class="fa-regular fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </td>
+                        <td style="font-size: 12.5px; color: var(--text-sub);">${lastSyncStr}</td>
+                        <td style="text-align: right; white-space:nowrap;">
+                            <button class="btn-link-action btn-sync-ical" data-id="${mapping.id}" style="color:var(--success); margin-right:8px;">
+                                <i class="fa-solid fa-arrows-rotate"></i> Đồng bộ
+                            </button>
+                            <button class="btn-link-action btn-delete-ical" data-id="${mapping.id}" style="color:var(--danger);">
+                                <i class="fa-solid fa-trash-can"></i> Xóa
+                            </button>
+                        </td>
+                    `;
+
+                    // Copy url event listener
+                    tr.querySelector('.btn-copy-url').addEventListener('click', () => {
+                        window.copyToClipboard(exportUrl);
+                    });
+
+                    // Sync action
+                    tr.querySelector('.btn-sync-ical').addEventListener('click', async () => {
+                        const id = mapping.id;
+                        showToast('Bắt đầu đồng bộ lịch...', 'info');
+                        try {
+                            const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/ota-mappings/${id}/sync`, {
+                                method: 'POST',
+                                headers: authHeaders
+                            });
+                            const res = await response.json();
+                            if (res.success) {
+                                showToast('Đồng bộ lịch iCal thành công!', 'success');
+                                fetchIcalMappings();
+                            } else {
+                                showToast(res.message || 'Lỗi đồng bộ lịch', 'danger');
+                            }
+                        } catch (err) {
+                            showToast('Lỗi kết nối máy chủ', 'danger');
+                        }
+                    });
+
+                    // Delete action
+                    tr.querySelector('.btn-delete-ical').addEventListener('click', async () => {
+                        if (!confirm('Bạn có chắc chắn muốn xóa liên kết iCal này không?')) return;
+                        const id = mapping.id;
+                        try {
+                            const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/ota-mappings/${id}`, {
+                                method: 'DELETE',
+                                headers: authHeaders
+                            });
+                            const res = await response.json();
+                            if (res.success) {
+                                showToast('Đã xóa liên kết iCal thành công!', 'success');
+                                fetchIcalMappings();
+                            } else {
+                                showToast(res.message || 'Lỗi khi xóa', 'danger');
+                            }
+                        } catch (err) {
+                            showToast('Lỗi kết nối máy chủ', 'danger');
+                        }
+                    });
+
+                    icalMappingsTbody.appendChild(tr);
+                });
+            };
+
+            // Clipboard copy helper
+            window.copyToClipboard = (text) => {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Đã copy đường dẫn iCal vào clipboard!', 'success');
+                }).catch(() => {
+                    showToast('Lỗi khi copy đường dẫn', 'danger');
+                });
+            };
+
+            icalSearchInput.addEventListener('input', debounce(() => {
+                icalSearchKeyword = icalSearchInput.value.trim();
+                filterAndRenderIcalMappings();
+            }, 400));
+
+            // ================================================================
+            // === ADD ICAL MAPPING MODAL LOGIC ===
+            // ================================================================
+            let roomTypesList = [];
+
+            document.getElementById('btn-add-ical').addEventListener('click', async () => {
+                // Prepopulate
+                document.getElementById('add-ical-import-url').value = '';
+                document.getElementById('add-ical-ota-select').value = 'Airbnb';
+                
+                // Fetch Room Types
+                const selectEl = document.getElementById('add-ical-roomtype-select');
+                selectEl.innerHTML = '<option value="">-- Đang tải loại phòng... --</option>';
+
+                try {
+                    const url = 'https://hotel-booking-v3.onrender.com/api/admin/room-types?page=0&size=100';
+                    const response = await fetch(url, { headers: getHeaders });
+                    const res = await response.json();
+                    
+                    if (res.success && res.data && res.data.content) {
+                        roomTypesList = res.data.content;
+                        selectEl.innerHTML = '<option value="">-- Chọn loại phòng --</option>';
+                        roomTypesList.forEach(rt => {
+                            selectEl.innerHTML += `<option value="${rt.id}">${escapeHTML(rt.name)} (ID: ${rt.id})</option>`;
+                        });
+                    } else {
+                        throw new Error('Không lấy được danh sách loại phòng');
+                    }
+                } catch (error) {
+                    console.warn('[CheckinX] Failed to fetch room types, loading mock list.');
+                    roomTypesList = [
+                        { id: 1, name: 'Deluxe Room' },
+                        { id: 2, name: 'Suite Family' },
+                        { id: 3, name: 'Standard Twin' }
+                    ];
+                    selectEl.innerHTML = '<option value="">-- Chọn loại phòng (Demo) --</option>';
+                    roomTypesList.forEach(rt => {
+                        selectEl.innerHTML += `<option value="${rt.id}">${escapeHTML(rt.name)} (ID: ${rt.id})</option>`;
+                    });
+                }
+
+                openModal('add-ical-modal');
+            });
+
+            document.getElementById('btn-save-new-ical').addEventListener('click', async () => {
+                const roomTypeId = parseInt(document.getElementById('add-ical-roomtype-select').value);
+                const otaName = document.getElementById('add-ical-ota-select').value;
+                const importIcalUrl = document.getElementById('add-ical-import-url').value.trim();
+
+                if (!roomTypeId) {
+                    showToast('Vui lòng chọn loại phòng!', 'warning');
+                    return;
+                }
+                if (!importIcalUrl) {
+                    showToast('Vui lòng dán link iCal nhập!', 'warning');
+                    return;
+                }
+                if (!importIcalUrl.toLowerCase().startsWith('http') && !importIcalUrl.toLowerCase().startsWith('file')) {
+                    showToast('Link iCal không hợp lệ! Phải bắt đầu bằng http, https hoặc file.', 'warning');
+                    return;
+                }
+
+                const requestBody = { roomTypeId, otaName, importIcalUrl };
+
+                try {
+                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/admin/ota-mappings', {
+                        method: 'POST',
+                        headers: authHeaders,
+                        body: JSON.stringify(requestBody)
+                    });
+                    const res = await response.json();
+
+                    if (res.success) {
+                        showToast('Thêm liên kết iCal thành công!', 'success');
+                        closeModal('add-ical-modal');
+                        fetchIcalMappings();
+                    } else {
+                        showToast(res.message || 'Lỗi thêm liên kết', 'danger');
+                    }
+                } catch (error) {
+                    showToast('Không kết nối được với máy chủ', 'danger');
+                }
+            });
 
             // ================================================================
             // === INITIAL KICKSTART ===
