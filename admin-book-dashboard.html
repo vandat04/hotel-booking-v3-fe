@@ -894,6 +894,33 @@
                     </label>
                 </div>
             </div>
+
+            <!-- NGUỒN ĐẶT PHÒNG Section -->
+            <div class="filter-section">
+                <div class="filter-label">NGUỒN ĐẶT PHÒNG</div>
+                <div class="radio-group" id="source-filter-group">
+                    <label class="radio-option">
+                        <input type="radio" name="source-filter" value="ALL" checked>
+                        <span>Tất cả các nguồn</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="source-filter" value="WEB">
+                        <span>WEB</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="source-filter" value="WALK-IN">
+                        <span>WALK-IN</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="source-filter" value="AIRBNB">
+                        <span>AIRBNB</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="source-filter" value="BOOKING">
+                        <span>BOOKING.COM</span>
+                    </label>
+                </div>
+            </div>
         </aside>
 
         <!-- Content -->
@@ -1399,6 +1426,7 @@
             const pageSize = 10;
             let currentKeyword = '';
             let currentFilter = 'ALL'; // ALL, UPCOMING_IN, UPCOMING_OUT
+            let currentSource = 'ALL'; // ALL, WEB, WALK-IN, AIRBNB, BOOKING
             
             const loadBookings = async (page = 0, keyword = '') => {
                 if (!jwtToken) return;
@@ -1409,7 +1437,9 @@
                 try {
                     let url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings?page=${page}&size=${pageSize}`;
                     
-                    if (currentFilter === 'UPCOMING_IN') {
+                    if (currentSource !== 'ALL') {
+                        url = `https://hotel-booking-v3.onrender.com/api/admin/bookings/filter?bookingSource=${currentSource}&page=${page}&size=${pageSize}`;
+                    } else if (currentFilter === 'UPCOMING_IN') {
                         url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/upcoming-checkin?page=${page}&size=${pageSize}`;
                     } else if (currentFilter === 'UPCOMING_OUT') {
                         url = `https://hotel-booking-v3.onrender.com/api/receptionist/bookings/upcoming-checkout?page=${page}&size=${pageSize}`;
@@ -1548,6 +1578,16 @@
                     searchTimeout = setTimeout(() => {
                         currentKeyword = e.target.value.trim();
                         currentPage = 0;
+                        
+                        // Reset other filters
+                        currentFilter = 'ALL';
+                        const radioAll = document.querySelector('input[name="booking-filter"][value="ALL"]');
+                        if (radioAll) radioAll.checked = true;
+                        
+                        currentSource = 'ALL';
+                        const radioSourceAll = document.querySelector('input[name="source-filter"][value="ALL"]');
+                        if (radioSourceAll) radioSourceAll.checked = true;
+
                         loadBookings(currentPage, currentKeyword);
                     }, 400);
                 });
@@ -1560,8 +1600,11 @@
                     document.getElementById('booking-search-input').value = '';
                     const radioAll = document.querySelector('input[name="booking-filter"][value="ALL"]');
                     if (radioAll) radioAll.checked = true;
+                    const radioSourceAll = document.querySelector('input[name="source-filter"][value="ALL"]');
+                    if (radioSourceAll) radioSourceAll.checked = true;
                     
                     currentFilter = 'ALL';
+                    currentSource = 'ALL';
                     currentKeyword = '';
                     currentPage = 0;
                     loadBookings(currentPage, currentKeyword);
@@ -1576,6 +1619,32 @@
                         currentFilter = e.target.value;
                         document.getElementById('booking-search-input').value = ''; // clear search when filtering
                         currentKeyword = '';
+                        
+                        // Reset source filter
+                        currentSource = 'ALL';
+                        const radioSourceAll = document.querySelector('input[name="source-filter"][value="ALL"]');
+                        if (radioSourceAll) radioSourceAll.checked = true;
+                        
+                        currentPage = 0;
+                        loadBookings(currentPage, currentKeyword);
+                    });
+                });
+            }
+
+            // Source filter logic
+            const sourceFilterGroup = document.getElementById('source-filter-group');
+            if (sourceFilterGroup) {
+                sourceFilterGroup.querySelectorAll('input[name="source-filter"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        currentSource = e.target.value;
+                        document.getElementById('booking-search-input').value = ''; // clear search when filtering
+                        currentKeyword = '';
+                        
+                        // Reset status filter
+                        currentFilter = 'ALL';
+                        const radioAll = document.querySelector('input[name="booking-filter"][value="ALL"]');
+                        if (radioAll) radioAll.checked = true;
+                        
                         currentPage = 0;
                         loadBookings(currentPage, currentKeyword);
                     });
