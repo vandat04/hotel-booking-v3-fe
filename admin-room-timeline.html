@@ -1044,6 +1044,20 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Redirect placeholder buttons to book dashboard
+            const btnCreateNew = document.getElementById('btn-create-new');
+            const btnQuickCheckin = document.getElementById('btn-quick-checkin');
+            if (btnCreateNew) {
+                btnCreateNew.addEventListener('click', () => {
+                    window.location.href = 'admin-book-dashboard.html';
+                });
+            }
+            if (btnQuickCheckin) {
+                btnQuickCheckin.addEventListener('click', () => {
+                    window.location.href = 'admin-book-dashboard.html';
+                });
+            }
+
             // Role check to display Về Admin Dashboard button
             const userRole = localStorage.getItem('checkinXRole') || '';
             const btnAdmin = document.getElementById('btn-admin-dashboard');

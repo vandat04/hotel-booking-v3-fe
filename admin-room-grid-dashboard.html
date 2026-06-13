@@ -1146,6 +1146,9 @@
                 bookingModal.style.display = 'flex';
                 // Reset form
                 document.getElementById('booking-form').reset();
+                if (typeof enforceDailyTimes === 'function') {
+                    enforceDailyTimes();
+                }
                 bkStatusMsg.style.display = 'none';
                 btnSubmitBooking.style.display = 'none';
                 isRoomAvailable = false;
@@ -1196,6 +1199,40 @@
                     el.addEventListener('input', requireRecheck);
                 }
             });
+
+            // Enforce default times for DAILY bookings (14:00 check-in, 12:00 check-out)
+            const checkInEl = document.getElementById('bk-checkIn');
+            const checkOutEl = document.getElementById('bk-checkOut');
+            const bookingTypeEl = document.getElementById('bk-bookingType');
+
+            const enforceDailyTimes = () => {
+                if (bookingTypeEl && bookingTypeEl.value === 'DAILY') {
+                    if (checkInEl && checkInEl.value) {
+                        const parts = checkInEl.value.split('T');
+                        if (parts.length > 1 && parts[1] !== '14:00') {
+                            checkInEl.value = parts[0] + 'T14:00';
+                        }
+                    }
+                    if (checkOutEl && checkOutEl.value) {
+                        const parts = checkOutEl.value.split('T');
+                        if (parts.length > 1 && parts[1] !== '12:00') {
+                            checkOutEl.value = parts[0] + 'T12:00';
+                        }
+                    }
+                }
+            };
+
+            if (bookingTypeEl) {
+                bookingTypeEl.addEventListener('change', enforceDailyTimes);
+            }
+            if (checkInEl) {
+                checkInEl.addEventListener('input', enforceDailyTimes);
+                checkInEl.addEventListener('change', enforceDailyTimes);
+            }
+            if (checkOutEl) {
+                checkOutEl.addEventListener('input', enforceDailyTimes);
+                checkOutEl.addEventListener('change', enforceDailyTimes);
+            }
             
             // Check Availability API
             btnCheckAvailability.addEventListener('click', async (e) => {
