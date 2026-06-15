@@ -1,4 +1,4 @@
-﻿// Inject header styles immediately when script is loaded to fix layout shift (CLS)
+// Inject header styles immediately when script is loaded to fix layout shift (CLS)
 (function() {
     const style = document.createElement('style');
     style.id = 'global-loader-styles';
@@ -60,6 +60,117 @@
         @keyframes pulse-text {
             0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
+        }
+
+        /* --- Mobile Responsive Style Overrides --- */
+        @media (max-width: 991px) {
+            header {
+                flex-direction: column !important;
+                height: auto !important;
+                padding: 10px 16px !important;
+                align-items: stretch !important;
+                gap: 8px !important;
+            }
+            .header-left {
+                justify-content: space-between !important;
+                width: 100% !important;
+                gap: 12px !important;
+            }
+            header nav {
+                width: 100% !important;
+                height: auto !important;
+                overflow-x: auto !important;
+                display: flex !important;
+                padding: 6px 0 !important;
+                gap: 8px !important;
+                scrollbar-width: none !important;
+            }
+            header nav::-webkit-scrollbar {
+                display: none !important;
+            }
+            .nav-link {
+                height: 36px !important;
+                padding: 0 12px !important;
+                border-radius: 6px !important;
+                white-space: nowrap !important;
+            }
+            .nav-link.active::after {
+                display: none !important;
+            }
+            .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.15) !important;
+            }
+            .header-right {
+                justify-content: flex-end !important;
+                gap: 16px !important;
+                margin-top: 4px !important;
+                width: 100% !important;
+            }
+            #header-container {
+                height: auto !important;
+            }
+            .main-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .workspace {
+                flex-direction: column !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            .sidebar-filter, aside {
+                width: 100% !important;
+                height: auto !important;
+                border-right: none !important;
+                border-bottom: 1px solid var(--border-color) !important;
+                padding: 16px !important;
+                position: static !important;
+            }
+            .content {
+                padding: 16px 12px !important;
+                overflow: visible !important;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+            table {
+                display: block !important;
+                width: 100% !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                white-space: nowrap !important;
+            }
+            th, td {
+                padding: 8px 10px !important;
+            }
+            .modal-content, .pm-dialog {
+                width: 92% !important;
+                max-width: 100% !important;
+                margin: 10px auto !important;
+                padding: 16px !important;
+            }
+            .modal-body {
+                padding: 12px 0 !important;
+            }
+            .modal-content form div[style*="display:flex"],
+            .modal-content form div[style*="display: flex"] {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+            .modal-content form div[style*="flex:1"],
+            .modal-content form div[style*="flex: 1"] {
+                width: 100% !important;
+            }
+        }
+
+        @media (min-width: 480px) and (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
         }
     `;
     document.head.appendChild(style);
