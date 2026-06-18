@@ -1348,6 +1348,10 @@
             // ================================================================
             // === AUTH CHECK ===
             // ================================================================
+            const BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                ? 'https://hotel-booking-v3.onrender.com/api'
+                : 'https://hotel-booking-v3.onrender.com/api';
+
             const jwtToken = localStorage.getItem('jwtToken')
                           || localStorage.getItem('token')
                           || localStorage.getItem('accessToken');
@@ -1436,7 +1440,7 @@
             // ================================================================
             const fetchDashboardStats = async () => {
                 try {
-                    const url = 'https://hotel-booking-v3.onrender.com/api/admin/dashboard/ota-statistic';
+                    const url = `${BASE_URL}/admin/dashboard/ota-statistic`;
                     const response = await fetch(url, { headers: getHeaders });
                     const res = await response.json();
 
@@ -1481,7 +1485,7 @@
                     if (filterStatus === 'active') params.set('isActive', true);
                     else if (filterStatus === 'inactive') params.set('isActive', false);
 
-                    const url = `https://hotel-booking-v3.onrender.com/api/admin/ota-channels?${params.toString()}`;
+                    const url = `${BASE_URL}/admin/ota-channels?${params.toString()}`;
                     const response = await fetch(url, { headers: getHeaders });
                     const res = await response.json();
 
@@ -1689,7 +1693,7 @@
                         return;
                     }
 
-                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/admin/ota-channels', {
+                    const response = await fetch(`${BASE_URL}/admin/ota-channels`, {
                         method: 'POST',
                         headers: authHeaders,
                         body: JSON.stringify(requestBody)
@@ -1750,7 +1754,7 @@
                         return;
                     }
 
-                    const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/ota-channels/${id}`, {
+                    const response = await fetch(`${BASE_URL}/admin/ota-channels/${id}`, {
                         method: 'PUT',
                         headers: authHeaders,
                         body: JSON.stringify(requestBody)
@@ -1846,7 +1850,7 @@
                         return;
                     }
 
-                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/admin/ota-channels/booking', {
+                    const response = await fetch(`${BASE_URL}/admin/ota-channels/booking`, {
                         method: 'POST',
                         headers: authHeaders,
                         body: JSON.stringify(agodaWebhookPayload)
@@ -2007,7 +2011,7 @@
                     </td></tr>`;
 
                 try {
-                    const url = 'https://hotel-booking-v3.onrender.com/api/admin/ota-mappings';
+                    const url = `${BASE_URL}/admin/ota-mappings`;
                     const response = await fetch(url, { headers: getHeaders });
                     const res = await response.json();
 
@@ -2060,7 +2064,7 @@
                     return;
                 }
 
-                const baseOrigin = 'https://hotel-booking-v3.onrender.com/api';
+                const baseOrigin = BASE_URL;
 
                 icalMappingsTbody.innerHTML = '';
                 filteredIcalMappings.forEach(mapping => {
@@ -2121,7 +2125,7 @@
                         const id = mapping.id;
                         showToast('Bắt đầu đồng bộ lịch...', 'info');
                         try {
-                            const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/ota-mappings/${id}/sync`, {
+                            const response = await fetch(`${BASE_URL}/admin/ota-mappings/${id}/sync`, {
                                 method: 'POST',
                                 headers: authHeaders
                             });
@@ -2142,7 +2146,7 @@
                         if (!confirm('Bạn có chắc chắn muốn xóa liên kết iCal này không?')) return;
                         const id = mapping.id;
                         try {
-                            const response = await fetch(`https://hotel-booking-v3.onrender.com/api/admin/ota-mappings/${id}`, {
+                            const response = await fetch(`${BASE_URL}/admin/ota-mappings/${id}`, {
                                 method: 'DELETE',
                                 headers: authHeaders
                             });
@@ -2191,7 +2195,7 @@
                 selectEl.innerHTML = '<option value="">-- Đang tải loại phòng... --</option>';
 
                 try {
-                    const url = 'https://hotel-booking-v3.onrender.com/api/admin/room-types?page=0&size=100';
+                    const url = `${BASE_URL}/admin/room-types?page=0&size=100`;
                     const response = await fetch(url, { headers: getHeaders });
                     const res = await response.json();
                     
@@ -2241,7 +2245,7 @@
                 const requestBody = { roomTypeId, otaName, importIcalUrl };
 
                 try {
-                    const response = await fetch('https://hotel-booking-v3.onrender.com/api/admin/ota-mappings', {
+                    const response = await fetch(`${BASE_URL}/admin/ota-mappings`, {
                         method: 'POST',
                         headers: authHeaders,
                         body: JSON.stringify(requestBody)
