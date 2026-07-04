@@ -2029,14 +2029,16 @@
                             roomType: { id: 1, name: 'Deluxe Room' },
                             otaName: 'AIRBNB',
                             importIcalUrl: 'https://www.airbnb.com/calendar/ical/123456.ics',
-                            lastSyncedAt: new Date().toISOString()
+                            lastSyncedAt: new Date().toISOString(),
+                            isMock: true
                         },
                         {
                             id: 2,
                             roomType: { id: 2, name: 'Suite Family' },
                             otaName: 'BOOKING.COM',
                             importIcalUrl: 'https://admin.booking.com/hotel/ical/987654.ics',
-                            lastSyncedAt: null
+                            lastSyncedAt: null,
+                            isMock: true
                         }
                     ];
                 }
@@ -2080,6 +2082,7 @@
                         <td>
                             <div style="font-weight:600; color:var(--text-main);">${escapeHTML(mapping.roomType?.name || 'Chưa phân loại')}</div>
                             <span style="font-size:11px; color:var(--text-muted);">Mã: RT-${mapping.roomType?.id}</span>
+                            ${mapping.isMock ? '<span style="font-size:10px; color:var(--danger); background:#fef2f2; border:1px solid #fee2e2; padding:1px 4px; border-radius:4px; margin-left:6px; display:inline-block;">Demo (Mất kết nối)</span>' : ''}
                         </td>
                         <td>
                             <span class="status-pill active" style="background-color: var(--primary-light); color: var(--primary);">
@@ -2089,39 +2092,42 @@
                         </td>
                         <td>
                             <div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size:12px;" title="${escapeHTML(mapping.importIcalUrl)}">
-                                <a href="${escapeHTML(mapping.importIcalUrl)}" target="_blank" style="color:var(--primary); text-decoration:none;">
+                                <a href="${mapping.isMock ? '#' : escapeHTML(mapping.importIcalUrl)}" target="${mapping.isMock ? '_self' : '_blank'}" style="color:var(--primary); text-decoration:none;">
                                     ${escapeHTML(mapping.importIcalUrl)}
                                 </a>
                             </div>
                         </td>
                         <td>
                             <div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size:12px; display:flex; align-items:center; gap:8px;">
-                                <a href="${escapeHTML(exportUrl)}" target="_blank" style="color:var(--success); text-decoration:none;" title="${escapeHTML(exportUrl)}">
+                                <a href="${mapping.isMock ? '#' : escapeHTML(exportUrl)}" target="${mapping.isMock ? '_self' : '_blank'}" style="color:var(--success); text-decoration:none;" title="${escapeHTML(exportUrl)}">
                                     ${escapeHTML(exportUrl)}
                                 </a>
-                                <button class="btn-link-action btn-copy-url" style="padding: 2px 6px; font-size:10px;">
+                                <button class="btn-link-action btn-copy-url" ${mapping.isMock ? 'disabled style="color:#cbd5e1; cursor:not-allowed;"' : ''} style="padding: 2px 6px; font-size:10px;">
                                     <i class="fa-regular fa-copy"></i> Copy
                                 </button>
                             </div>
                         </td>
-                        <td style="font-size: 12.5px; color: var(--text-sub);">${lastSyncStr}</td>
+                        <td style="font-size: 12.5px; color: var(--text-sub);">${mapping.isMock ? 'Không khả dụng' : lastSyncStr}</td>
                         <td style="text-align: right; white-space:nowrap;">
-                            <button class="btn-link-action btn-sync-ical" data-id="${mapping.id}" style="color:var(--success); margin-right:8px;">
+                            <button class="btn-link-action btn-sync-ical" data-id="${mapping.id}" ${mapping.isMock ? 'disabled style="color:#cbd5e1; cursor:not-allowed;"' : 'style="color:var(--success); margin-right:8px;"'}>
                                 <i class="fa-solid fa-arrows-rotate"></i> Đồng bộ
                             </button>
-                            <button class="btn-link-action btn-delete-ical" data-id="${mapping.id}" style="color:var(--danger);">
+                            <button class="btn-link-action btn-delete-ical" data-id="${mapping.id}" ${mapping.isMock ? 'disabled style="color:#cbd5e1; cursor:not-allowed;"' : 'style="color:var(--danger);"'}>
                                 <i class="fa-solid fa-trash-can"></i> Xóa
                             </button>
                         </td>
                     `;
 
                     // Copy url event listener
-                    tr.querySelector('.btn-copy-url').addEventListener('click', () => {
-                        window.copyToClipboard(exportUrl);
-                    });
+                    if (!mapping.isMock) {
+                        tr.querySelector('.btn-copy-url').addEventListener('click', () => {
+                            window.copyToClipboard(exportUrl);
+                        });
+                    }
 
                     // Sync action
                     tr.querySelector('.btn-sync-ical').addEventListener('click', async () => {
+                        if (mapping.isMock) return;
                         const id = mapping.id;
                         showToast('Bắt đầu đồng bộ lịch...', 'info');
                         try {
@@ -2143,6 +2149,7 @@
 
                     // Delete action
                     tr.querySelector('.btn-delete-ical').addEventListener('click', async () => {
+                        if (mapping.isMock) return;
                         if (!confirm('Bạn có chắc chắn muốn xóa liên kết iCal này không?')) return;
                         const id = mapping.id;
                         try {
